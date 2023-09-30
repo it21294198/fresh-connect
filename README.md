@@ -30,6 +30,7 @@ When the project is created
   return {
     presets: ["babel-preset-expo"],
     plugins: [
+       "react-native-reanimated/plugin",
       [
         "module:react-native-dotenv",
         {
