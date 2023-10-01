@@ -4,7 +4,6 @@ import { StyleSheet, Text, View } from 'react-native';
 import { t } from 'react-native-tailwindcss';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import NetInfo from '@react-native-community/netinfo';
-import { EXPO_PUBLIC_APP_ID } from '@env';
 
 export default function App() {
 
