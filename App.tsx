@@ -5,8 +5,9 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import NetInfo from '@react-native-community/netinfo';
 import { NavigationContainer } from '@react-navigation/native';
 import MainNavigation from './Navigation/MainNavigation';
+import { AuthProvider,useAuth } from './contexts/auth';
 
-export default function App() {
+function Main() {
 
     NetInfo.fetch().then(state => {
         console.log('Connection type', state.type);
@@ -26,6 +27,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+export default function App(){
+  return(
+    <AuthProvider>
+      <Main/>
+    </AuthProvider>
+  )
+}
 
 // Test Area
 // export default function App() {

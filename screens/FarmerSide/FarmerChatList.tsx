@@ -1,10 +1,10 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-export default function FarmerSlider() {
+export default function FarmerChatList() {
   return (
     <View>
-      <Text>FarmerSlider</Text>
+      <Text>FarmerChatList</Text>
     </View>
   )
 }
