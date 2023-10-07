@@ -11,6 +11,7 @@ import { Provider } from 'react-redux'
 import SelectUser from './screens/SelectUser';
 import {store} from './contexts/store'
 import { useSelector,useDispatch } from 'react-redux';
+import Login from './screens/Login';
 
 export function Main() {
 
@@ -23,8 +24,8 @@ export function Main() {
       
   return (
     <AuthProvider>
-      {count !== 0?
-        <SelectUser/>
+      {count === 0?
+        <Login/>
       :
         <MainNavigation/>
       }
