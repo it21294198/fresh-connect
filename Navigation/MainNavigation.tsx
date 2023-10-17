@@ -70,7 +70,7 @@ function ForCustomerSide(){
 
 function ForFarmerSide(){
   return(
-      <Drawer.Navigator initialRouteName="CustomerHomePage">
+      <Drawer.Navigator initialRouteName="FarmerHomePage">
         <Drawer.Screen name='FarmerHomePage' component={FarmerTabNavigation}/>
         <Drawer.Screen name='FarmerProfile' component={FarmerProfile}/>
         <Drawer.Screen name='ProductPage' component={ProductPage}/>
