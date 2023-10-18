@@ -58,7 +58,6 @@ function FarmerTabNavigation(){
 
 function ForCustomerSide(){
   return(
-    <View style={{ flex: 1, borderTopLeftRadius: 50, borderTopRightRadius: 50, borderBottomLeftRadius: 50, borderBottomRightRadius: 50 }}>
       <Drawer.Navigator initialRouteName="CustomerHomePage">
         <Drawer.Screen name="CustomerHomePage" component={CustomerTabNavigation} />
         <Drawer.Screen name="CustomerProfile" component={CustomerProfile} />
@@ -67,7 +66,6 @@ function ForCustomerSide(){
         <Drawer.Screen name="SelectUser" component={SelectUser} options={{ headerShown: false }} />
         <Drawer.Screen name="Logout" component={Logout} />
       </Drawer.Navigator>
-    </View>
   )
 }
 

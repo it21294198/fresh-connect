@@ -2,7 +2,7 @@ import { View, ScrollView,StyleSheet } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { fireStore } from '../../config/firebase';
 import { collection, getDocs, DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
-import { Layout, Text ,Card,Button} from '@ui-kitten/components';
+import { Input, Icon } from "react-native-magnus";
 
 interface ShopData {
   id: string;
@@ -31,47 +31,17 @@ export default function CustomerHomePage() {
     }
   };
 
-  const Footer = (props: ViewProps): React.ReactElement => (
-  <View
-    {...props}
-    // eslint-disable-next-line react/prop-types
-    style={[props.style, styles.footerContainer]}
-  >
-    <Button
-      // style={styles.footerControl}
-      size='small'
-      status='basic'
-    >
-      CANCEL
-    </Button>
-    <Button
-      style={styles.footerControl}
-      size='small'
-    >
-      ACCEPT
-    </Button>
-  </View>
-);
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Card>
-              <Text>Hello</Text>
-            </Card>
-            <Card>
-              <Text>Hello</Text>
-            </Card>
-                  <Card
-        style={styles.card}
-        footer={Footer}
-        >
-        <Text>
-With Footer
-        </Text>
-      </Card>
-        <Card>
-          <Text>Hello</Text>
-        </Card>
+        <Input
+        placeholder="Username"
+        p={10}
+        m={20}
+        focusBorderColor="green400"
+        suffix={<Icon name="search" color="gray900" fontFamily="Feather" />}
+        prefix={<Icon name="search" color="gray900" fontFamily="Feather" />}
+      />
     </View>
   );
 }
