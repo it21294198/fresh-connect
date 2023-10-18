@@ -31,27 +31,6 @@ export default function CustomerHomePage() {
     }
   };
 
-  const Footer = (props: ViewProps): React.ReactElement => (
-  <View
-    {...props}
-    // eslint-disable-next-line react/prop-types
-    style={[props.style, styles.footerContainer]}
-  >
-    <Button
-      // style={styles.footerControl}
-      size='small'
-      status='basic'
-    >
-      CANCEL
-    </Button>
-    <Button
-      style={styles.footerControl}
-      size='small'
-    >
-      ACCEPT
-    </Button>
-  </View>
-);
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
