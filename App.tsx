@@ -11,6 +11,8 @@ import SelectUser from './screens/SelectUser';
 import {store} from './contexts/store'
 import { useSelector,useDispatch } from 'react-redux';
 import Login from './screens/Login';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider, Layout } from '@ui-kitten/components';
 
 export function Main() {
 
@@ -36,9 +38,11 @@ export function Main() {
 
 export default function App(){
     return(
-      <Provider store={store}>
-      <View><Text>remove mytailwind</Text></View>
-        {/* <Main/> */}
-      </Provider>
+      <ApplicationProvider {...eva} theme={eva.light}>
+        <Provider store={store}>
+      {/* <View><Text>remove mytailwind</Text></View> */}
+          <Main/>
+        </Provider>
+      </ApplicationProvider>
   )
 }
