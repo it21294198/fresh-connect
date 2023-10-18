@@ -15,6 +15,7 @@ import Logout from '../screens/Logout';
 import FAQ from '../screens/FAQ';
 import UpdateStocks from '../screens/FarmerSide/UpdateStocks';
 import SelectUser from '../screens/SelectUser';
+import { View } from 'react-native';
 
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -57,14 +58,16 @@ function FarmerTabNavigation(){
 
 function ForCustomerSide(){
   return(
+    <View style={{ flex: 1, borderTopLeftRadius: 50, borderTopRightRadius: 50, borderBottomLeftRadius: 50, borderBottomRightRadius: 50 }}>
       <Drawer.Navigator initialRouteName="CustomerHomePage">
         <Drawer.Screen name="CustomerHomePage" component={CustomerTabNavigation} />
         <Drawer.Screen name="CustomerProfile" component={CustomerProfile} />
         <Drawer.Screen name="SavedShops" component={SavedShops} />
         <Drawer.Screen name="HelpCenter" component={FAQ} />
-        <Drawer.Screen name="SelectUser" component={SelectUser} options={{ headerShown: false }}/>
+        <Drawer.Screen name="SelectUser" component={SelectUser} options={{ headerShown: false }} />
         <Drawer.Screen name="Logout" component={Logout} />
       </Drawer.Navigator>
+    </View>
   )
 }
 
