@@ -1,7 +1,8 @@
-import { View, Text, ScrollView } from 'react-native';
+import { View, ScrollView,StyleSheet } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { fireStore } from '../../config/firebase';
 import { collection, getDocs, DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
+import { Input, Icon } from "react-native-magnus";
 
 interface ShopData {
   id: string;
@@ -30,13 +31,65 @@ export default function CustomerHomePage() {
     }
   };
 
+  const Footer = (props: ViewProps): React.ReactElement => (
+  <View
+    {...props}
+    // eslint-disable-next-line react/prop-types
+    style={[props.style, styles.footerContainer]}
+  >
+    <Button
+      // style={styles.footerControl}
+      size='small'
+      status='basic'
+    >
+      CANCEL
+    </Button>
+    <Button
+      style={styles.footerControl}
+      size='small'
+    >
+      ACCEPT
+    </Button>
+  </View>
+);
+
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <ScrollView>
-        {data.map((item) => (
-          <Text key={item.id}>{item.text}</Text>
-        ))}
-      </ScrollView>
+        <Input
+        placeholder="Username"
+        p={10}
+        m={20}
+        focusBorderColor="green400"
+        suffix={<Icon name="search" color="gray900" fontFamily="Feather" />}
+        prefix={<Icon name="search" color="gray900" fontFamily="Feather" />}
+      />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  topContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  card: {
+    flex: 1,
+    margin: 20,
+    width: 350,
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 2 }, // Shadow offset
+    shadowOpacity: 0.4, // Shadow opacity
+    shadowRadius: 4, // Shadow radius
+    elevation: 4, // Android-specific elevation for shadow
+  },
+  footerContainer: {
+    flexDirection: 'row',
+    width: 'auto',
+    height: 'auto',
+    justifyContent: 'flex-end',
+  },
+  footerControl: {
+    marginHorizontal: 2,
+    top: 50,
+  },
+});
