@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native'
 import React, { createContext, useContext, useState } from 'react';
-import { User,AuthContextType } from '../config/interfaces';
+import { User,AuthContextType } from '../util/interfaces';
 
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
