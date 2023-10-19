@@ -1,7 +1,7 @@
 import { View, Text,TextInput,Dimensions  } from 'react-native'
 import React,{useState} from 'react'
 import { useAuth } from '../contexts/auth';
-import { User } from '../config/interfaces';
+import { User } from '../util/interfaces';
 import {increment,decrement} from '../features/count/counterSlice'
 import { useSelector, useDispatch } from "react-redux";
 // import { useSelector, useDispatch } from "react-redux/es/exports";
