@@ -1,14 +1,20 @@
-export interface User {
-  username: string;
-  type:string;
-  logStatus:boolean;
+export interface UserLogin {
+  email: string|null;
+  type:boolean|null;
 }
 
-// Define the context type
-export interface AuthContextType {
-  user: User | null;
-  login: (userData: User) => void;
-  logout: () => void;
-  signUp: (userData: User) => void;
+export interface User{
+  email:string;
+  password:string;
 }
 
+export interface Loading {
+  isLoading: boolean;
+}
+
+export interface UserSignIn{
+  firstName:string;
+  lastName:string;
+  email:string;
+  password:string;
+}
