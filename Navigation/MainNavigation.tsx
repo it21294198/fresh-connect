@@ -1,6 +1,7 @@
 // import * as React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CustomerHomePage from '../screens/CustomerSide/CustomerHomePage';
 import CustomerProfile from '../screens/CustomerSide/CustomerProfile';
@@ -16,9 +17,12 @@ import FAQ from '../screens/FAQ';
 import UpdateStocks from '../screens/FarmerSide/UpdateStocks';
 import SelectUser from '../screens/SelectUser';
 import { View } from 'react-native';
+import CustomerChatList from '../screens/CustomerSide/CustomerChatList';
+import Chat from '../screens/Chat';
 
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
 export default function MainNavigation() {
   const farmer = true
@@ -40,6 +44,7 @@ function CustomerTabNavigation(){
         <Tab.Screen name="Home" component={CustomerHomePage} />
         <Tab.Screen name="ShopMapDisplay" component={ShopMapDisplay} />
         <Tab.Screen name="SavedShops" component={SavedShops} />
+        <Tab.Screen name="Chats" options={{headerShown: false}} component={Chats} />
         <Tab.Screen name="CustomerProfile" component={CustomerProfile} />
       </Tab.Navigator>
   )
@@ -62,6 +67,7 @@ function ForCustomerSide(){
         <Drawer.Screen name="CustomerHomePage" component={CustomerTabNavigation} />
         <Drawer.Screen name="CustomerProfile" component={CustomerProfile} />
         <Drawer.Screen name="SavedShops" component={SavedShops} />
+        <Drawer.Screen name="Chats" component={Chats} />
         <Drawer.Screen name="HelpCenter" component={FAQ} />
         <Drawer.Screen name="SelectUser" component={SelectUser} options={{ headerShown: false }} />
         <Drawer.Screen name="Logout" component={Logout} />
@@ -81,5 +87,14 @@ function ForFarmerSide(){
         <Drawer.Screen name="SelectUser" component={SelectUser} options={{ headerShown: false }}/>
         <Drawer.Screen name='Logout' component={Logout}/>
       </Drawer.Navigator>
+  )
+}
+
+function Chats(){
+  return(
+    <Stack.Navigator initialRouteName='CustomerChatList'>
+      <Stack.Screen name='ChatList' options={{ title: 'Chats List' }} component={CustomerChatList}/>
+      <Stack.Screen name='Chat' options={{ title: 'Chat' }} component={Chat}/>
+    </Stack.Navigator>
   )
 }
