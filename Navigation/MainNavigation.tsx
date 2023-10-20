@@ -16,12 +16,14 @@ import FAQ from '../screens/FAQ';
 import UpdateStocks from '../screens/FarmerSide/UpdateStocks';
 import SelectUser from '../screens/SelectUser';
 import { View } from 'react-native';
+import { useSelector } from 'react-redux';
+import { UserLogin } from '../util/interfaces';
 
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
 
 export default function MainNavigation() {
-  const farmer = true
+  let farmer:boolean|null = useSelector((state:{user:UserLogin})=> state.user.type)
   return (
     <NavigationContainer>
       {/* {farmer? */}
@@ -58,13 +60,15 @@ function FarmerTabNavigation(){
 
 function ForCustomerSide(){
   return(
-      <Drawer.Navigator initialRouteName="CustomerHomePage">
+      <Drawer.Navigator initialRouteName="CustomerHomePage"
+      drawerContent={(props) => <Logout {...props} />}
+      >
         <Drawer.Screen name="CustomerHomePage" component={CustomerTabNavigation} />
         <Drawer.Screen name="CustomerProfile" component={CustomerProfile} />
         <Drawer.Screen name="SavedShops" component={SavedShops} />
         <Drawer.Screen name="HelpCenter" component={FAQ} />
         <Drawer.Screen name="SelectUser" component={SelectUser} options={{ headerShown: false }} />
-        <Drawer.Screen name="Logout" component={Logout} />
+        {/* <Drawer.Screen name="Logout" component={Logout} /> */}
       </Drawer.Navigator>
   )
 }
