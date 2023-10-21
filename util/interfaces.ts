@@ -21,3 +21,7 @@ export interface customDrawerPropsInterface {
     size?: number;
   };
 }
+
+export interface drawerProfileInterface{
+  CustomerProfile: any | undefined;
+}
