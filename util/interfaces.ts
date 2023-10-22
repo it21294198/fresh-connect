@@ -1,16 +1,27 @@
+export interface UserLogin {
+  email: string|null;
+  type:boolean|null;
+  address?:string|null|undefined;
+  firstName?:string|null|undefined;
+  lastName?:string|null|undefined;
+  contactNo?:number|null|undefined;
+  userId?:string|null|undefined;
+
 export interface User {
   username: string;
   type: string;
   logStatus: boolean;
 }
 
-// Define the context type
-export interface AuthContextType {
-  user: User | null;
-  login: (userData: User) => void;
-  logout: () => void;
-  signUp: (userData: User) => void;
+export interface Loading {
+  isLoading: boolean;
 }
+
+export interface UserSignIn{
+  firstName:string;
+  lastName:string;
+  email:string;
+  password:string;
 
 export interface customDrawerPropsInterface {
   drawerActiveTintColor?: string;
@@ -24,4 +35,5 @@ export interface customDrawerPropsInterface {
 
 export interface drawerProfileInterface{
   CustomerProfile: any | undefined;
+
 }

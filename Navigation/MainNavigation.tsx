@@ -1,6 +1,7 @@
-// import * as React from 'react';
-import { createDrawerNavigator, DrawerItem, DrawerNavigationProp, DrawerItemList, DrawerContentScrollView } from '@react-navigation/drawer';
-import { NavigationContainer } from '@react-navigation/native';
+import React, { useState } from 'react';
+import { createDrawerNavigator, DrawerItem, DrawerNavigationProp, DrawerItemList, DrawerContentScrollView, DrawerContentComponentProps } from '@react-navigation/drawer';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import CustomerHomePage from '../screens/CustomerSide/CustomerHomePage';
@@ -16,8 +17,10 @@ import Logout from '../screens/Logout';
 import FAQ from '../screens/FAQ';
 import UpdateStocks from '../screens/FarmerSide/UpdateStocks';
 import SelectUser from '../screens/SelectUser';
-import { View, Image, Button } from 'react-native';
-import { customDrawerPropsInterface } from '../util/interfaces';
+
+import { useSelector } from 'react-redux';
+import { View, Image} from 'react-native';
+import { customDrawerPropsInterface, UserLogin } from '../util/interfaces';
 import Svg, { Path } from "react-native-svg"
 import chatIcon from "../assets/Chat.svg"
 import emptyHome from "../assets/homeEmptyIcon.svg"
@@ -33,27 +36,46 @@ import helpCenterEmptyIconImg from "../assets/helpCenterEmptyIconImg.png"
 import switchTypeFilledIconImg from "../assets/switchTypeFilledIconImg.png"
 import switchTypeEmptyIconImg from "../assets/switchTypeEmptyIconImg.png"
 import logoutEmptyIconImg from "../assets/logoutEmptyIconImg.png"
-import { useState } from 'react';
-import React from 'react'
+import customHamburger from "../assets/customHamburger.png"
+
+
+import CustomerChatList from '../screens/CustomerSide/CustomerChatList';
+import Chat from '../screens/Chat';
+import CustomerShopPage from '../screens/CustomerSide/CustomerShopPage';
+import CustomerProductPage from '../screens/CustomerSide/CustomerProductPage';
+
+
 import { paths } from '../assets/strings';
-import { Div, Text } from "react-native-magnus";
+import { Button, Div, Text } from "react-native-magnus";
 import { getHeaderTitle } from '@react-navigation/elements';
 import { DrawerProfile } from '../components/DrawerProfile';
+
 
 export default function MainNavigation()
 {
   const [isHomeActive, setIsHomeActive] = useState(false);
   const [currentPage, setCurrentPage] = useState('CustomerHomePage');
+  // const navigation = useNavigation()
 
   const drawerOptions = {
     drawerActiveTintColor: '#45A053',
     drawerActiveBackgroundColor: '#E5EFE3',
-    drawerStyle: { borderTopRightRadius: 30, borderBottomRightRadius: 30 }
+    drawerStyle: { borderTopRightRadius: 30, borderBottomRightRadius: 30 },
+    headerTitleAlign: "center",
+    headerLeft: (props: any) => (
+      <Button
+        bg='transparent'
+        prefix={<Image
+          source={customHamburger}
+          style={{ width: 19, height: 21, resizeMode: 'contain', }}
+        />}
+      ></Button>
+    ),
   }
 
   const drawerHomeOptions = {
     drawerIcon: () => (
-      currentPage == 'CustomerHomePage' || currentPage == 'FarmerHomePage' ? <Image
+      currentPage === 'CustomerHomePage' || currentPage === 'FarmerHomePage' ? <Image
         source={filledHomeImg2}
         style={{ width: 19, height: 20, resizeMode: 'contain' }}
       /> : <Image
@@ -82,7 +104,7 @@ export default function MainNavigation()
   // }
   const drawerProfileOptions = {
     drawerIcon: () => (
-      currentPage == 'CustomerProfile' ?
+      currentPage === 'CustomerProfile' ?
         <Image
           source={accountsFilledIconImg}
           style={{ width: 19, height: 20, resizeMode: 'contain' }}
@@ -96,7 +118,7 @@ export default function MainNavigation()
 
   const drawerFavouritesOptions = {
     drawerIcon: () => (
-      currentPage == 'SavedShops' ?
+      currentPage === 'SavedShops' ?
         <Image
           source={favoutitesFilledIconImg}
           style={{ width: 22, height: 22, resizeMode: 'contain' }}
@@ -105,12 +127,13 @@ export default function MainNavigation()
           style={{ width: 22, height: 22, resizeMode: 'contain' }}
         />
     ),
-    drawerItemStyle: { marginVertical: 5 }
+    drawerItemStyle: { marginVertical: 5 },
+
   };
 
   const drawerHelpOptions = {
     drawerIcon: () => (
-      currentPage == 'HelpCenter' ?
+      currentPage === 'HelpCenter' ?
         <Image
           source={helpCenterFilledIconImg}
           style={{ width: 20, height: 20, resizeMode: 'contain' }}
@@ -124,7 +147,7 @@ export default function MainNavigation()
 
   const drawerSwitchUserOptions = {
     drawerIcon: () => (
-      currentPage == 'SelectUser' ?
+      currentPage === 'SelectUser' ?
         <Image
           source={switchTypeFilledIconImg}
           style={{ width: 22, height: 22, resizeMode: 'contain' }}
@@ -151,7 +174,7 @@ export default function MainNavigation()
 
   const drawerChatOptions = {
     drawerIcon: () => (
-      currentPage == 'SavedShops' ?
+      currentPage === 'SavedShops' ?
         <Image
           source={favoutitesFilledIconImg}
           style={{ width: 22, height: 22, resizeMode: 'contain' }}
@@ -168,9 +191,7 @@ export default function MainNavigation()
   const Tab = createBottomTabNavigator();
   const Stack = createStackNavigator();
 
-  const farmer = true
-
-
+  let farmer:boolean|null = useSelector((state:{user:UserLogin})=> state.user.type)
 
   const handleItemClick = (id: string) =>
   {
@@ -188,12 +209,14 @@ export default function MainNavigation()
   function CustomerTabNavigation()
   {
     return (
-      <Tab.Navigator initialRouteName='Home'>
-        <Tab.Screen name="Home" component={CustomerHomePage} />
-        <Tab.Screen name="ShopMapDisplay" component={ShopMapDisplay} />
+      <Tab.Navigator initialRouteName='Home' screenOptions={{ headerShown: false, }}>
+        <Tab.Screen name="Home" component={CustomerHomeStack} />
+        <Tab.Screen name="ShopMapDisplay" component={ShopMapDisplay} options={{ headerShown: false, tabBarShowLabel: true, }} />
         <Tab.Screen name="SavedShops" component={SavedShops} />
+        <Tab.Screen name="Chats" component={Chats} />
         <Tab.Screen name="CustomerProfile" component={CustomerProfile} />
       </Tab.Navigator>
+
     )
   }
 
@@ -224,6 +247,7 @@ export default function MainNavigation()
     //ADD CHATS, SETTINGS (?)
     //Removed profile screen
     return (
+      // <Drawer.Navigator initialRouteName="CustomerHomePage" screenOptions={drawerOptions}
       <Drawer.Navigator initialRouteName="CustomerHomePage" screenOptions={drawerOptions}
         drawerContent={(props) =>
         {
@@ -255,9 +279,9 @@ export default function MainNavigation()
           listeners={({ navigation }) => ({
             drawerItemPress: () => handleItemClick('Logout'),
           })} />
-      </Drawer.Navigator>
-    )
-  }
+  </Drawer.Navigator>
+  )
+}
 
   function ForFarmerSide()
   { //TODO: Add Shop page, chats, buttons
@@ -294,10 +318,30 @@ export default function MainNavigation()
     )
   }
 
+  function Chats(){
+    return(
+      <Stack.Navigator initialRouteName='CustomerChatList'>
+        <Stack.Screen name='ChatList' options={{ title: 'Chats List' }} component={CustomerChatList}/>
+        <Stack.Screen name='Chat' options={({route}:any)=>({title: route.params.chatRoom.name})} component={Chat}/>
+      </Stack.Navigator>
+    )
+  }
+  
+  function CustomerHomeStack(){
+    return(
+      <Stack.Navigator initialRouteName='CustomerChatList'>
+        <Stack.Screen name='CustomerHomePage' options={{ title: 'Home' }} component={CustomerHomePage}/>
+        <Stack.Screen name='CustomerShopPage' options={({route}:any)=>({title: route.params.shop.shopName})} component={CustomerShopPage}/>
+        <Stack.Screen name='CustomerProductPage' options={({route}:any)=>({title: route.params.products.name})} component={CustomerProductPage}/>
+      </Stack.Navigator>
+    )
+  
+  }
+
   return (
     <NavigationContainer>
       {/* {farmer? */}
-      {farmer ?
+      {!farmer ?
         <ForFarmerSide />
         :
         <ForCustomerSide />
@@ -306,3 +350,4 @@ export default function MainNavigation()
   )
 
 }
+
