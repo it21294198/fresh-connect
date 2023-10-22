@@ -6,11 +6,11 @@ export interface UserLogin {
   lastName?:string|null|undefined;
   contactNo?:number|null|undefined;
   userId?:string|null|undefined;
-}
 
-export interface User{
-  email:string;
-  password:string;
+export interface User {
+  username: string;
+  type: string;
+  logStatus: boolean;
 }
 
 export interface Loading {
@@ -22,4 +22,18 @@ export interface UserSignIn{
   lastName:string;
   email:string;
   password:string;
+
+export interface customDrawerPropsInterface {
+  drawerActiveTintColor?: string;
+  drawerActiveBackgroundColor?: string;
+  drawerIcon?: {
+    focused?: boolean;
+    color?: string;
+    size?: number;
+  };
+}
+
+export interface drawerProfileInterface{
+  CustomerProfile: any | undefined;
+
 }
