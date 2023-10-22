@@ -1,6 +1,11 @@
 export interface UserLogin {
   email: string|null;
   type:boolean|null;
+  address?:string|null|undefined;
+  firstName?:string|null|undefined;
+  lastName?:string|null|undefined;
+  contactNo?:number|null|undefined;
+  userId?:string|null|undefined;
 }
 
 export interface User{
