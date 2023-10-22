@@ -1,6 +1,6 @@
 // import * as React from 'react';
 import { createDrawerNavigator, DrawerItem, DrawerNavigationProp, DrawerItemList, DrawerContentScrollView } from '@react-navigation/drawer';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CustomerHomePage from '../screens/CustomerSide/CustomerHomePage';
 import CustomerProfile from '../screens/CustomerSide/CustomerProfile';
@@ -15,7 +15,7 @@ import Logout from '../screens/Logout';
 import FAQ from '../screens/FAQ';
 import UpdateStocks from '../screens/FarmerSide/UpdateStocks';
 import SelectUser from '../screens/SelectUser';
-import { View, Image, Button } from 'react-native';
+import { View, Image } from 'react-native';
 import { customDrawerPropsInterface } from '../util/interfaces';
 import Svg, { Path } from "react-native-svg"
 import chatIcon from "../assets/Chat.svg"
@@ -32,10 +32,13 @@ import helpCenterEmptyIconImg from "../assets/helpCenterEmptyIconImg.png"
 import switchTypeFilledIconImg from "../assets/switchTypeFilledIconImg.png"
 import switchTypeEmptyIconImg from "../assets/switchTypeEmptyIconImg.png"
 import logoutEmptyIconImg from "../assets/logoutEmptyIconImg.png"
+import customHamburger from "../assets/customHamburger.png"
+
+
 import { useState } from 'react';
 import React from 'react'
 import { paths } from '../assets/strings';
-import { Div, Text } from "react-native-magnus";
+import { Button, Div, Text } from "react-native-magnus";
 import { getHeaderTitle } from '@react-navigation/elements';
 import { DrawerProfile } from '../components/DrawerProfile';
 
@@ -43,16 +46,27 @@ export default function MainNavigation()
 {
   const [isHomeActive, setIsHomeActive] = useState(false);
   const [currentPage, setCurrentPage] = useState('CustomerHomePage');
+  // const navigation = useNavigation()
 
   const drawerOptions = {
     drawerActiveTintColor: '#45A053',
     drawerActiveBackgroundColor: '#E5EFE3',
-    drawerStyle: { borderTopRightRadius: 30, borderBottomRightRadius: 30 }
+    drawerStyle: { borderTopRightRadius: 30, borderBottomRightRadius: 30 },
+    headerTitleAlign: "center",
+    headerLeft: (props: any) => (
+      <Button
+        bg='transparent'
+        prefix={<Image
+          source={customHamburger}
+          style={{ width: 19, height: 21, resizeMode: 'contain', }}
+        />}
+      ></Button>
+    ),
   }
 
   const drawerHomeOptions = {
     drawerIcon: () => (
-      currentPage == 'CustomerHomePage' || currentPage == 'FarmerHomePage' ? <Image
+      currentPage === 'CustomerHomePage' || currentPage === 'FarmerHomePage' ? <Image
         source={filledHomeImg2}
         style={{ width: 19, height: 20, resizeMode: 'contain' }}
       /> : <Image
@@ -81,7 +95,7 @@ export default function MainNavigation()
   // }
   const drawerProfileOptions = {
     drawerIcon: () => (
-      currentPage == 'CustomerProfile' ?
+      currentPage === 'CustomerProfile' ?
         <Image
           source={accountsFilledIconImg}
           style={{ width: 19, height: 20, resizeMode: 'contain' }}
@@ -95,7 +109,7 @@ export default function MainNavigation()
 
   const drawerFavouritesOptions = {
     drawerIcon: () => (
-      currentPage == 'SavedShops' ?
+      currentPage === 'SavedShops' ?
         <Image
           source={favoutitesFilledIconImg}
           style={{ width: 22, height: 22, resizeMode: 'contain' }}
@@ -104,12 +118,13 @@ export default function MainNavigation()
           style={{ width: 22, height: 22, resizeMode: 'contain' }}
         />
     ),
-    drawerItemStyle: { marginVertical: 5 }
+    drawerItemStyle: { marginVertical: 5 },
+
   };
 
   const drawerHelpOptions = {
     drawerIcon: () => (
-      currentPage == 'HelpCenter' ?
+      currentPage === 'HelpCenter' ?
         <Image
           source={helpCenterFilledIconImg}
           style={{ width: 20, height: 20, resizeMode: 'contain' }}
@@ -123,7 +138,7 @@ export default function MainNavigation()
 
   const drawerSwitchUserOptions = {
     drawerIcon: () => (
-      currentPage == 'SelectUser' ?
+      currentPage === 'SelectUser' ?
         <Image
           source={switchTypeFilledIconImg}
           style={{ width: 22, height: 22, resizeMode: 'contain' }}
@@ -150,7 +165,7 @@ export default function MainNavigation()
 
   const drawerChatOptions = {
     drawerIcon: () => (
-      currentPage == 'SavedShops' ?
+      currentPage === 'SavedShops' ?
         <Image
           source={favoutitesFilledIconImg}
           style={{ width: 22, height: 22, resizeMode: 'contain' }}
@@ -186,9 +201,9 @@ export default function MainNavigation()
   function CustomerTabNavigation()
   {
     return (
-      <Tab.Navigator initialRouteName='Home'>
+      <Tab.Navigator initialRouteName='Home' screenOptions={{ headerShown: false, }}>
         <Tab.Screen name="Home" component={CustomerHomePage} />
-        <Tab.Screen name="ShopMapDisplay" component={ShopMapDisplay} />
+        <Tab.Screen name="ShopMapDisplay" component={ShopMapDisplay} options={{ headerShown: false, tabBarShowLabel: true, }} />
         <Tab.Screen name="SavedShops" component={SavedShops} />
         <Tab.Screen name="CustomerProfile" component={CustomerProfile} />
       </Tab.Navigator>
@@ -212,6 +227,7 @@ export default function MainNavigation()
     //ADD CHATS, SETTINGS (?)
     //Removed profile screen
     return (
+      // <Drawer.Navigator initialRouteName="CustomerHomePage" screenOptions={drawerOptions}
       <Drawer.Navigator initialRouteName="CustomerHomePage" screenOptions={drawerOptions}
         drawerContent={(props) =>
         {
@@ -285,7 +301,7 @@ export default function MainNavigation()
   return (
     <NavigationContainer>
       {/* {farmer? */}
-      {farmer ?
+      {!farmer ?
         <ForFarmerSide />
         :
         <ForCustomerSide />
