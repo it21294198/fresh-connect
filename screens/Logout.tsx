@@ -1,22 +1,52 @@
-import { View, Text,Button} from 'react-native'
+import { View, Text,TouchableOpacity} from 'react-native'
 import React from 'react'
-import { CommonActions } from '@react-navigation/native';
+import { useDispatch } from 'react-redux';
+import { logOut, swithcUser } from '../features/user/userSlice';
+import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 
-export default function Logout({ navigation }:any) {
+export default function Logout({ navigation ,props}:any) {
+    const dispatch = useDispatch()
 
-    const goToSettings = () => {
+    const goToLoing = () => {
     // Use CommonActions.navigate to navigate to the "Settings" screen
-    navigation.dispatch(
-      CommonActions.navigate({
-        name: 'SelectUser',
-      })
-    );
-  };
+    dispatch(logOut())
+    navigation.navigate('AnotherScreen');
+    // navigation.dispatch(
+    //   CommonActions.navigate({
+    //     name: 'SelectUser',
+    //   })
+    // );
+    };
+
+    const goToSelectUser = () =>{
+      dispatch(swithcUser())
+    }
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Home!</Text>
-    <Button title="Go to Settings" onPress={goToSettings} />
+    <DrawerContentScrollView>
+
+    <DrawerItem
+        label="Home"
+        onPress={() => navigation.navigate('CustomerHomePage')}
+      />
+    <DrawerItem
+        label="Profile"
+        onPress={() => navigation.navigate('CustomerProfile')}
+      />
+
+    <View style={{padding:16,   flex: 1,
+    justifyContent: 'space-between'}}>
+    <TouchableOpacity onPress={goToSelectUser}>
+      <Text>Swith User</Text>
+    </TouchableOpacity>
     </View>
+
+    <View style={{padding:16}}>
+    <TouchableOpacity onPress={goToLoing}>
+      <Text>Logout</Text>
+    </TouchableOpacity>
+    </View>
+
+    </DrawerContentScrollView>
   )
 }

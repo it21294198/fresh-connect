@@ -6,3 +6,8 @@ declare module '@env' {
   export const EXPO_PUBLIC_MESSAGING_SENDER_ID: string;
   export const EXPO_PUBLIC_APP_ID: string;
 }
+
+declare module "*.png";
+declare module "*.svg";
+declare module "*.jpeg";
+declare module "*.jpg";
