@@ -2,6 +2,7 @@
 import { createDrawerNavigator, DrawerItem, DrawerNavigationProp, DrawerItemList, DrawerContentScrollView } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import CustomerHomePage from '../screens/CustomerSide/CustomerHomePage';
 import CustomerProfile from '../screens/CustomerSide/CustomerProfile';
 import SavedShops from '../screens/CustomerSide/SavedShops';
@@ -165,6 +166,7 @@ export default function MainNavigation()
 
   const Drawer = createDrawerNavigator();
   const Tab = createBottomTabNavigator();
+  const Stack = createStackNavigator();
 
   const farmer = true
 
@@ -202,8 +204,18 @@ export default function MainNavigation()
         <Tab.Screen name='Home' component={FarmerHomePage} />
         <Tab.Screen name='FarmerShopPage' component={FarmerShopPage} />
         <Tab.Screen name='FarmerProfile' component={FarmerProfile} />
-        <Tab.Screen name='ProductPage' component={ProductPage} />
+        <Tab.Screen name='ProductPage' component={FarmerProductPageStackNavigation} />
       </Tab.Navigator>
+    )
+  }
+
+  function FarmerProductPageStackNavigation() 
+  {
+    return (
+      <Stack.Navigator>
+        <Stack.Screen name='LandingPage' component={ProductPage} />
+        <Stack.Screen name='AddStocks' component={AddStocks} />
+      </Stack.Navigator>
     )
   }
 
