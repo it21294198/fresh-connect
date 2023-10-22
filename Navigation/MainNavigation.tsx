@@ -15,8 +15,9 @@ import Logout from '../screens/Logout';
 import FAQ from '../screens/FAQ';
 import UpdateStocks from '../screens/FarmerSide/UpdateStocks';
 import SelectUser from '../screens/SelectUser';
+import { useSelector } from 'react-redux';
 import { View, Image, Button } from 'react-native';
-import { customDrawerPropsInterface } from '../util/interfaces';
+import { customDrawerPropsInterface, UserLogin } from '../util/interfaces';
 import Svg, { Path } from "react-native-svg"
 import chatIcon from "../assets/Chat.svg"
 import emptyHome from "../assets/homeEmptyIcon.svg"
@@ -166,9 +167,7 @@ export default function MainNavigation()
   const Drawer = createDrawerNavigator();
   const Tab = createBottomTabNavigator();
 
-  const farmer = true
-
-
+  let farmer:boolean|null = useSelector((state:{user:UserLogin})=> state.user.type)
 
   const handleItemClick = (id: string) =>
   {
