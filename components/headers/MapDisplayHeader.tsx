@@ -1,5 +1,5 @@
 import React from 'react'
-import { Div, Button, Header, Icon } from 'react-native-magnus';
+import { Div, Button, Header, Icon, Text } from 'react-native-magnus';
 import customHamburger from "../../assets/customHamburger.png"
 import searchIcon from "../../assets/searchIcon.png"
 import { NavigationProp } from '@react-navigation/native';
@@ -11,7 +11,7 @@ export const MapDisplayHeader = ({ navigation }: any) =>
     {
         navigation.toggleDrawer(); // Function to toggle the drawer
     };
-
+    const text = "Search"
     return (
         <>
             <Div>
@@ -38,7 +38,7 @@ export const MapDisplayHeader = ({ navigation }: any) =>
                             prefix={
                                 <Image source={searchIcon} style={{ width: 19, height: 21, resizeMode: 'contain', paddingHorizontal:20, marginVertical:0 }} />
                             }
-                            >Search</Button>
+                            >{text}</Button>
                     </Header>
                 </Div>
             </Div>
