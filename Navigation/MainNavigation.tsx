@@ -1,4 +1,5 @@
-import { createDrawerNavigator, DrawerItem, DrawerNavigationProp, DrawerItemList, DrawerContentScrollView } from '@react-navigation/drawer';
+import React, { useState } from 'react';
+import { createDrawerNavigator, DrawerItem, DrawerNavigationProp, DrawerItemList, DrawerContentScrollView, DrawerContentComponentProps } from '@react-navigation/drawer';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -42,11 +43,7 @@ import Chat from '../screens/Chat';
 import CustomerShopPage from '../screens/CustomerSide/CustomerShopPage';
 import CustomerProductPage from '../screens/CustomerSide/CustomerProductPage';
 
-const Stack = createStackNavigator();
 
-
-import { useState } from 'react';
-import React from 'react'
 import { paths } from '../assets/strings';
 import { Button, Div, Text } from "react-native-magnus";
 import { getHeaderTitle } from '@react-navigation/elements';
