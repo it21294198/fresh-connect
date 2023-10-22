@@ -19,6 +19,8 @@ import SelectUser from '../screens/SelectUser';
 import { View } from 'react-native';
 import CustomerChatList from '../screens/CustomerSide/CustomerChatList';
 import Chat from '../screens/Chat';
+import CustomerShopPage from '../screens/CustomerSide/CustomerShopPage';
+import CustomerProductPage from '../screens/CustomerSide/CustomerProductPage';
 
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -40,8 +42,8 @@ export default function MainNavigation() {
 
 function CustomerTabNavigation(){
   return(
-      <Tab.Navigator initialRouteName='Home'>
-        <Tab.Screen name="Home" component={CustomerHomePage} />
+      <Tab.Navigator screenOptions={{headerShown: false}} initialRouteName='Home'>
+        <Tab.Screen name="Home" component={CustomerHomeStack} />
         <Tab.Screen name="ShopMapDisplay" component={ShopMapDisplay} />
         <Tab.Screen name="SavedShops" component={SavedShops} />
         <Tab.Screen name="Chats" options={{headerShown: false}} component={Chats} />
@@ -94,7 +96,17 @@ function Chats(){
   return(
     <Stack.Navigator initialRouteName='CustomerChatList'>
       <Stack.Screen name='ChatList' options={{ title: 'Chats List' }} component={CustomerChatList}/>
-      <Stack.Screen name='Chat' options={{ title: 'Chat' }} component={Chat}/>
+      <Stack.Screen name='Chat' options={({route}:any)=>({title: route.params.chatRoom.name})} component={Chat}/>
+    </Stack.Navigator>
+  )
+}
+
+function CustomerHomeStack(){
+  return(
+    <Stack.Navigator initialRouteName='CustomerChatList'>
+      <Stack.Screen name='CustomerHomePage' options={{ title: 'Home' }} component={CustomerHomePage}/>
+      <Stack.Screen name='CustomerShopPage' options={({route}:any)=>({title: route.params.shop.shopName})} component={CustomerShopPage}/>
+      <Stack.Screen name='CustomerProductPage' options={({route}:any)=>({title: route.params.products.name})} component={CustomerProductPage}/>
     </Stack.Navigator>
   )
 }

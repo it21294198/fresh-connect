@@ -3,29 +3,30 @@ import React from 'react'
 import { Button, Icon } from 'react-native-magnus'
 
 export default function CustomerChatList({ navigation }: any) {
-  const newUser = {
-    _id: 1,
-    name: 'Akmal'
+  const user1 = {
+    id: "8SoZKFk8U0q6l2lEbogL",
+    name: 'John'
   }
-  const chatList = [
+
+  const user2 = {
+    id: "Z04NU1rDCHE8GNus2HbL",
+    name: 'Peter' 
+  }
+  const chatRooms = [
     {
-      id: '1',
+      id: '8oCIlz7fwspqb6EOZG4D1',
       name: 'Nuwara Farm Chat'
     },
     {
-      id: '2',
+      id: 'nglQRgIiMMIqccafJeFm',
       name: 'Western Farm Chat'
-    },
-    {
-      id: '3',
-      name: 'Wayamba Farm Chat'
     },
   ]
   return (
     <View style={styles.container}>
       <FlatList
       style={styles.list}
-        data={chatList}
+        data={chatRooms}
         keyExtractor={item => item.id} 
         renderItem={({ item }:any) => (
             <Button
@@ -39,7 +40,7 @@ export default function CustomerChatList({ navigation }: any) {
               color="red500"
               underlayColor="red100"
               suffix={<Icon name="arrowright" ml="md" color="grren"/>}
-              onPress={() => navigation.navigate('Chat', { user: newUser,name:item.name })}
+              onPress={() => navigation.navigate('Chat', { user: user2,chatRoom:item })}
             >    {item.name}
             </Button>
         )}

@@ -1,33 +1,55 @@
 import { View, Text } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { GiftedChat } from 'react-native-gifted-chat'
+import { getMessages, getUser, sendMessage } from './ChatController'
 
 export default function Chat({ route, navigation }: any) {
-  const [messages, setMessages] = useState([])
-  const { user,name } = route.params
-  const data = [
-    {
-      _id: 0,
-      text: 'New Chat Created',
-      createdAt: new Date().getTime(),
-      system: true
-    },
-    {
-      _id: 1,
-      text: 'Hello!',
-      createdAt: new Date().getTime(),
-      user: user
-    }
-  ]
+  const [messages, setMessages] = useState<any[]>([])
+  const { user,chatRoom } = route.params
 
-  const handleSend: any = (newMessage = []) => {
-    setMessages(GiftedChat.append(messages, newMessage))
+  async function receiveMessages(){
+    const newMessages: any = await getMessages(chatRoom.id)
+    
+    const formattedMessage = newMessages.map((msg:any)=> (
+      {
+      _id: msg.id,
+      text: msg.message,
+      createdAt: msg.timestamp.toDate(),
+      user:{
+        _id:msg.sender,
+        name: msg.senderName
+      },
+    }
+    ))
+    console.log(formattedMessage)
+    setMessages(formattedMessage)
+  }
+
+  useEffect(() => {
+    receiveMessages()
+  }, [])
+
+  function onSend(newMessage:any = []) {
+    setMessages((previousMessages) => GiftedChat.append(previousMessages, newMessage));
+    const msg:any={
+      sender:user.id,
+      senderName:user.name,
+      chatRoom: chatRoom.id,
+      message:newMessage[0].text,
+      date: new Date().toDateString(),
+      time: new Date().toLocaleTimeString(), 
+    }
+    sendMessage(msg)
   }
 
   return (
-    <View>
-      <Text>This is {name}</Text>
-      <GiftedChat messages={messages} onSend={newMessage => handleSend(newMessage)} user={{ _id: 1 }} />
-    </View>
+    <GiftedChat
+      messages={messages}
+      onSend={onSend}
+      user={{
+        _id: user.id, 
+      }}
+      scrollToBottom
+    />
   )
 }
