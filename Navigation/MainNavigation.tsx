@@ -188,6 +188,7 @@ export default function MainNavigation()
 
   const Drawer = createDrawerNavigator();
   const Tab = createBottomTabNavigator();
+  const Stack = createStackNavigator();
 
   let farmer:boolean|null = useSelector((state:{user:UserLogin})=> state.user.type)
 
@@ -208,7 +209,7 @@ export default function MainNavigation()
   {
     return (
       <Tab.Navigator initialRouteName='Home' screenOptions={{ headerShown: false, }}>
-        <Tab.Screen name="Home" component={CustomerHomePage} />
+        <Tab.Screen name="Home" component={CustomerHomeStack} />
         <Tab.Screen name="ShopMapDisplay" component={ShopMapDisplay} options={{ headerShown: false, tabBarShowLabel: true, }} />
         <Tab.Screen name="SavedShops" component={SavedShops} />
         <Tab.Screen name="Chats" component={Chats} />
