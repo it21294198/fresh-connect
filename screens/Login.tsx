@@ -34,7 +34,8 @@ export default function Login({navigation}:any) {
     <View style={styles.container}>
       <View style={styles.middleText}>
         <Text style={styles.middleTextMain}>Welcome Back</Text>
-        <Text style={styles.middleTextSub}>Your Lorem ipsum dolor sit amet hgfhg gfhh gdfgdfg dgdfgd</Text>
+        <Text style={styles.middleTextSub}>Your Lorem ipsum dolor</Text>
+        <Text style={styles.middleTextSub}>amet</Text>
       </View>
       <View style={styles.bottom}>
           <View style={styles.bottomTextTopView}>

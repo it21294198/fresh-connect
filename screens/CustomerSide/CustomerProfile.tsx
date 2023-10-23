@@ -2,8 +2,9 @@ import React,{useState,useEffect} from 'react'
 import {fireStore} from '../../config/firebase'
 import { View, Text,TextInput, StyleSheet, TouchableOpacity, Image, ScrollView} from 'react-native'
 
-export default function CustomerProfile() {
-  
+export default function CustomerProfile({navigation}:any) {
+  const [locationAddress, setLocationAddress] = useState<any>('Address');
+  const [email, setEmail] = useState<string>('email');
   useEffect(() => {
     // load user profile data
     // load 2 user shops
@@ -33,6 +34,12 @@ export default function CustomerProfile() {
 
   const viewAllShops = () =>{
     console.log('redirect to view saved shops');
+    // this should navigate to saved shop page
+    // navigation.navigate('SavedShop')
+  }
+
+  const selectLocation = () =>{
+    console.log('select location from map');
   }
 
   return (
@@ -63,7 +70,7 @@ export default function CustomerProfile() {
       <View>
         <Text style={styles.texts}>Email</Text>
         <View style={styles.inputsView}>
-          <TextInput placeholder='email' style={[styles.inputs,styles.singleLineInputs]}/>
+          <TextInput placeholder={email} style={[styles.inputs,styles.singleLineInputs]}/>
         </View>
       </View>
       <View style={styles.doubleRow}>
@@ -82,13 +89,16 @@ export default function CustomerProfile() {
       </View>
       <View>
         <Text style={styles.texts}>Address</Text>
-        <View style={styles.inputsView}>
-          <Image
-          resizeMode="contain"
-          source={require('../../assets/pin.png')} // Replace with the path to your image
-          style={styles.pin}/>
-          <TextInput placeholder='Address' style={[styles.inputs,styles.singleLineInputs]}/>
-        </View>
+        <TouchableOpacity onPress={selectLocation}>
+          <View style={styles.inputsView}>
+            <Image
+            resizeMode="contain"
+            source={require('../../assets/pin.png')} // Replace with the path to your image
+            style={styles.pin}/>
+            {/* this address will be changed by map */}
+            <TextInput placeholder={locationAddress} editable={false} style={[styles.inputs,styles.singleLineInputs]}/>
+          </View>
+        </TouchableOpacity>
       </View>
       <View style={styles.updateBtnContainer}>
         <TouchableOpacity onPress={updateProfile} style={styles.updateBtn}>
@@ -100,7 +110,7 @@ export default function CustomerProfile() {
       <View style={styles.savedShopView}>
           <View style={styles.savedTopView}>
             <Text style={styles.mainText}>Saved Shops</Text>
-            <TouchableOpacity onPress={viewAllShops} style={styles.viewAllBtn}>
+            <TouchableOpacity onPress={()=>viewAllShops()} style={styles.viewAllBtn}>
               <Text style={styles.subText}>View all</Text>
             </TouchableOpacity>
           </View>
@@ -111,7 +121,7 @@ export default function CustomerProfile() {
                 <View style={styles.savedCard} key={item.id}>
                   <Text style={styles.savedCardTitel}>{item.title}</Text>
                   <Image
-                    resizeMode="contain"
+                    resizeMode="cover"
                     source={item.imageUrl}
                     style={styles.savedImage}
                     />
@@ -241,7 +251,9 @@ const styles = StyleSheet.create({
   },
   savedImage:{
     width:170,
-    height:120
+    height:120,
+    borderBottomLeftRadius:10,
+    borderBottomRightRadius:10,
   },
   savedCardTitel:{
     paddingLeft:10,
