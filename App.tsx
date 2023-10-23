@@ -15,6 +15,7 @@ import SignUp from './screens/SignUp';
 import { UserLogin } from './util/interfaces'
 import { createStackNavigator } from '@react-navigation/stack';
 import CustomerProfile from './screens/CustomerSide/CustomerProfile';
+import SavedShops from './screens/CustomerSide/SavedShops';
 
 const Stack = createStackNavigator();
 
@@ -56,8 +57,9 @@ export default function App(){
     return(
       <ThemeProvider>
         <Provider store={store}>
-          <Main/>
+          {/* <Main/> */}
           {/* <CustomerProfile/> */}
+          <SavedShops/>
         </Provider>
       </ThemeProvider>
   )

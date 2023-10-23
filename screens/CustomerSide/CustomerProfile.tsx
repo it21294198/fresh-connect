@@ -3,8 +3,27 @@ import {fireStore} from '../../config/firebase'
 import { View, Text,TextInput, StyleSheet, TouchableOpacity, Image, ScrollView} from 'react-native'
 
 export default function CustomerProfile() {
+  
+  useEffect(() => {
+    // load user profile data
+    // load 2 user shops
+  }, []);
 
-  const mainContainer = () =>{
+  // example two saved shop objects
+  const savedShops = [
+    {
+      id:1,
+      title:'hello',
+      imageUrl:require('../../assets/shop.jpg')
+    },
+    {
+      id:2,
+      title:'helfsfsffs',
+      imageUrl:require('../../assets/splash.png')
+    }
+  ]
+
+  const updateProfile = () =>{
     console.log('user updated');
   }
 
@@ -12,9 +31,12 @@ export default function CustomerProfile() {
     console.log('update profile')
   }
 
+  const viewAllShops = () =>{
+    console.log('redirect to view saved shops');
+  }
+
   return (
   <ScrollView contentContainerStyle={styles.mainContainer} showsVerticalScrollIndicator={false}>
-    {/* <View style={styles.mainContainer}> */}
       <View style={styles.profileTextView}>
         <Text style={styles.profileText}>Profile</Text>
       </View>
@@ -69,45 +91,41 @@ export default function CustomerProfile() {
         </View>
       </View>
       <View style={styles.updateBtnContainer}>
-        <TouchableOpacity onPress={mainContainer} style={styles.updateBtn}>
+        <TouchableOpacity onPress={updateProfile} style={styles.updateBtn}>
           <Text style={styles.updateBtnText}>Update</Text>
         </TouchableOpacity>
       </View>
 
     {/* dynamic content */}
-      <View>
-        <View>
+      <View style={styles.savedShopView}>
           <View style={styles.savedTopView}>
             <Text style={styles.mainText}>Saved Shops</Text>
-            <Text style={styles.subText}>View all</Text>
+            <TouchableOpacity onPress={viewAllShops} style={styles.viewAllBtn}>
+              <Text style={styles.subText}>View all</Text>
+            </TouchableOpacity>
           </View>
-          <View style={styles.savedCardList}>
-            <View style={styles.savedCard}>
-              <Text>Hello</Text>
-              <Image
-              resizeMode="contain"
-              source={require('../../assets/shop.jpg')} // Replace with the path to your image
-              style={styles.savedImage}/>
-            </View>
-            <View style={styles.savedCard}>
-              <Text>Hello</Text>
-              <Image
-              resizeMode="contain"
-              source={require('../../assets/shop.jpg')} // Replace with the path to your image
-              style={styles.savedImage}/>
-            </View>
+          {/* example two most view shops */}
+           <View style={styles.savedCardList}>
+            {savedShops.map((item, key) => (
+              <TouchableOpacity>
+                <View style={styles.savedCard} key={item.id}>
+                  <Text style={styles.savedCardTitel}>{item.title}</Text>
+                  <Image
+                    resizeMode="contain"
+                    source={item.imageUrl}
+                    style={styles.savedImage}
+                    />
+                </View>
+              </TouchableOpacity>
+            ))}
           </View>
-        </View>
       </View>
-    {/* </View> */}
   </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
   mainContainer:{
-    flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
   },
   profileTextView:{
@@ -186,6 +204,9 @@ const styles = StyleSheet.create({
     bottom:0,
     right:0
   },
+  savedShopView:{
+    marginTop:30
+  },
   savedTopView:{
     flexDirection:'row',
     justifyContent: 'space-between',
@@ -213,7 +234,7 @@ const styles = StyleSheet.create({
     },
     elevation: 4, // For Android shadow
     padding: 0,
-    margin: 10,
+    margin: 5,
   },
   savedCardList:{
     flexDirection:'row'
@@ -221,5 +242,13 @@ const styles = StyleSheet.create({
   savedImage:{
     width:170,
     height:120
+  },
+  savedCardTitel:{
+    paddingLeft:10,
+    paddingBottom:10,
+    fontSize:15,
+    fontWeight:'bold',
+  },
+  viewAllBtn:{
   }
 })
