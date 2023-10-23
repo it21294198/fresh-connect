@@ -17,18 +17,27 @@ export default function CustomerHomePage({ navigation }: any) {
       shopId: '123',
       shopName: 'Nuwara Farm',
       description: 'Fresh fruits and vegatables available',
-      address: 'No.43, Main Street, Kany'
+      openHours:["10:00","16:30"],
+      contactNo:"0777124568",
+      email:"farmer@email.com",
+      address: 'No.43, Main Street, Kandy'
     },
     {
       shopId: '124',
       shopName: 'Emerald Tea',
       description: 'All varieties of export quality tea available',
+      openHours:["09:00","16:30"],
+      contactNo:"0777124568",
+      email:"farmer@email.com",
       address: 'No.43, Main Street, Kany'
     },
     {
       shopId: '125',
       shopName: 'Coconut Groves',
       description: 'Coconut and coconut related products available',
+      openHours:["09:00","16:30"],
+      contactNo:"0777124568",
+      email:"farmer@email.com",
       address: 'No.43, Main Street, Kany'
     }
   ]
@@ -61,7 +70,7 @@ export default function CustomerHomePage({ navigation }: any) {
               {shop.shopName}
             </Text>
           </Div>
-          <Button bg="green500" h={40} w={40} rounded="circle" ml="md">
+          <Button bg="#45A053" h={40} w={40} rounded="circle" ml="md">
             <Icon name="star" color="white" />
           </Button>
         </Div>
@@ -78,8 +87,8 @@ export default function CustomerHomePage({ navigation }: any) {
             </Text>
           </Div>
         </Div>
-        <Div row flex={1}>
-          <Button alignItems='flex-end' onPress={() => navigation.navigate('CustomerShopPage', { shop: shop })}>View</Button>
+        <Div row justifyContent='flex-end'>
+          <Button bg='#45A053' rounded={17.5} onPress={() => navigation.navigate('CustomerShopPage', { shop: shop })}>View</Button>
         </Div>
       </Div>
     )

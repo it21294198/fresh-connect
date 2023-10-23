@@ -1,77 +1,173 @@
-import { View, ScrollView, StyleSheet, FlatList } from 'react-native';
+import { View, ScrollView, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { Input, Icon, Button, Div, Text, Header, Image } from "react-native-magnus";
 
 interface ShopData {
-    id: string;
-    text: string;
-  }
+  id: string;
+  text: string;
+}
 
 export default function CustomerShopPage({ route, navigation }: any) {
-    const [data, setData] = useState<ShopData[]>([]);
+  const [data, setData] = useState<ShopData[]>([]);
+  const { shop } = route.params
+  const openTime = shop.openHours[0] + " - " + shop.openHours[1]
 
-    const products =[
-    {
-        name: 'Carrot',
-        category:'Vegetables',
-        price: 1000,
-        organic: true
-    },
-    {
-        name: 'Mango',
-        category:'Fruits',
-        price: 1000,
-        organic: true
-    },
-    {
-        name: 'Milk',
-        category:'Dairy',
-        price: 1000,
-        organic: true
+  const openNow = () => {
+    var d = new Date();
+    var h = d.getHours();
+    if (h === 0) { h = 24 }
+    const openH = shop.openHours[0].split(":")
+    const closeH = shop.openHours[1].split(":")
+
+    if (h >= openH[0] && h <= closeH[0]) {
+      return (
+        <Text fontSize="xl" color="green500">
+          Open Now
+        </Text>
+      )
+    } else {
+      return (
+        <Text fontSize="xl" color="red">
+          Closed Now
+        </Text>
+      )
     }
-    ]
+  }
 
-    const renderProducts = products.map((product) => {
-        return (
-          <Div m="sm" rounded="md" shadow='sm' p="md">
-            <Div row alignItems="center">
-              <Div flex={1}>
-                <Text fontWeight="bold" fontSize="xl" mt="sm">
-                  {product.name}
-                </Text>
-              </Div>
-              <Image h={50} w={50} source={require("./Assets/organic.png")} />
-            </Div>
-            <Div row alignItems="center">
-              <Div
-                rounded="xl"
-                h={150}
-                w={150}
-                bgImg={require("./Assets/store.jpg")}
-              />
-              <Div flex={1}>
-                <Text fontSize="xl" m="sm">
-                  {product.price}
-                </Text>
-              </Div>
-            </Div>
-            <Div row flex={1}>
-              <Button alignItems='flex-end' onPress={() => navigation.navigate('CustomerShopPage', { product:product })}>View</Button>
-            </Div>
-          </Div>
-        )
-      })
-    
+  const products = [
+    {
+      name: 'Carrot',
+      category: 'Vegetables',
+      price: 100,
+      per: 500,
+      qtUnit: 'g',
+      organic: true,
+      createdAt: '08/10/2023',
+      specialMsg: "Please Contact us for any further queries",
+      imageId: require("./Assets/carrot.jpg")
+    },
+    {
+      name: 'Mango',
+      category: 'Fruits',
+      price: 200,
+      per: 500,
+      qtUnit: 'g',
+      organic: false,
+      createdAt: '08/10/2023',
+      specialMsg: "Please Contact us for any further queries",
+      imageId: require("./Assets/mangoes.webp")
+    },
+    {
+      name: 'Milk',
+      category: 'Dairy',
+      price: 300,
+      per: 500,
+      qtUnit: 'g',
+      organic: false,
+      createdAt: '08/10/2023',
+      specialMsg: "Please Contact us for any further queries",
+      imageId: require("./Assets/milk.jpg")
+    }
+  ]
+
+  const renderProducts = products.map((product) => {
+    const newPrice = "Rs " + product.price + "/" + product.per + product.qtUnit;
     return (
-<ScrollView style={styles.scrollview}>
+      <Div m="sm" rounded="md" shadow='sm' p="md">
+        <Div row>
+          <Div flex={1} alignItems='flex-start'>
+            <Text fontWeight="bold" fontSize="xl" mt="sm">
+              {product.name}
+            </Text>
+          </Div>
+          <Div flex={1} alignItems='flex-end'>
+            {product.organic
+              ? <Image h={50} w={50} source={require("./Assets/organic.png")} /> : null
+            }
+          </Div>
+        </Div>
+        <Div row>
+          <TouchableOpacity onPress={() => navigation.navigate('CustomerProductPage', { product: product })}>
+            <Div
+              rounded="xl"
+              h={150}
+              w={300}
+              alignItems='center'
+
+              bgImg={product.imageId}
+            />
+          </TouchableOpacity>
+        </Div>
+        <Div row>
+          <Div flex={1} alignItems='flex-start'>
+            <Text fontSize="md" mt={20} color="gray500">
+              Date Added
+            </Text>
+          </Div>
+          <Div flex={2} alignItems='center'>
+            <Text fontSize="md" mt={20}>
+              {product.createdAt}
+            </Text>
+          </Div>
+          <Div flex={1} alignItems='flex-end' mr="sm">
+            <Button mt="md" bg="#45A053" fontSize="md" rounded={17.5}>{newPrice}</Button>
+          </Div>
+        </Div>
+      </Div>
+    )
+  })
+
+  return (
+    <ScrollView style={styles.scrollview}>
       <View style={styles.container}>
-        <Input
-          placeholder="Search"
-          p={10}
-          m={20}
-          focusBorderColor="green400"
-          suffix={<Icon name="search" fontFamily="Feather" />}
-        />
+        <Div row>
+          <Div
+            flex={1}
+            w="100%"
+            h={150}
+            alignItems='center'
+            bgImg={ require("./Assets/store.jpg")}
+          />
+        </Div>
+        <Div row>
+          <Div flex={1} alignItems='flex-start' ml="lg">
+            <Text fontSize="xl" fontWeight='bold' mt={20}>
+              Address
+            </Text>
+          </Div>
+          <Div flex={1} alignItems='flex-end' mr="lg">
+            <Text fontSize="md" mt={20}>
+              {shop.address}
+            </Text>
+          </Div>
+        </Div>
+        <Div row mt="md">
+          <Div flex={1} alignItems='flex-start' ml="lg">
+            <Text fontSize="xl" fontWeight='bold'>
+              Open Hours
+            </Text>
+          </Div>
+          <Div flex={1} alignItems='flex-end' mr="lg">
+            <Text fontSize="md">
+              Monday - Friday
+            </Text>
+          </Div>
+        </Div>
+        <Div row>
+          <Div flex={1} alignItems='flex-end' mr="lg">
+            <Text fontSize="md">
+              {openTime}
+            </Text>
+          </Div>
+        </Div>
+        <Div row>
+          <Div flex={2} alignItems='flex-start' mt={20} ml="lg">
+            {openNow()}
+          </Div>
+          <Div flex={1} alignItems='flex-end' mt="sm" mr="xs">
+            <Button mt="sm" bg="#45A053" color="gray100" fontSize="md" rounded={17.5}>Save shop &nbsp;<Icon name="star" color="gray100" /></Button>
+          </Div>
+        </Div>
         <View style={styles.divider} />
         <Div row justifyContent="center" alignItems="center">
           <Button
@@ -114,7 +210,7 @@ export default function CustomerShopPage({ route, navigation }: any) {
         </Div>
         <View style={styles.divider} />
         <Div p="xl" shadow="sm" rounded="md" bg='white' mx='sm'>
-          <Text fontWeight="bold" fontSize="4xl" mt="md" textAlign='center'>Activity From Shops</Text>
+          <Text fontWeight="bold" fontSize="4xl" mt="md" textAlign='center'>Newest Additions</Text>
 
           {renderProducts}
 
