@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Button, StatusBar, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, StatusBar, ScrollView, StyleSheet, Image } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import CheckBox from 'expo-checkbox';
 import React, { useState } from 'react'
@@ -10,18 +10,29 @@ export default function AddStocks() {
 	const navigation = useNavigation();
 	const insets = useSafeAreaInsets();
 	const [stockName, setStockName] = useState('');
-	const [category, setCategory] = useState(''); 
+	const [category, setCategory] = useState('');
 	const [quantity, setQuantity] = useState('');
 	const [price1, setPrice1] = useState('');
 	const [price2, setPrice2] = useState('');
 	const [isOrganic, setIsOrganic] = useState(false);
 	const [specialNote, setSpecialNote] = useState('');
+	const [uploadedImage, setUploadedImage] = useState<string | null>(null);
 
-	const categories = ['Category 1', 'Category 2', 'Category 3']; 
+	const categories = ['Category 1', 'Category 2', 'Category 3'];
 
 	const handleAddStock = () => {
 		// TODO
 	};
+
+	const handleImageUpload = () => {
+		// TODO
+		try {
+			setUploadedImage('assets/carrot-head.png');
+			console.log(uploadedImage);
+		} catch (error) {
+			console.error("Error setting the image:", error);
+		}
+	}
 
 
 	return (
@@ -36,83 +47,91 @@ export default function AddStocks() {
 				<FarmerHeader navigation={navigation} title='Add Stock' headerRight={false} back={true} />
 			</View>
 
+
 			<ScrollView style={{ flex: 0, marginTop: 50, marginBottom: 25 }} contentContainerStyle={{ flexGrow: 1 }}>
 				<View style={{ margin: 10, borderWidth: 5, borderRadius: 15, borderColor: 'rgba(128, 128, 128, 0.1)', overflow: 'hidden' }}>
+
 					<View style={styles.formContainer}>
-						{/* Empty area with an image upload button */}
+
+						{/* Area for the image */}
 						<View style={styles.imageContainer}>
+							<Image
+								source={uploadedImage ? { uri: uploadedImage } : null}
+								style={uploadedImage ? styles.image : { display: 'none' }}
+							/>
 							{/* Image Upload Button */}
 							<View style={styles.button}>
-								<Button title="Upload Image" />
+								<Button title="Upload Image" onPress={handleImageUpload} />
 							</View>
 						</View>
-				<View style={{ marginTop: 45, padding: 15, borderWidth: 5, borderRadius: 15, borderColor: 'rgba(128, 128, 128, 0.1)', overflow: 'hidden' }}>
 
-						{/* Stock Name */}
-						<TextInput
-							style={styles.inputDefault}
-							placeholder="Stock Name"
-							value={stockName}
-							onChangeText={(text) => setStockName(text)}
-						/>
+						<View style={{ marginTop: 45, padding: 15, borderWidth: 5, borderRadius: 15, borderColor: 'rgba(128, 128, 128, 0.1)', overflow: 'hidden' }}>
 
-						{/* Category Dropdown */}
-						<Picker
-							selectedValue={category}
-							onValueChange={(itemValue) => setCategory(itemValue)}
-						>
-							{categories.map((cat, index) => (
-								<Picker.Item label={cat} value={cat} key={index} />
-							))}
-						</Picker>
-
-						{/* Quantity */}
-						<TextInput
-							style={styles.inputDefault}
-							placeholder="Quantity"
-							value={quantity}
-							onChangeText={(text) => setQuantity(text)}
-						/>
-
-						{/* Price per Unit */}
-						<View style={styles.priceContainer}>
+							{/* Stock Name */}
 							<TextInput
-								style={styles.input}
-								placeholder="Price (RS)"
-								value={price1}
-								onChangeText={(text) => setPrice1(text)}
+								style={styles.inputDefault}
+								placeholder="Stock Name"
+								value={stockName}
+								onChangeText={(text) => setStockName(text)}
 							/>
-							<Text>per</Text>
+
+							{/* Category Dropdown */}
+							<Picker
+								selectedValue={category}
+								onValueChange={(itemValue) => setCategory(itemValue)}
+							>
+								{categories.map((cat, index) => (
+									<Picker.Item label={cat} value={cat} key={index} />
+								))}
+							</Picker>
+
+							{/* Quantity */}
 							<TextInput
-								style={styles.input}
-								placeholder="Unit | eg: 100g"
-								value={price2}
-								onChangeText={(text) => setPrice2(text)}
+								style={styles.inputDefault}
+								placeholder="Quantity"
+								value={quantity}
+								onChangeText={(text) => setQuantity(text)}
 							/>
-						</View>
 
-						{/* Organically made product */}
-						<View style={styles.checkboxContainer}>
-							<CheckBox value={isOrganic} onValueChange={setIsOrganic} />
-							<Text>     Organically made product</Text>
-						</View>
+							{/* Price per Unit */}
+							<View style={styles.priceContainer}>
+								<TextInput
+									style={styles.input}
+									placeholder="Price (RS)"
+									value={price1}
+									onChangeText={(text) => setPrice1(text)}
+								/>
+								<Text>per</Text>
+								<TextInput
+									style={styles.input}
+									placeholder="Unit | eg: 100g"
+									value={price2}
+									onChangeText={(text) => setPrice2(text)}
+								/>
+							</View>
 
-						{/* Special Note */}
-						<TextInput
-							style={styles.textArea}
-							placeholder="Anything special you want to say to the customer about this product? Type here"
-							multiline={true}
-							numberOfLines={4}
-							value={specialNote}
-							onChangeText={(text) => setSpecialNote(text)}
-						/>
+							{/* Organically made product */}
+							<View style={styles.checkboxContainer}>
+								<CheckBox value={isOrganic} onValueChange={setIsOrganic} />
+								<Text>     Organically made product</Text>
+							</View>
 
-						{/* Add Button */}
-						<View style={styles.addButton}>
-							<Button title="Add" onPress={handleAddStock} />
+							{/* Special Note */}
+							<TextInput
+								style={styles.textArea}
+								placeholder="Anything special you want to say to the customer about this product? Type here"
+								multiline={true}
+								numberOfLines={4}
+								value={specialNote}
+								onChangeText={(text) => setSpecialNote(text)}
+							/>
+
+							{/* Add Button */}
+							<View style={styles.addButton}>
+								<Button title="Add" onPress={handleAddStock} />
+							</View>
 						</View>
 					</View>
-				</View>
 				</View>
 			</ScrollView>
 		</View>
@@ -136,6 +155,10 @@ const styles = StyleSheet.create({
 		width: '100%',
 		backgroundColor: 'rgba(128, 128, 128, 0.5)',
 		borderRadius: 10,
+	},
+	image: {
+		width: '100%',
+		height: '100%',
 	},
 	input: {
 		height: 40,
