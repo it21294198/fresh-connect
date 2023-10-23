@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { createDrawerNavigator, DrawerItem, DrawerNavigationProp, DrawerItemList, DrawerContentScrollView, DrawerContentComponentProps } from '@react-navigation/drawer';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import CustomerHomePage from '../screens/CustomerSide/CustomerHomePage';
@@ -223,20 +222,20 @@ export default function MainNavigation()
   function FarmerTabNavigation()
   {
     return (
-      <Tab.Navigator initialRouteName='Home'>
+      <Tab.Navigator initialRouteName='Home' screenOptions={{ headerShown: false, }}>
         <Tab.Screen name='Home' component={FarmerHomePage} />
         <Tab.Screen name='FarmerShopPage' component={FarmerShopPage} />
         <Tab.Screen name='FarmerProfile' component={FarmerProfile} />
-        <Tab.Screen name='ProductPage' component={FarmerProductPageStackNavigation} />
+        <Tab.Screen name='ProductPage' component={ProductPage} />
       </Tab.Navigator>
     )
   }
 
-  function FarmerProductPageStackNavigation() 
+  function FarmerStackNavigation() 
   {
     return (
-      <Stack.Navigator>
-        <Stack.Screen name='LandingPage' component={ProductPage} />
+      <Stack.Navigator initialRouteName='LandingPage' screenOptions={{ headerShown: false, }}>
+        <Stack.Screen name='LandingPage' component={FarmerTabNavigation} />
         <Stack.Screen name='AddStocks' component={AddStocks} />
       </Stack.Navigator>
     )
@@ -287,7 +286,7 @@ export default function MainNavigation()
   { //TODO: Add Shop page, chats, buttons
     //Removed: profile, ProductPage, AddStocks, UpdateStocks
     return (
-      <Drawer.Navigator initialRouteName="FarmerHomePage" screenOptions={drawerOptions}
+      <Drawer.Navigator initialRouteName="FarmerHomePage" screenOptions={{drawerOptions, headerShown: false}}
         drawerContent={(props) =>
         {
           return (
@@ -302,7 +301,7 @@ export default function MainNavigation()
         <Drawer.Screen name='AddStocks' component={AddStocks} />
         <Drawer.Screen name='UpdateStocks' component={UpdateStocks} /> */}
 
-        <Drawer.Screen name='FarmerHomePage' component={FarmerTabNavigation} options={drawerHomeOptions} listeners={({ navigation }) => ({
+        <Drawer.Screen name='FarmerHomePage' component={FarmerStackNavigation} options={drawerHomeOptions} listeners={({ navigation }) => ({
           drawerItemPress: () => handleItemClick('FarmerHomePage'),
         })} />
         <Drawer.Screen name="HelpCenter" component={FAQ} options={drawerHelpOptions} listeners={({ navigation }) => ({
