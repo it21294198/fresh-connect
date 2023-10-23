@@ -32,8 +32,12 @@ export default function SignUp({navigation}:any) {
   return (
     <View style={styles.container}>
       <View style={styles.middleText}>
-        <Text style={styles.middleTextMain}>Welcome Back</Text>
-        <Text style={styles.middleTextSub}>Your Lorem ipsum dolor sit amet hgfhg gfhh gdfgdfg dgdfgd</Text>
+        <View style={styles.middleTextMainView}>
+          <Text style={styles.middleTextMain}>Welcome to</Text>
+          <Text style={styles.middleTextMain}>FreshConnect</Text>
+        </View>
+        <Text style={styles.middleTextSub}>Your Lorem ipsum dolor</Text>
+        <Text style={styles.middleTextSub}>amet</Text>
       </View>
       <View style={styles.bottom}>
           <View style={styles.bottomTextTopView}>
@@ -109,7 +113,12 @@ const styles = StyleSheet.create({
   middleTextMain:{
     fontSize:29,
     fontWeight:'bold',
-    marginBottom:50
+  },
+  middleTextMainView:{
+    marginBottom:50,
+    marginTop:20,
+    alignItems:'center',
+    textAlign:'justify'
   },
   middleTextSub:{
     fontSize:22,
