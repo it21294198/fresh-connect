@@ -44,7 +44,8 @@ export default function SelectUser() {
             </TouchableOpacity>
           </View>
           <View style={styles.bottomTextBottomView}>
-            <Text style={styles.bottomTextBottom}>Don't worry you can still access features of both regardless of what you choose</Text>
+            <Text style={styles.bottomTextBottom}>Don't worry you can still access features of</Text>
+            <Text style={styles.bottomTextBottom}>both regardless of what you choose</Text>
           </View>
       </View>
     </View>
@@ -118,7 +119,7 @@ const styles = StyleSheet.create({
   },
   bottomTextBottomView:{
     justifyContent:'center',
-    flexDirection: 'row', // Display items horizontally
-    margin:20
+    margin:20,
+    alignItems: 'center'
   },
 });
