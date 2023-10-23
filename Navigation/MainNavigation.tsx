@@ -321,7 +321,7 @@ export default function MainNavigation()
       <Stack.Navigator initialRouteName='CustomerHomePage'>
         <Stack.Screen name='CustomerHomePage' options={{ title: 'Home' }} component={CustomerHomePage}/>
         <Stack.Screen name='CustomerShopPage' options={({route}:any)=>({title: route.params.shop.shopName})} component={CustomerShopPage}/>
-        <Stack.Screen name='CustomerProductPage' options={({route}:any)=>({title: route.params.products.name})} component={CustomerProductPage}/>
+        <Stack.Screen name='CustomerProductPage' options={({route}:any)=>({title: route.params.product.name})} component={CustomerProductPage}/>
       </Stack.Navigator>
     )
   
