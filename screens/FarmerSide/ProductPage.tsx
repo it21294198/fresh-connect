@@ -27,6 +27,8 @@ export default function ProductPage() {
 					<View >
 						<Text>ProductPage</Text>
 						<Button title="Add Stocks" onPress={() => navigation.navigate('AddStocks')} />
+						<Text>{'\n\n'}</Text>
+						<Button title="Update Stocks" onPress={() => navigation.navigate('UpdateStocks')} />
 					</View>
 				</ScrollView>
 		</View>

@@ -237,6 +237,7 @@ export default function MainNavigation()
       <Stack.Navigator initialRouteName='LandingPage' screenOptions={{ headerShown: false, }}>
         <Stack.Screen name='LandingPage' component={FarmerTabNavigation} />
         <Stack.Screen name='AddStocks' component={AddStocks} />
+        <Stack.Screen name='UpdateStocks' component={UpdateStocks} />
       </Stack.Navigator>
     )
   }
