@@ -57,9 +57,9 @@ export default function App(){
     return(
       <ThemeProvider>
         <Provider store={store}>
-          {/* <Main/> */}
+          <Main/>
           {/* <CustomerProfile/> */}
-          <SavedShops/>
+          {/* <SavedShops/> */}
         </Provider>
       </ThemeProvider>
   )

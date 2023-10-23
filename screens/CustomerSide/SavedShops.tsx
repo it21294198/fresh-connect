@@ -77,7 +77,7 @@ export default function SavedShops() {
             </View>
             <TouchableOpacity onPress={()=>pressedShopImage(item.id)}>
               <Image
-                resizeMode="contain"
+                resizeMode="cover"
                 source={item.imageUrl}
                 style={styles.savedImage}
               />
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor:'white',
     borderRadius:20,
-    padding:10,
+    paddingHorizontal:20,
     height:350
   },
   textInModal:{
@@ -179,7 +179,9 @@ const styles = StyleSheet.create({
   },
   savedImage:{
     width:170,
-    height:120
+    height:120,
+    borderBottomLeftRadius:10,
+    borderBottomRightRadius:10,
   },
   savedCardTitle:{
     paddingLeft:10,

@@ -6,11 +6,14 @@ export interface UserLogin {
   lastName?:string|null|undefined;
   contactNo?:number|null|undefined;
   userId?:string|null|undefined;
+}
 
 export interface User {
-  username: string;
-  type: string;
-  logStatus: boolean;
+  username?: string;
+  password:string;
+  email:string;
+  type?: string;
+  logStatus?: boolean;
 }
 
 export interface Loading {
@@ -22,6 +25,7 @@ export interface UserSignIn{
   lastName:string;
   email:string;
   password:string;
+}
 
 export interface customDrawerPropsInterface {
   drawerActiveTintColor?: string;
