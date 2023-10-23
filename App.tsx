@@ -15,6 +15,7 @@ import SignUp from './screens/SignUp';
 import { UserLogin } from './util/interfaces'
 import { createStackNavigator } from '@react-navigation/stack';
 import CustomerProfile from './screens/CustomerSide/CustomerProfile';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const Stack = createStackNavigator();
 
@@ -54,11 +55,13 @@ export function Main() {
 
 export default function App(){
     return(
-      <ThemeProvider>
-        <Provider store={store}>
-          <Main/>
-          {/* <CustomerProfile/> */}
-        </Provider>
-      </ThemeProvider>
+        <ThemeProvider>
+      <SafeAreaProvider>
+          <Provider store={store}>
+            <Main/>
+            {/* <CustomerProfile/> */}
+          </Provider>
+      </SafeAreaProvider>
+        </ThemeProvider>
   )
 }
