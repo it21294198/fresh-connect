@@ -4,6 +4,7 @@ import customHamburger from "../../assets/customHamburger.png"
 import searchIcon from "../../assets/searchIcon.png"
 import { NavigationProp } from '@react-navigation/native';
 import { Image } from 'react-native';
+import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 
 export const MapDisplayHeader = ({ navigation }: any) =>
 {
@@ -14,33 +15,36 @@ export const MapDisplayHeader = ({ navigation }: any) =>
     const text = "Search"
     return (
         <>
-            <Div>
-                <Div >
-                    <Header flexDir='row'
-                        p="lg"
-                        borderBottomWidth={1}
-                        borderBottomColor="gray200"
-                        alignment="center"
-                        prefix={
-                            <Button bg="transparent" onPress={handleDrawer}
-                                prefix={
-                                    <Image source={customHamburger} style={{ width: 19, height: 21, resizeMode: 'contain', }} />
-                                }>
-                            </Button>
-                        }>
-                        <Button
-                            borderColor='black'
-                            borderWidth={1}
-                            alignSelf='center'
-                            bg='transparent'
-                            color='black'
-                            rounded={25}
-                            w={200}
-                            prefix={<Image source={searchIcon} style={{width: 19, height:20, resizeMode: 'contain', paddingHorizontal: 20}}></Image>}
-                        >Search</Button>
-                    </Header>
+            <SafeAreaView style={{ backgroundColor: 'white' }}>
+                <Div>
+                    <Div >
+                        <Header flexDir='row'
+                            p="lg"
+                            borderBottomWidth={1}
+                            borderBottomColor="gray200"
+                            alignment="center"
+                            shadow={0}
+                            prefix={
+                                <Button bg="transparent" onPress={handleDrawer}
+                                    prefix={
+                                        <Image source={customHamburger} style={{ width: 19, height: 21, resizeMode: 'contain', }} />
+                                    }>
+                                </Button>
+                            }>
+                            <Button
+                                borderColor='black'
+                                borderWidth={1}
+                                alignSelf='center'
+                                bg='transparent'
+                                color='black'
+                                rounded={25}
+                                w={200}
+                                prefix={<Image source={searchIcon} style={{ width: 19, height: 20, resizeMode: 'contain', paddingHorizontal: 20 }}></Image>}
+                            >Search</Button>
+                        </Header>
+                    </Div>
                 </Div>
-            </Div>
+            </SafeAreaView>
         </>
     )
 }
