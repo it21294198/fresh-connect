@@ -1,20 +1,19 @@
-import { View, ScrollView, TouchableOpacity, StyleSheet, } from 'react-native';
+import { View, ScrollView, TouchableOpacity, StyleSheet, Animated, } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { fireStore } from '../../config/firebase';
+import { fireStore } from '../config/firebase';
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { Div, Button, Header, Icon, Text } from 'react-native-magnus';
-import { MapDisplayHeader } from '../../components/headers/MapDisplayHeader';
-import { CommonHeader } from '../../components/headers/CommonHeader';
+import { MapDisplayHeader } from '../components/headers/MapDisplayHeader';
+import { CommonHeader } from '../components/headers/CommonHeader';
 import MapView from 'react-native-maps';
 import { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import getInitialState from "react-native-maps";
 import { GOOGLE_MAPS_API_KEY } from "@env";
-import { locationObjectInterface, userSelectedCoordinateLocation } from '../../util/interfaces';
+import { locationObjectInterface, userSelectedCoordinateLocation } from '../util/interfaces';
 import * as Location from 'expo-location';
-import LocationSelector from '../../components/LocationSelector';
 
 
-export default function ShopMapDisplay({ navigation }: any)
+export default function LocationSelector({ navigation, handleConfirm }: { navigation: any, handleConfirm: (coordinates: locationObjectInterface, selectedAddress: string | undefined) => void })
 {
   console.log(GOOGLE_MAPS_API_KEY);
   const shopColRef = collection(fireStore, 'shops');
@@ -40,25 +39,6 @@ export default function ShopMapDisplay({ navigation }: any)
 
     })();
   }, []);
-
-  const watch_location = async () =>
-  {
-    if (status === 'granted')
-    {
-      let location = await Location.watchPositionAsync(
-        {
-          accuracy: Location.Accuracy.High,
-          timeInterval: 10000,
-          distanceInterval: 80,
-        },
-        (location_update) =>
-        {
-          console.log('update location!', location_update.coords);
-        }
-      );
-    }
-  };
-
 
   // defined the initial load location
   const [mapRegion, setmapRegion] = useState({
@@ -136,7 +116,7 @@ export default function ShopMapDisplay({ navigation }: any)
     }));
     const addressString = await getAddressFromCoordinates(event);
     setSelectedAddress(addressString)
-    console.log('Address from map on drag (through handleLocationDrag)',addressString);
+    console.log('Address from map on drag (through handleLocationDrag)', addressString);
 
     console.log('called handleLocationDrag: ', event);
   }
@@ -163,7 +143,7 @@ export default function ShopMapDisplay({ navigation }: any)
     }));
     const addressString = await getAddressFromCoordinates(coordinate);
     setSelectedAddress(addressString)
-    console.log('Address from map on press (through setUserSelectedCoordinateLocation)',addressString);
+    console.log('Address from map on press (through setUserSelectedCoordinateLocation)', addressString);
 
     setTimeout(() =>
     {
@@ -171,14 +151,14 @@ export default function ShopMapDisplay({ navigation }: any)
     }, 5000);
   }
 
-  const handlePressConfirm = (coordinates: locationObjectInterface, selectedAddress: string | undefined) =>{
+  const handlePressConfirm = (coordinates: locationObjectInterface, selectedAddress: string | undefined) =>
+  {
     console.log('handlePressConfirm called ########');
-    
+
   }
 
   return (
     <Div style={styles.container}>
-      <MapDisplayHeader navigation={navigation} />
       <Div style={styles.mapcontainer}>
         <MapView
           provider={PROVIDER_GOOGLE}
@@ -212,7 +192,7 @@ export default function ShopMapDisplay({ navigation }: any)
           fontSize="sm"
           color='#343434'
           mt={10}
-          ml={15}>{selectedAddress ? <Text> {selectedAddress}</Text> : 'Fetching location'}</Text>
+          ml={15}>{selectedAddress ? <Text> {selectedAddress}</Text> : 'Fetching location...'}</Text>
         <Button
           alignSelf='center'
           w='90%'
@@ -220,6 +200,7 @@ export default function ShopMapDisplay({ navigation }: any)
           bg='#45A053'
           mt={20}
           mb={15}
+          onPress={() => handleConfirm(userSelectedCoordinateLocation, selectedAddress)}
         >Confirm</Button>
       </Div>
     </Div>
@@ -231,8 +212,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   map: {
-    width: '100%',
-    height: '100%',
+    height: 'auto',
+    flex: 1,
+    borderWidth: 2,
+    borderColor: 'black'
   },
   mapcontainer: {
     flex: 1,
