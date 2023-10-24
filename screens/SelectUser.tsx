@@ -9,8 +9,12 @@ export default function SelectUser() {
   const dispatch = useDispatch()
   let email:string|null = useSelector((state:{user:UserLogin})=> state.user.email)
   let type:boolean|null = useSelector((state:{user:UserLogin})=> state.user.type)
+  let uId:string|null = useSelector((state:{user:UserLogin})=>state.user.userId)
+
   useEffect(() => {
     dispatch(swithcUser())
+    console.log(uId);
+    console.log(email);
   }, []);
   return (
     <View style={styles.container}>

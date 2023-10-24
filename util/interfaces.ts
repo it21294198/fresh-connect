@@ -9,6 +9,8 @@ export interface UserLogin {
 }
 
 export interface User {
+  firstName?:any;
+  lastName?: any;
   username?: string;
   password:string;
   email:string;
@@ -16,13 +18,14 @@ export interface User {
   logStatus?: boolean;
 }
 
-export interface Loading {
+export interface LoadingState{
   isLoading: boolean;
 }
 
 export interface UserSignIn{
-  firstName:string;
-  lastName:string;
+  firstName?:string;
+  lastName?:string;
+  userId?:string;
   email:string;
   password:string;
 }
@@ -40,4 +43,15 @@ export interface customDrawerPropsInterface {
 export interface drawerProfileInterface{
   CustomerProfile: any | undefined;
 
+}
+
+export interface ShopRegister{
+  shopName:string;
+  email:string;
+  contactNo:number;
+  description:string;
+  openAt?:any;
+  closeAt?:any;
+  address:string;
+  accept:boolean;
 }
