@@ -11,6 +11,8 @@ import getInitialState from "react-native-maps";
 import { GOOGLE_MAPS_API_KEY } from "@env";
 import { locationObjectInterface, userSelectedCoordinateLocation } from '../../util/interfaces';
 import * as Location from 'expo-location';
+import LocationSelector from '../../components/LocationSelector';
+
 
 export default function ShopMapDisplay({ navigation }: any)
 {
@@ -167,6 +169,11 @@ export default function ShopMapDisplay({ navigation }: any)
     {
       console.log(userSelectedCoordinateLocation);
     }, 5000);
+  }
+
+  const handlePressConfirm = (coordinates: locationObjectInterface, selectedAddress: string | undefined) =>{
+    console.log('handlePressConfirm called ########');
+    
   }
 
   return (

@@ -29,7 +29,7 @@
       "package": "com.farmerapp.freshconnect",
       "config": {
         "googleMaps": {
-          
+          // "apiKey": ""
         }
       },
       "adaptiveIcon": {

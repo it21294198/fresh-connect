@@ -1,4 +1,4 @@
-import { View, ScrollView, TouchableOpacity, StyleSheet, } from 'react-native';
+import { View, ScrollView, TouchableOpacity, StyleSheet, Animated, } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { fireStore } from '../config/firebase';
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
@@ -12,7 +12,8 @@ import { GOOGLE_MAPS_API_KEY } from "@env";
 import { locationObjectInterface, userSelectedCoordinateLocation } from '../util/interfaces';
 import * as Location from 'expo-location';
 
-export default function LocationSelector({ navigation, handleConfirm }: {navigation : any, handleConfirm: {coordinates: locationObjectInterface, address: string}})
+
+export default function LocationSelector({ navigation, handleConfirm }: { navigation: any, handleConfirm: (coordinates: locationObjectInterface, selectedAddress: string | undefined) => void })
 {
   console.log(GOOGLE_MAPS_API_KEY);
   const shopColRef = collection(fireStore, 'shops');
@@ -20,8 +21,24 @@ export default function LocationSelector({ navigation, handleConfirm }: {navigat
   const [location, setLocation] = useState<Location.PermissionStatus>();
   const [errorMsg, setErrorMsg] = useState('');
   const [status, setStatus] = useState('');
-  const [selectedAddress, setSelectedAddress] = useState<string | undefined>('');
 
+  useEffect(() =>
+  {
+    (async () =>
+    {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted')
+      {
+        setStatus('Permission to access location was denied');
+        return;
+      } else
+      {
+        console.log('Access granted!!')
+        setStatus(status)
+      }
+
+    })();
+  }, []);
 
   // defined the initial load location
   const [mapRegion, setmapRegion] = useState({
@@ -33,7 +50,7 @@ export default function LocationSelector({ navigation, handleConfirm }: {navigat
 
   // updates when a user navigates to a new region
   const [userSelectedRegion, setUserSelectedRegion] = useState<locationObjectInterface>()
-
+  const [selectedAddress, setSelectedAddress] = useState<string | undefined>();
   // data for userselected marker
   // const [userSelectedCoordinateLocation, setUserSelectedCoordinateLocation] = useState<userSelectedCoordinateLocation | locationObjectInterface>({
   const [userSelectedCoordinateLocation, setUserSelectedCoordinateLocation] = useState<locationObjectInterface>({
@@ -51,36 +68,9 @@ export default function LocationSelector({ navigation, handleConfirm }: {navigat
     longitudeDelta: 0.0421,
   });
 
-  const handleRegionChange = (data: locationObjectInterface) =>
+  const myApiKey = ""
+  function getAddressFromCoordinates({ latitude, longitude }: { latitude: number, longitude: number }): Promise<string | undefined>
   {
-    setUserSelectedRegion(data)
-    console.log('Called handleRegionChange: ', data);
-
-  }
-
-  const handleLocationDrag = async (event: any) =>
-  {
-    setSelectedRegion(event);
-    setUserSelectedCoordinateLocation((previousState) => ({
-      ...previousState,
-      latitude: event.latitude,
-      longitude: event.longitude,
-    }));
-    const addressString = await getAddressFromCoordinates(event);
-    setSelectedAddress(addressString)
-    console.log('Address from map on drag (through handleLocationDrag)',addressString);
-
-    console.log('called handleLocationDrag: ', event);
-  }
-
-  const handleMarkerPress = (event: any) =>
-  {
-    console.log('called handleMarkerPress: ', event);
-  }
-
-  function getAddressFromCoordinates({ latitude, longitude }: { latitude: number, longitude: number }) : Promise<string | undefined>
-  {
-    const myApiKey = ""
     return new Promise((resolve, reject) =>
     {
       fetch(
@@ -109,8 +99,31 @@ export default function LocationSelector({ navigation, handleConfirm }: {navigat
     });
   }
 
-  const handleLocationConfirm = () =>{
-    handleConfirm();
+  const handleRegionChange = (data: locationObjectInterface) =>
+  {
+    setUserSelectedRegion(data)
+    console.log('Called handleRegionChange: ', data);
+
+  }
+
+  const handleLocationDrag = async (event: any) =>
+  {
+    setSelectedRegion(event);
+    setUserSelectedCoordinateLocation((previousState) => ({
+      ...previousState,
+      latitude: event.latitude,
+      longitude: event.longitude,
+    }));
+    const addressString = await getAddressFromCoordinates(event);
+    setSelectedAddress(addressString)
+    console.log('Address from map on drag (through handleLocationDrag)', addressString);
+
+    console.log('called handleLocationDrag: ', event);
+  }
+
+  const handleMarkerPress = (event: any) =>
+  {
+    console.log('called handleMarkerPress: ', event);
   }
 
   const userSelectedCoordinate = async (data: any) =>
@@ -129,7 +142,8 @@ export default function LocationSelector({ navigation, handleConfirm }: {navigat
       longitude: coordinate.longitude,
     }));
     const addressString = await getAddressFromCoordinates(coordinate);
-    console.log(addressString);
+    setSelectedAddress(addressString)
+    console.log('Address from map on press (through setUserSelectedCoordinateLocation)', addressString);
 
     setTimeout(() =>
     {
@@ -137,17 +151,14 @@ export default function LocationSelector({ navigation, handleConfirm }: {navigat
     }, 5000);
   }
 
+  const handlePressConfirm = (coordinates: locationObjectInterface, selectedAddress: string | undefined) =>
+  {
+    console.log('handlePressConfirm called ########');
 
-
-  // const handleLocationConfirm = () =>
-  // {
-  //   console.log('Called handleLocationConfirm function');
-  //   handleConfirm({coordinates: userSelectedCoordinateLocation, address: selectedAddress})
-  // }
+  }
 
   return (
     <Div style={styles.container}>
-      <MapDisplayHeader navigation={navigation} />
       <Div style={styles.mapcontainer}>
         <MapView
           provider={PROVIDER_GOOGLE}
@@ -165,7 +176,7 @@ export default function LocationSelector({ navigation, handleConfirm }: {navigat
             title='Your shop address'
             description='lorem ipsum dollar lament lol lmfao why wwhen who then react next js sample test'
             draggable
-            onDragEnd={(e) => handleLocationDrag({ x: e.nativeEvent.coordinate })}
+            onDragEnd={(e) => handleLocationDrag(e.nativeEvent.coordinate)}
           >
           </Marker>
         </MapView>
@@ -181,7 +192,7 @@ export default function LocationSelector({ navigation, handleConfirm }: {navigat
           fontSize="sm"
           color='#343434'
           mt={10}
-          ml={15}>No 123, lorem ipsum rd, Katugasthota, Kandy</Text>
+          ml={15}>{selectedAddress ? <Text> {selectedAddress}</Text> : 'Fetching location...'}</Text>
         <Button
           alignSelf='center'
           w='90%'
@@ -189,7 +200,7 @@ export default function LocationSelector({ navigation, handleConfirm }: {navigat
           bg='#45A053'
           mt={20}
           mb={15}
-          onPress={handleLocationConfirm}
+          onPress={() => handleConfirm(userSelectedCoordinateLocation, selectedAddress)}
         >Confirm</Button>
       </Div>
     </Div>
@@ -201,8 +212,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   map: {
-    width: '100%',
-    height: '100%',
+    height: 'auto',
+    flex: 1,
+    borderWidth: 2,
+    borderColor: 'black'
   },
   mapcontainer: {
     flex: 1,
