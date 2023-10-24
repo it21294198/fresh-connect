@@ -3,10 +3,20 @@ import {fireStore} from '../config/firebase'
 import { View, Text,TextInput, StyleSheet, TouchableOpacity, Image, ScrollView,Dimensions,Button } from 'react-native'
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { ShopRegister } from '../util/interfaces';
+import { setUserInitials } from '../features/user/userSlice';
+import { useDispatch } from 'react-redux';
+import { setLoadingFalse, setLoadingTrue } from '../features/connection/loaderSlice';
+import { UserLogin } from '../util/interfaces'; // get the path accordingly
+import { useSelector } from 'react-redux';
+import { Timestamp, doc, setDoc } from 'firebase/firestore';
 
 const screenWidth = Dimensions.get('window').width;
 
 export default function RegisterShop({navigation}:any) {
+  const dispatch = useDispatch()
+
+  let uId:string|null = useSelector((state:{user:UserLogin})=>state.user.userId)
+
   const [locationAddress, setLocationAddress] = useState<any>('Address');
   const [email, setEmail] = useState<string>('email');
   const [isChecked, setIsChecked] = useState(false);
@@ -20,13 +30,14 @@ export default function RegisterShop({navigation}:any) {
     description:'',
     openAt:undefined,
     closeAt:undefined,
-    address:'',
+    address:'test',
     accept:false
   });
 
   useEffect(() => {
     // load user profile data
     // load 2 user shops
+    setError(false)
   }, []);
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -51,22 +62,46 @@ export default function RegisterShop({navigation}:any) {
     hideDatePicker();
   };
 
-const setShopProfile = () =>{
+const setShopProfile = async () => {
+  if (farmerRegistrForm.accept) {
+    dispatch(setLoadingTrue());
+    setError(false);
 
-    if(farmerRegistrForm.accept){
-      setError(false)
-      for (const key in farmerRegistrForm) {
-        if (farmerRegistrForm.hasOwnProperty(key)) {
-          console.log(`${key}:`, farmerRegistrForm[key]);
-        }
+    for (const key in farmerRegistrForm) {
+      if (farmerRegistrForm.hasOwnProperty(key)) {
+        console.log(`${key}:`, farmerRegistrForm[key]);
       }
-      // send the data to database
-      console.log('shop profile updated');
-    }else{
-      setError(true)
-      console.log('error on register');
     }
+
+    // Change register status
+    const docRef = doc(fireStore, 'users', uId);
+    await setDoc(docRef, { isSeller: true }, { merge: true });
+
+    const shopToStore = {
+      userId: uId,
+      shopName: farmerRegistrForm.shopName,
+      email: farmerRegistrForm.email,
+      contactNo: farmerRegistrForm.contactNo,
+      openAt: Timestamp.fromDate(new Date(farmerRegistrForm.openAt)),
+      closeAt: Timestamp.fromDate(new Date(farmerRegistrForm.closeAt)),
+      address: farmerRegistrForm.address,
+      shopAddress: farmerRegistrForm.address,
+      description: farmerRegistrForm.description,
+    };
+
+    const newShop = doc(fireStore, 'shops',uId);
+    await setDoc(newShop, shopToStore);
+
+    // Send the data to the database
+    console.log('Shop profile updated');
+    dispatch(setLoadingFalse());
+    dispatch(setUserInitials({ isSeller: true }));
+  } else {
+    setError(true);
+    console.log('Error on register');
   }
+};
+
   
   const changeShopProfileImage = () =>{
     console.log('update shop image');
@@ -209,6 +244,9 @@ const setShopProfile = () =>{
         {isChecked && <Text></Text>}
       </TouchableOpacity>
       </View>
+      </View>
+      <View style={error?styles.errorView:{display:'none'}}>
+        <Text style={styles.error}>Incorrect Details</Text>
       </View>
       <View style={styles.bottomView}>
           <TouchableOpacity onPress={setShopProfile} style={styles.updateBtn}>
@@ -389,5 +427,18 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     justifyContent:'center',
     width:screenWidth // get the screen with accordingly
-  }
+  },
+  errorView:{
+    alignItems:'center',
+    backgroundColor:'red',
+    borderRadius:20,
+    marginHorizontal:40,
+    marginVertical:10
+  },
+  error:{
+    color:'white',
+    fontWeight:'bold',
+    fontSize:15,
+    marginHorizontal:50
+  },
 })
