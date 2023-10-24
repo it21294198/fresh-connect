@@ -1,138 +1,261 @@
-import { View, Text, ScrollView, Button, Modal,TextInput ,StyleSheet} from 'react-native';
+import { View, Text, ScrollView, Button, Modal,TextInput ,StyleSheet,TouchableOpacity,Image, FlatList} from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { fireStore } from '../../config/firebase';
-import {
-  collection,
-  getDocs,
-  DocumentData,
-  QueryDocumentSnapshot,
-  doc,
-  setDoc,
-  deleteDoc,
-} from 'firebase/firestore';
-
-interface ShopData {
-  id: string;
-  text: string;
-  // Add other fields as needed
-}
+import TextLimitedByWords from '../../util/hooks/TextLimitedByWords'
 
 export default function SavedShops() {
-  const [data, setData] = useState<ShopData[]>([]);
-  const [selectedItem, setSelectedItem] = useState<ShopData | null>(null);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
-    fetchDataFromFirestore();
   }, []);
 
-  const fetchDataFromFirestore = async () => {
-    try {
-      const querySnapshot = await getDocs(collection(fireStore, 'text'));
-      const items:any = querySnapshot.docs.map(
-        (doc: QueryDocumentSnapshot<DocumentData>) => ({
-          id: doc.id,
-          ...doc.data(),
-        })
-      );
-      setData(items);
-    } catch (error) {
-      console.error('Error fetching data: ', error);
-    }
-  };
+  const pressedShopImage = (id:any) =>{
+    console.log('shopPressed',id);
+  }
 
-  const handleDelete = async (itemId: string) => {
-    try {
-      await deleteDoc(doc(fireStore, 'text', itemId));
-      // After deleting the item, refresh the data
-      fetchDataFromFirestore();
-    } catch (error) {
-      console.error('Error deleting item: ', error);
-    }
-  };
-
-  const handleEdit = (item: ShopData) => {
-    setSelectedItem(item);
+  const pressFevIcon = (id:any) =>{
+    console.log('fevIconPressed',id);
     setModalVisible(true);
-  };
+  }
 
-  const handleUpdate = async () => {
-    if (selectedItem) {
-      // Update the selected item in Firestore with the updated data
-      const itemDocRef = doc(fireStore, 'text', selectedItem.id);
-      await setDoc(itemDocRef, { text: selectedItem.text });
-      
-      // Close the modal and refresh the data
-      setModalVisible(false);
-      fetchDataFromFirestore();
-    }
-  };
+  const closeModal = () => {
+    setModalVisible(false); // Close the modal
+  }
 
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <ScrollView>
-        {data.map((item) => (
-          <View key={item.id}>
-            <Text>{item.text}</Text>
-            <Button title="Edit" onPress={() => handleEdit(item)} />
-            <Button title="Delete" onPress={() => handleDelete(item.id)} color="red" />
-          </View>
-        ))}
-      </ScrollView>
-
-      {/* Edit Modal */}
+  const removeFromSavedShop = () =>{
+    console.log('pressedRemoveSavedShop');
+    setModalVisible(false); // Close the modal
+  }
+  const modalViewForFevIcon = () =>{
+    return(
       <Modal
         animationType="slide"
         transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
+        visible={isModalVisible}>
         <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
-        <TextInput
-            value={selectedItem?.text}
-            style={styles.textInput}
-            onChangeText={(text) => {
-              if (selectedItem) {
-                setSelectedItem({ ...selectedItem, text });
-              }
-            }}
-            placeholder="Edit Text"
-            />
-          <Button title="Update" onPress={handleUpdate} />
-          <Button
-            title="Cancel"
-            onPress={() => {
-              setModalVisible(false);
-            }}
-          />
-        </View>
+          <View style={styles.modalContainerView}>
+            <Image style={styles.askImage} source={require('../../assets/askIcon.png')}/>
+            <View>
+              <Text style={styles.textInModal}>Are you  sure you want to</Text>
+              <Text style={styles.textInModal}>remove this shop from</Text>
+              <Text style={styles.textInModal}>favourites ?</Text>
+            </View>
+            <View style={styles.modalBtnView}>
+              <TouchableOpacity style={[styles.leftButton,{marginRight:20}]} onPress={closeModal}>
+                <View style={styles.buttonTextContainer}><Text>No</Text></View>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.rightButton} onPress={()=>removeFromSavedShop()}>
+                <View style={styles.buttonTextContainer}><Text style={{color:'white'}}>Yes</Text></View>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
       </Modal>
+    )
+  }
+
+  return (
+    <View style={styles.mainContainer}>
+      <View style={styles.titleView}><Text style={styles.titleViewText}>Saved Shops</Text></View>
+      {modalViewForFevIcon()}
+      <FlatList
+        data={savedShops}
+        numColumns={2}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.savedCard}>
+            <View style={styles.savedCardTitleBarView}>
+              <TextLimitedByWords text={item.title}/>
+                <TouchableOpacity onPress={()=>pressFevIcon(item.id)}>
+                  <View style={styles.fevIconView}>
+                    <Image 
+                      source={require('../../assets/favoutitesFilledIconImg.png')}
+                      style={styles.fevIconImage}
+                      resizeMode="contain"
+                      />
+                  </View>
+                </TouchableOpacity>
+            </View>
+            <TouchableOpacity onPress={()=>pressedShopImage(item.id)}>
+              <Image
+                resizeMode="cover"
+                source={item.imageUrl}
+                style={styles.savedImage}
+              />
+            </TouchableOpacity>
+          </View>
+        )}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  modalContainer: {
+  mainContainer:{
+    flex:1,
+    alignItems:'center'
+  },
+  modalContainer:{
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',   
   },
-  modalContent: {
+  askImage:{
+    margin:20
+  },
+  modalContainerView:{
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor:'white',
+    borderRadius:20,
+    paddingHorizontal:20,
+    height:350
+  },
+  textInModal:{
+    textAlign: 'center',
+    fontSize:16,
+    fontWeight:'bold'
+  },
+  modalBtnView:{
+    flexDirection: 'row',
+    justifyContent: 'space-between', // Align items at each end of the row
+    paddingTop:30,
+    paddingHorizontal: 10,
+  },
+  buttonTextContainer:{
+    alignItems: 'center', // Vertically center the text
+    justifyContent: 'center',
+  },
+  leftButton:{
     backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-    elevation: 5,
-  },
-  textInput: {
-    marginBottom: 10,
     padding: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
+    borderRadius: 20,
+    borderWidth: 2,  // Add a border of 2 units
+    borderColor: 'black',
+    width:120
   },
+  rightButton:{
+    backgroundColor: 'black', // Example background color
+    padding: 10,
+    borderRadius: 20,
+    width:120
+  },
+  titleView:{
+    margin:30,
+    marginTop:40,
+    alignItems:'center'
+  },
+  titleViewText:{
+    fontSize:20,
+    fontWeight:'bold'
+  },
+  savedCard:{
+    backgroundColor: 'white',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    shadowColor: 'black',
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    elevation: 4, // For Android shadow
+    padding: 0,
+    margin: 5,
+  },
+  savedCardTitleBarView:{
+    flexDirection:'row',
+    alignItems:'center',
+    justifyContent:'space-between',
+    padding:5,
+  },
+  fevIconImage:{
+    width:20,
+    height:20,
+    marginBottom:5,
+    marginLeft:60
+  },
+  savedImage:{
+    width:170,
+    height:120,
+    borderBottomLeftRadius:10,
+    borderBottomRightRadius:10,
+  },
+  fevIconView:{
+    position: 'absolute',
+    top: -25, // Adjust the top position to place it at the top
+    right: -10, // Adjust the right position to place it at the right
+    padding: 10,
+  }
 });
+
+  const savedShops = [
+    {
+      id:1,
+      title:'hello',
+      imageUrl:require('../../assets/shop.jpg')
+    },
+    {
+      id:2,
+      title:'helfsfsffs',
+      imageUrl:require('../../assets/splash.png')
+    },
+    {
+      id:3,
+      title:'helfsfsffs',
+      imageUrl:require('../../assets/splash.png')
+    },
+    {
+      id:4,
+      title:'helf',
+      imageUrl:require('../../assets/splash.png')
+    },
+    {
+      id:5,
+      title:'helfsfsffs',
+      imageUrl:require('../../assets/splash.png')
+    },
+    {
+      id:6,
+      title:'helfsfsffs',
+      imageUrl:require('../../assets/splash.png')
+    },
+    {
+      id:7,
+      title:'helfsfsffs',
+      imageUrl:require('../../assets/splash.png')
+    },
+    {
+      id:8,
+      title:'helfsfsffs',
+      imageUrl:require('../../assets/splash.png')
+    },
+    {
+      id:9,
+      title:'helfsfsffs',
+      imageUrl:require('../../assets/splash.png')
+    },
+    {
+      id:10,
+      title:'helfsfsffs',
+      imageUrl:require('../../assets/splash.png')
+    },
+    {
+      id:11,
+      title:'helfsfsffs',
+      imageUrl:require('../../assets/splash.png')
+    },
+    {
+      id:12,
+      title:'helfsfsffs',
+      imageUrl:require('../../assets/splash.png')
+    },
+    {
+      id:13,
+      title:'helfsfsffs',
+      imageUrl:require('../../assets/splash.png')
+    }
+  ]
