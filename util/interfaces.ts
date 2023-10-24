@@ -40,10 +40,27 @@ export interface customDrawerPropsInterface {
     size?: number;
   };
 }
-
 export interface drawerProfileInterface{
   CustomerProfile: any | undefined;
 
+}
+
+export interface locationObjectInterface{
+    latitude: number,
+    longitude: number,
+    latitudeDelta?: number,
+    longitudeDelta?: number,
+}
+export interface userSelectedCoordinateLocation{
+  coordinate:
+    {
+      latitude: number,
+      longitude: number
+    }  
+    position:{
+      x: number;
+      y: number;
+    }
 }
 
 export interface ShopRegister{
@@ -56,3 +73,4 @@ export interface ShopRegister{
   address:string;
   accept:boolean;
 }
+

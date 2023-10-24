@@ -5,6 +5,7 @@ declare module '@env' {
   export const EXPO_PUBLIC_STORAGE_BUCKET: string;
   export const EXPO_PUBLIC_MESSAGING_SENDER_ID: string;
   export const EXPO_PUBLIC_APP_ID: string;
+  export const GOOGLE_MAPS_API_KEY: string;
 }
 
 declare module "*.png";
