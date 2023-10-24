@@ -12,10 +12,16 @@ interface ShopData {
 export default function CustomerHomePage({ navigation }: any) {
   const [data, setData] = useState<ShopData[]>([]);
 
+  const user = {
+    id: "8SoZKFk8U0q6l2lEbogL",
+    name: 'John'
+  }
+
   const savedShops = [
     {
       shopId: '123',
       shopName: 'Nuwara Farm',
+      userId:"Z04NU1rDCHE8GNus2HbL",
       description: 'Fresh fruits and vegatables available',
       openHours:["10:00","16:30"],
       contactNo:"0777124568",
@@ -25,6 +31,7 @@ export default function CustomerHomePage({ navigation }: any) {
     {
       shopId: '124',
       shopName: 'Emerald Tea',
+      userId:"Z04NU1rDCHE8GNus2HbL",
       description: 'All varieties of export quality tea available',
       openHours:["09:00","16:30"],
       contactNo:"0777124568",
@@ -34,6 +41,7 @@ export default function CustomerHomePage({ navigation }: any) {
     {
       shopId: '125',
       shopName: 'Coconut Groves',
+      userId:"Z04NU1rDCHE8GNus2HbL",
       description: 'Coconut and coconut related products available',
       openHours:["09:00","16:30"],
       contactNo:"0777124568",
@@ -61,9 +69,9 @@ export default function CustomerHomePage({ navigation }: any) {
     }
   };
 
-  const renderActvity = savedShops.map((shop) => {
+  const renderActvity = savedShops.map((shop, index) => {
     return (
-      <Div m="sm" rounded="md" shadow='sm' p="md">
+      <Div key={index} m="sm" rounded="md" shadow='sm' p="md">
         <Div row alignItems="center">
           <Div flex={1}>
             <Text fontWeight="bold" fontSize="xl" mt="sm">
@@ -88,7 +96,7 @@ export default function CustomerHomePage({ navigation }: any) {
           </Div>
         </Div>
         <Div row justifyContent='flex-end'>
-          <Button bg='#45A053' rounded={17.5} onPress={() => navigation.navigate('CustomerShopPage', { shop: shop })}>View</Button>
+          <Button bg='#45A053' rounded={17.5} onPress={() => navigation.navigate('CustomerShopPage', { user: user, shop: shop })}>View</Button>
         </Div>
       </Div>
     )

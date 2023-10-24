@@ -30,6 +30,10 @@ async function getMessages(roomId:string){
     }
 }
 
+async function getChatRooms(){
+    
+}
+
 async function getUser(id:any){
     try{
         //console.log(id)

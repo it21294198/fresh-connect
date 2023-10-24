@@ -2,14 +2,10 @@ import { View, ScrollView, StyleSheet, FlatList, TouchableOpacity } from 'react-
 import React, { useState, useEffect } from 'react';
 import { Input, Icon, Button, Div, Text, Header, Image } from "react-native-magnus";
 
-interface ShopData {
-  id: string;
-  text: string;
-}
 
 export default function CustomerShopPage({ route, navigation }: any) {
-  const [data, setData] = useState<ShopData[]>([]);
-  const { shop } = route.params
+  const [data, setData] = useState<any[]>([]);
+  const { user, shop } = route.params
   const openTime = shop.openHours[0] + " - " + shop.openHours[1]
 
   const openNow = () => {
@@ -41,8 +37,10 @@ export default function CustomerShopPage({ route, navigation }: any) {
       price: 100,
       per: 500,
       qtUnit: 'g',
+      quantity: 500,
       organic: true,
       createdAt: '08/10/2023',
+      buyBefore: '09/10/2023',
       specialMsg: "Please Contact us for any further queries",
       imageId: require("./Assets/carrot.jpg")
     },
@@ -52,8 +50,10 @@ export default function CustomerShopPage({ route, navigation }: any) {
       price: 200,
       per: 500,
       qtUnit: 'g',
+      quantity: 500,
       organic: false,
       createdAt: '08/10/2023',
+      buyBefore: '09/10/2023',
       specialMsg: "Please Contact us for any further queries",
       imageId: require("./Assets/mangoes.webp")
     },
@@ -63,17 +63,30 @@ export default function CustomerShopPage({ route, navigation }: any) {
       price: 300,
       per: 500,
       qtUnit: 'g',
+      quantity: 500,
       organic: false,
       createdAt: '08/10/2023',
+      buyBefore: '09/10/2023',
       specialMsg: "Please Contact us for any further queries",
       imageId: require("./Assets/milk.jpg")
     }
   ]
 
-  const renderProducts = products.map((product) => {
+  const renderProducts = products.map((product,index) => {
     const newPrice = "Rs " + product.price + "/" + product.per + product.qtUnit;
     return (
-      <Div m="sm" rounded="md" shadow='sm' p="md">
+      <Div key={index} m="sm" rounded={10} shadow='sm' p="md">
+        <Div row>
+          <TouchableOpacity onPress={() => navigation.navigate('CustomerProductPage', { user: user, shop: shop, product: product })}>
+            <Div
+              rounded="xl"
+              h={150}
+              w={300}
+              alignItems='center'
+              bgImg={product.imageId}
+            />
+          </TouchableOpacity>
+        </Div>
         <Div row>
           <Div flex={1} alignItems='flex-start'>
             <Text fontWeight="bold" fontSize="xl" mt="sm">
@@ -85,18 +98,6 @@ export default function CustomerShopPage({ route, navigation }: any) {
               ? <Image h={50} w={50} source={require("./Assets/organic.png")} /> : null
             }
           </Div>
-        </Div>
-        <Div row>
-          <TouchableOpacity onPress={() => navigation.navigate('CustomerProductPage', { product: product })}>
-            <Div
-              rounded="xl"
-              h={150}
-              w={300}
-              alignItems='center'
-
-              bgImg={product.imageId}
-            />
-          </TouchableOpacity>
         </Div>
         <Div row>
           <Div flex={1} alignItems='flex-start'>
@@ -165,7 +166,7 @@ export default function CustomerShopPage({ route, navigation }: any) {
             {openNow()}
           </Div>
           <Div flex={1} alignItems='flex-end' mt="sm" mr="xs">
-            <Button mt="sm" bg="#45A053" color="gray100" fontSize="md" rounded={17.5}>Save shop &nbsp;<Icon name="star" color="gray100" /></Button>
+            <Button bg="#45A053" fontSize="md" rounded={17.5} suffix={<Icon px="md" name="star" color="gray100" />}>Save shop</Button>
           </Div>
         </Div>
         <View style={styles.divider} />
