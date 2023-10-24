@@ -41,3 +41,14 @@ export interface drawerProfileInterface{
   CustomerProfile: any | undefined;
 
 }
+
+export interface ShopRegister{
+  shopName:string;
+  email:string;
+  contactNo:number;
+  description:string;
+  openAt?:any;
+  closeAt?:any;
+  address:string;
+  accept:boolean;
+}
