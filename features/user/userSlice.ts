@@ -25,6 +25,20 @@ export const userSlice = createSlice({
         setType:(state,action:PayloadAction<boolean | null>)=>{
             state.type = action.payload
         },
+        setUserId:(state,action:PayloadAction<string| null>)=>{
+            state.userId = action.payload
+        },
+        setUserInitials:(state,action:PayloadAction<any>)=>{
+            if (action.payload.firstName !== undefined) {
+                state.firstName = action.payload.firstName;
+            }
+            if (action.payload.lastName !== undefined) {
+                state.lastName = action.payload.lastName;
+            }
+            if (action.payload.userId !== undefined) {
+                state.userId = action.payload.userId;
+            }
+        },
         swithcUser:(state)=>{
             state.type = null
         },
@@ -48,7 +62,7 @@ export const userSlice = createSlice({
     }
 })
 
-export const { logUser,logOut,setType,swithcUser } = userSlice.actions;
+export const { logUser,logOut,setType,swithcUser,setUserInitials } = userSlice.actions;
 
 export default userSlice.reducer;
 
@@ -62,3 +76,11 @@ export default userSlice.reducer;
 //     userId: 'New User ID',
 //   })
 // );
+
+// dispatch(
+//     setUserInitials({
+//      firstName: user.firstName,
+//      lastName: user.lastName,
+//      userId: userRef,
+//     })
+// )
