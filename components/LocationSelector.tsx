@@ -1,18 +1,18 @@
 import { View, ScrollView, TouchableOpacity, StyleSheet, } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { fireStore } from '../../config/firebase';
+import { fireStore } from '../config/firebase';
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { Div, Button, Header, Icon, Text } from 'react-native-magnus';
-import { MapDisplayHeader } from '../../components/headers/MapDisplayHeader';
-import { CommonHeader } from '../../components/headers/CommonHeader';
+import { MapDisplayHeader } from '../components/headers/MapDisplayHeader';
+import { CommonHeader } from '../components/headers/CommonHeader';
 import MapView from 'react-native-maps';
 import { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import getInitialState from "react-native-maps";
 import { GOOGLE_MAPS_API_KEY } from "@env";
-import { locationObjectInterface, userSelectedCoordinateLocation } from '../../util/interfaces';
+import { locationObjectInterface, userSelectedCoordinateLocation } from '../util/interfaces';
 import * as Location from 'expo-location';
 
-export default function ShopMapDisplay({ navigation }: any)
+export default function LocationSelector({ navigation, handleConfirm }: {navigation : any, handleConfirm: {coordinates: locationObjectInterface, address: string}})
 {
   console.log(GOOGLE_MAPS_API_KEY);
   const shopColRef = collection(fireStore, 'shops');
@@ -20,42 +20,7 @@ export default function ShopMapDisplay({ navigation }: any)
   const [location, setLocation] = useState<Location.PermissionStatus>();
   const [errorMsg, setErrorMsg] = useState('');
   const [status, setStatus] = useState('');
-
-  useEffect(() =>
-  {
-    (async () =>
-    {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted')
-      {
-        setStatus('Permission to access location was denied');
-        return;
-      } else
-      {
-        console.log('Access granted!!')
-        setStatus(status)
-      }
-
-    })();
-  }, []);
-
-  const watch_location = async () =>
-  {
-    if (status === 'granted')
-    {
-      let location = await Location.watchPositionAsync(
-        {
-          accuracy: Location.Accuracy.High,
-          timeInterval: 10000,
-          distanceInterval: 80,
-        },
-        (location_update) =>
-        {
-          console.log('update location!', location_update.coords);
-        }
-      );
-    }
-  };
+  const [selectedAddress, setSelectedAddress] = useState<string | undefined>('');
 
 
   // defined the initial load location
@@ -68,7 +33,7 @@ export default function ShopMapDisplay({ navigation }: any)
 
   // updates when a user navigates to a new region
   const [userSelectedRegion, setUserSelectedRegion] = useState<locationObjectInterface>()
-  const [selectedAddress, setSelectedAddress] = useState<string | undefined>();
+
   // data for userselected marker
   // const [userSelectedCoordinateLocation, setUserSelectedCoordinateLocation] = useState<userSelectedCoordinateLocation | locationObjectInterface>({
   const [userSelectedCoordinateLocation, setUserSelectedCoordinateLocation] = useState<locationObjectInterface>({
@@ -85,37 +50,6 @@ export default function ShopMapDisplay({ navigation }: any)
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
-
-  const myApiKey = ""
-  function getAddressFromCoordinates({ latitude, longitude }: { latitude: number, longitude: number }): Promise<string | undefined>
-  {
-    return new Promise((resolve, reject) =>
-    {
-      fetch(
-        'https://maps.googleapis.com/maps/api/geocode/json?address=' +
-        latitude +
-        ',' +
-        longitude +
-        '&key=' +
-        myApiKey,
-      )
-        .then(response => response.json())
-        .then(responseJson =>
-        {
-          if (responseJson.status === 'OK')
-          {
-            resolve(responseJson?.results?.[0]?.formatted_address);
-          } else
-          {
-            reject('not found');
-          }
-        })
-        .catch(error =>
-        {
-          reject(error);
-        });
-    });
-  }
 
   const handleRegionChange = (data: locationObjectInterface) =>
   {
@@ -144,6 +78,41 @@ export default function ShopMapDisplay({ navigation }: any)
     console.log('called handleMarkerPress: ', event);
   }
 
+  function getAddressFromCoordinates({ latitude, longitude }: { latitude: number, longitude: number }) : Promise<string | undefined>
+  {
+    const myApiKey = ""
+    return new Promise((resolve, reject) =>
+    {
+      fetch(
+        'https://maps.googleapis.com/maps/api/geocode/json?address=' +
+        latitude +
+        ',' +
+        longitude +
+        '&key=' +
+        myApiKey,
+      )
+        .then(response => response.json())
+        .then(responseJson =>
+        {
+          if (responseJson.status === 'OK')
+          {
+            resolve(responseJson?.results?.[0]?.formatted_address);
+          } else
+          {
+            reject('not found');
+          }
+        })
+        .catch(error =>
+        {
+          reject(error);
+        });
+    });
+  }
+
+  const handleLocationConfirm = () =>{
+    handleConfirm();
+  }
+
   const userSelectedCoordinate = async (data: any) =>
   {
     const { coordinate }: {
@@ -160,14 +129,21 @@ export default function ShopMapDisplay({ navigation }: any)
       longitude: coordinate.longitude,
     }));
     const addressString = await getAddressFromCoordinates(coordinate);
-    setSelectedAddress(addressString)
-    console.log('Address from map on press (through setUserSelectedCoordinateLocation)',addressString);
+    console.log(addressString);
 
     setTimeout(() =>
     {
       console.log(userSelectedCoordinateLocation);
     }, 5000);
   }
+
+
+
+  // const handleLocationConfirm = () =>
+  // {
+  //   console.log('Called handleLocationConfirm function');
+  //   handleConfirm({coordinates: userSelectedCoordinateLocation, address: selectedAddress})
+  // }
 
   return (
     <Div style={styles.container}>
@@ -189,7 +165,7 @@ export default function ShopMapDisplay({ navigation }: any)
             title='Your shop address'
             description='lorem ipsum dollar lament lol lmfao why wwhen who then react next js sample test'
             draggable
-            onDragEnd={(e) => handleLocationDrag(e.nativeEvent.coordinate)}
+            onDragEnd={(e) => handleLocationDrag({ x: e.nativeEvent.coordinate })}
           >
           </Marker>
         </MapView>
@@ -205,7 +181,7 @@ export default function ShopMapDisplay({ navigation }: any)
           fontSize="sm"
           color='#343434'
           mt={10}
-          ml={15}>{selectedAddress ? <Text> {selectedAddress}</Text> : 'Fetching location'}</Text>
+          ml={15}>No 123, lorem ipsum rd, Katugasthota, Kandy</Text>
         <Button
           alignSelf='center'
           w='90%'
@@ -213,6 +189,7 @@ export default function ShopMapDisplay({ navigation }: any)
           bg='#45A053'
           mt={20}
           mb={15}
+          onPress={handleLocationConfirm}
         >Confirm</Button>
       </Div>
     </Div>

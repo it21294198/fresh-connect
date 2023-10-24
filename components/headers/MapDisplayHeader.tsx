@@ -16,7 +16,7 @@ export const MapDisplayHeader = ({ navigation }: any) =>
         <>
             <Div>
                 <Div >
-                    <Header flex={1} flexDir='row'
+                    <Header flexDir='row'
                         p="lg"
                         borderBottomWidth={1}
                         borderBottomColor="gray200"
@@ -44,15 +44,3 @@ export const MapDisplayHeader = ({ navigation }: any) =>
         </>
     )
 }
-
-<Button
-    borderColor='black'
-    borderWidth={1}
-    bg='transparent'
-    color='black'
-    alignSelf="center"
-    style={{ marginHorizontal: 50, paddingVertical: 0, marginVertical: 0 }}
-    rounded={25}
-    prefix={
-        <Image source={searchIcon} style={{ width: 19, height: 21, resizeMode: 'contain', paddingHorizontal: 20, marginVertical: 0 }} />
-    }></Button>
