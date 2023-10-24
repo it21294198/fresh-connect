@@ -3,19 +3,23 @@ import React from 'react'
 import { useDispatch } from 'react-redux';
 import { logOut, swithcUser } from '../features/user/userSlice';
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
+import { auth } from '../config/firebase';
+import { signOut } from 'firebase/auth';
+import { setLoadingFalse, setLoadingTrue } from '../features/connection/loaderSlice';
 
 export default function Logout({ navigation ,props}:any) {
     const dispatch = useDispatch()
 
     const goToLoing = () => {
     // Use CommonActions.navigate to navigate to the "Settings" screen
+    dispatch(setLoadingTrue())
+    signOut(auth).then(() => {
+      console.log('logout');
+    }).catch((error:any) => {
+      console.log('logout error',error);
+    });
+    dispatch(setLoadingFalse())
     dispatch(logOut())
-    navigation.navigate('AnotherScreen');
-    // navigation.dispatch(
-    //   CommonActions.navigate({
-    //     name: 'SelectUser',
-    //   })
-    // );
     };
 
     const goToSelectUser = () =>{
