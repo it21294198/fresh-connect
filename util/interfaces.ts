@@ -9,21 +9,27 @@ export interface UserLogin {
 }
 
 export interface User {
-  username: string;
-  type: string;
-  logStatus: boolean;
+  firstName?:any;
+  lastName?: any;
+  username?: string;
+  password:string;
+  email:string;
+  type?: string;
+  logStatus?: boolean;
 }
 
-export interface Loading {
+export interface LoadingState{
   isLoading: boolean;
 }
 
 export interface UserSignIn{
-  firstName:string;
-  lastName:string;
+  firstName?:string;
+  lastName?:string;
+  userId?:string;
   email:string;
   password:string;
 }
+
 export interface customDrawerPropsInterface {
   drawerActiveTintColor?: string;
   drawerActiveBackgroundColor?: string;
@@ -68,6 +74,7 @@ export interface shopDataInterface {
   contactNo?: number;
 }
 
+<<<<<<< HEAD
 export interface LocationObj{
   coords: {
     accuracy: number | null;
@@ -87,3 +94,16 @@ export interface coordComparisionObject{
   
   coord2: {latitude: number| undefined; longitude: number| undefined;};
 }
+=======
+export interface ShopRegister{
+  shopName:string;
+  email:string;
+  contactNo:number;
+  description:string;
+  openAt?:any;
+  closeAt?:any;
+  address:string;
+  accept:boolean;
+}
+
+>>>>>>> cea62a602ad1a584b98ea71d6b8e20488d366ecf
