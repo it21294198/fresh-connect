@@ -24,7 +24,7 @@ npm i
 When the project is created
 
   1. add env changes to babel.config.js 
- ```
+ ```js
   module.exports = function (api) {
   api.cache(true);
   return {
@@ -51,7 +51,7 @@ When the project is created
 };
   ```
   2. created env.d.ts for enable env with typescript
-  ```
+  ```ts
   declare module '@env' {
   export const EXPO_PUBLIC_API_KEY: string;
   export const EXPO_PUBLIC_AUTH_DOMAIN: string;
@@ -62,7 +62,7 @@ When the project is created
 }
   ``` 
   3. add tsconfig.json
-   ```
+   ```json
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
@@ -76,4 +76,46 @@ When the project is created
   ]
 }
    ```
+## Use of Redux correctly
+
+### Get the value inside store (user id = uid)
+
+```ts
+import { UserLogin } from '../util/interfaces'; // get the path accordingly
+import { useSelector } from 'react-redux';
+
+let uId:string|null = useSelector((state:{user:UserLogin})=>state.user.userId)
+let email:string|null = useSelector((state:{user:UserLogin})=>state.user.email)
+
+console.log(email) // you can use this any where
+```
+
+### How to use loading
+```ts
+import { useDispatch } from 'react-redux';
+import { loaderSlice } from '../features/connection/loaderSlice';
+
+//palace this near useStates area
+const dispatch = useDispatch()
+
+function getLongTimeToProcess(){
+  dispatch(setLoadingTrue());
+  // put your time consuming process
+  dispatch(setLoadingFalse());
+
+  //place navigation if needed below here
+}
+```
+
+### Set the value inside store (no need to use this)
+
+```ts
+import { useDispatch } from 'react-redux';
+
+const dispatch = useDispatch()
+
+const uid:string = '@123abc'
+
+dispatch(setUserId(uid))
+```
 

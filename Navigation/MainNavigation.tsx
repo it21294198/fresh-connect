@@ -48,6 +48,7 @@ import { paths } from '../assets/strings';
 import { Button, Div, Text } from "react-native-magnus";
 import { getHeaderTitle } from '@react-navigation/elements';
 import { DrawerProfile } from '../components/DrawerProfile';
+import RegisterShop from '../screens/RegisterShop';
 
 
 export default function MainNavigation()
@@ -55,6 +56,7 @@ export default function MainNavigation()
   const [isHomeActive, setIsHomeActive] = useState(false);
   const [currentPage, setCurrentPage] = useState('CustomerHomePage');
   // const navigation = useNavigation()
+  let isSeller:boolean|null = useSelector((state:{user:UserLogin})=>state.user.isSeller)
 
   const drawerOptions = {
     drawerActiveTintColor: '#45A053',
@@ -327,16 +329,16 @@ export default function MainNavigation()
   
   }
 
-  return (
-    <NavigationContainer>
-      {/* {farmer? */}
-      {!farmer ?
-        <ForFarmerSide />
-        :
-        <ForCustomerSide />
-      }
-    </NavigationContainer>
-  )
+return (
+  <NavigationContainer>
+    {farmer ? (
+      isSeller ? <ForFarmerSide /> : <RegisterShop />
+    ) : (
+      <ForCustomerSide />
+    )}
+  </NavigationContainer>
+);
+
 
 }
 
