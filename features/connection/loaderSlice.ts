@@ -1,12 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import {Loading} from '../../util/interfaces'
+import {LoadingState} from '../../util/interfaces'
 
-const initialLoadState: Loading = {
+const initialLoadState: LoadingState = {
   isLoading: false,
 };
 
 export const loaderSlice = createSlice({
-  name: "user",
+  name: "loader",
   initialState: initialLoadState,
   reducers: {
     setLoadingTrue: (state) => {

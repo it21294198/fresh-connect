@@ -1,11 +1,28 @@
 import React,{useState,useEffect} from 'react'
 import {fireStore} from '../../config/firebase'
 import { View, Text,TextInput, StyleSheet, TouchableOpacity, Image, ScrollView} from 'react-native'
+// imorot the loctaion selector
 
 export default function FarmerHomePage({navigation}:any) {
   const [locationAddress, setLocationAddress] = useState<any>('Address');
   const [email, setEmail] = useState<string>('email');
   const [shopLocationAddress, setShopLocationAddress] = useState('shop address');
+// const [locationData, setLocationData] = useState(second)
+/* locationDtaInterfecae: {coordinates: {
+            latitude: number, longitude: number
+          },
+          address:string
+}
+*/
+
+  // const handleConfirm = (data:locationDtaInterfecae) =>{
+  //   {address} = data;
+
+  //   setlocaData(data)
+  // }
+
+  // <LocationSelector navigation={navigation} handleConfirm={handleConfirm}/>
+
   useEffect(() => {
     // load user profile data
     // load 2 user shops
@@ -40,7 +57,7 @@ export default function FarmerHomePage({navigation}:any) {
       <View style={styles.profileTextView}>
         <Text style={styles.profileText}>Profile</Text>
       </View>
-      <View>
+      <View style={styles.profileImageView}>
         <Image source={require('../../assets/profile.jpg')} style={styles.image1}/>
         <TouchableOpacity onPress={changeProfile}>
           <Image source={require('../../assets/photo.png')} style={styles.image2}/>
@@ -125,6 +142,12 @@ export default function FarmerHomePage({navigation}:any) {
           </View>
         </View>
         <View style={styles.farmerTextView}>
+          <Text style={styles.texts}>Shop Description</Text>
+          <View style={styles.inputsView}>
+            <TextInput placeholder={'About the shop'} style={[styles.inputs,styles.singleLineInputs]}/>
+          </View>
+        </View>
+        <View style={styles.farmerTextView}>
           <Text style={styles.texts}>Shop contact number</Text>
           <View style={styles.inputsView}>
             <TextInput placeholder={'enter number'} keyboardType="numeric" style={[styles.inputs,styles.singleLineInputs]}/>
@@ -145,7 +168,7 @@ export default function FarmerHomePage({navigation}:any) {
       </View>
       <View style={styles.updateBtnContainer}>
         <TouchableOpacity onPress={updateShopProfile} style={styles.updateBtn}>
-          <Text style={[styles.updateBtnText,{marginHorizontal:1}]}>Update Shop</Text>
+          <Text style={[styles.updateBtnText,{marginHorizontal:1}]}>Update Shop Profile</Text>
         </TouchableOpacity>
       </View>
       </View>
@@ -162,11 +185,14 @@ const styles = StyleSheet.create({
     marginVertical:20
   },
   profileTextView:{
-    marginTop:0
+    marginVertical:20
   },
   profileText:{
     fontSize:30,
     fontWeight:'bold'
+  },
+  profileImageView:{
+    marginVertical:20
   },
   image1:{
     width: 200, // Set the desired width
@@ -203,7 +229,7 @@ const styles = StyleSheet.create({
   doubleRow:{
     flexDirection: 'row', // Arrange children horizontally
     justifyContent: 'space-between',
-    marginBottom:10    
+    marginVertical:20
   },
   doubleRowView:{
     // flex: 1, // Take equal horizontal space
@@ -214,16 +240,13 @@ const styles = StyleSheet.create({
     marginVertical:20
   },
   updateBtn:{
+    marginVertical:10,
     backgroundColor: '#45A053', // Background color
-    paddingLeft: 70,                // Padding
-    paddingRight: 70,                // Padding
-    paddingTop:20,
-    paddingBottom:20,
     borderRadius: 8,            // Border radius
     justifyContent: 'center',   // Center content vertically
     alignItems: 'center',
-    marginLeft:30,
-    marginRight:30
+    width:164,
+    height:40
   },
   updateBtnText:{
     color:'white',

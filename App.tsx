@@ -12,10 +12,11 @@ import Login from './screens/Login';
 import { ThemeProvider } from 'react-native-magnus';
 import Loading from './screens/Loading';
 import SignUp from './screens/SignUp';
-import { UserLogin } from './util/interfaces'
+import { UserLogin,LoadingState } from './util/interfaces'
 import { createStackNavigator } from '@react-navigation/stack';
 import CustomerProfile from './screens/CustomerSide/CustomerProfile';
 import SavedShops from './screens/CustomerSide/SavedShops';
+import RegisterShop from './screens/RegisterShop';
 
 const Stack = createStackNavigator();
 
@@ -23,6 +24,7 @@ export function Main() {
 
   let email:string|null = useSelector((state:{user:UserLogin})=> state.user.email)
   let type:boolean|null = useSelector((state:{user:UserLogin})=> state.user.type)
+  let loading:boolean = useSelector((state:{loader:LoadingState})=>state.loader.isLoading)
 
   useEffect(() => {
     NetInfo.fetch().then(state => {
@@ -30,6 +32,12 @@ export function Main() {
           console.log('Is connected?', state.isConnected);
         });
     }, []);
+
+  if(loading){
+    return(
+      <Loading/>
+    )
+  }
       
   if(email===null && type===null){
     return(
@@ -60,6 +68,7 @@ export default function App(){
           <Main/>
           {/* <CustomerProfile/> */}
           {/* <SavedShops/> */}
+          {/* <RegisterShop/> */}
         </Provider>
       </ThemeProvider>
   )

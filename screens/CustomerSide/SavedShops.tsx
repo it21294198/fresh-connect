@@ -1,6 +1,7 @@
 import { View, Text, ScrollView, Button, Modal,TextInput ,StyleSheet,TouchableOpacity,Image, FlatList} from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { fireStore } from '../../config/firebase';
+import TextLimitedByWords from '../../util/hooks/TextLimitedByWords'
 
 export default function SavedShops() {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -64,7 +65,7 @@ export default function SavedShops() {
         renderItem={({ item }) => (
           <View style={styles.savedCard}>
             <View style={styles.savedCardTitleBarView}>
-              <Text style={styles.savedCardTitle}>{item.title}</Text>
+              <TextLimitedByWords text={item.title}/>
                 <TouchableOpacity onPress={()=>pressFevIcon(item.id)}>
                   <View style={styles.fevIconView}>
                     <Image 
@@ -182,12 +183,6 @@ const styles = StyleSheet.create({
     height:120,
     borderBottomLeftRadius:10,
     borderBottomRightRadius:10,
-  },
-  savedCardTitle:{
-    paddingLeft:10,
-    paddingBottom:10,
-    fontSize:15,
-    fontWeight:'bold',
   },
   fevIconView:{
     position: 'absolute',
