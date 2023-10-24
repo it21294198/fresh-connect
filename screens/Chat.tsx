@@ -8,7 +8,8 @@ export default function Chat({ route, navigation }: any) {
   const { user,chatRoom } = route.params
 
   async function receiveMessages(){
-    const newMessages: any = await getMessages(chatRoom.id)
+    //console.log(chatRoom)
+    const newMessages: any = await getMessages(chatRoom)
     
     const formattedMessage = newMessages.map((msg:any)=> (
       {
@@ -21,7 +22,7 @@ export default function Chat({ route, navigation }: any) {
       },
     }
     ))
-    console.log(formattedMessage)
+    //console.log(formattedMessage)
     setMessages(formattedMessage)
   }
 
@@ -34,7 +35,7 @@ export default function Chat({ route, navigation }: any) {
     const msg:any={
       sender:user.id,
       senderName:user.name,
-      chatRoom: chatRoom.id,
+      chatRoom: chatRoom,
       message:newMessage[0].text,
       date: new Date().toDateString(),
       time: new Date().toLocaleTimeString(), 
