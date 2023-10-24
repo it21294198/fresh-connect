@@ -1,26 +1,22 @@
 import React,{useState,useEffect} from 'react'
 import {fireStore} from '../config/firebase'
-import { View, Text,TextInput, StyleSheet, TouchableOpacity, Image, ScrollView} from 'react-native'
+import { View, Text,TextInput, StyleSheet, TouchableOpacity, Image, ScrollView,Dimensions } from 'react-native'
+
+const screenWidth = Dimensions.get('window').width;
 
 export default function RegisterShop({navigation}:any) {
   const [locationAddress, setLocationAddress] = useState<any>('Address');
   const [email, setEmail] = useState<string>('email');
+  const [isChecked, setIsChecked] = useState(false);
   const [shopLocationAddress, setShopLocationAddress] = useState('shop address');
+
   useEffect(() => {
     // load user profile data
     // load 2 user shops
   }, []);
 
-  const updateProfile = () =>{
-    console.log('user updated');
-  }
-
-  const updateShopProfile = () =>{
+  const setShopProfile = () =>{
     console.log('shop profile updated');
-  }
-
-  const changeProfile = () =>{
-    console.log('update profile')
   }
 
   const changeShopProfileImage = () =>{
@@ -34,6 +30,10 @@ export default function RegisterShop({navigation}:any) {
   const selectShopLocation = () =>{
     console.log('select location from map');
   }
+
+  const handleCheckboxToggle = () => {
+    setIsChecked(!isChecked);
+  };
 
   return (
   <ScrollView contentContainerStyle={styles.mainContainer} showsVerticalScrollIndicator={false}>
@@ -60,6 +60,12 @@ export default function RegisterShop({navigation}:any) {
           </View>
         </View>
         <View style={styles.farmerTextView}>
+          <Text style={styles.texts}>Shop contact number</Text>
+          <View style={styles.inputsView}>
+            <TextInput placeholder={'enter number'} keyboardType="numeric" style={[styles.inputs,styles.singleLineInputs]}/>
+          </View>
+        </View>
+        <View style={styles.farmerTextView}>
           <Text style={styles.texts}>About the shop</Text>
           <View style={styles.inputsView}>
             <TextInput placeholder={'enter description'} style={[styles.inputs,styles.singleLineInputs]}/>
@@ -67,16 +73,16 @@ export default function RegisterShop({navigation}:any) {
         </View>
 
         <View style={styles.horizontalContainer}>
-        <View style={styles.farmerTextView}>
           <Text style={styles.texts}>Open hours</Text>
+        <View style={[styles.farmerTextView,{marginRight:50}]}>
           <View style={styles.inputsView}>
-            <TextInput placeholder="hh:mm" keyboardType="numeric" style={[styles.inputs,styles.singleLineInputs]}/>
+            <TextInput placeholder="to" keyboardType="numeric" style={[styles.inputs,styles.timeInput]}/>
           </View>
         </View>
         <View style={styles.farmerTextView}>
-          <Text style={styles.texts}>Open hours</Text>
+          {/* <Text style={styles.texts}>Open hours</Text> */}
           <View style={styles.inputsView}>
-            <TextInput placeholder="hh:mm" keyboardType="numeric" style={[styles.inputs,styles.singleLineInputs]}/>
+            <TextInput placeholder="no" keyboardType="numeric" style={[styles.inputs,styles.timeInput]}/>
           </View>
         </View>
         </View>
@@ -94,11 +100,21 @@ export default function RegisterShop({navigation}:any) {
           </View>
         </TouchableOpacity>
       </View>
-      <View style={styles.updateBtnContainer}>
-        <TouchableOpacity onPress={updateShopProfile} style={styles.updateBtn}>
-          <Text style={[styles.updateBtnText,{marginHorizontal:1}]}>Update Shop</Text>
-        </TouchableOpacity>
+
+      <View style={styles.acceptTextView}>
+        <Text style={styles.acceptText}>Accept Terms and Conditions</Text>
+        <TouchableOpacity
+        style={[styles.checkbox, isChecked ? styles.checked : styles.unchecked]}
+        onPress={handleCheckboxToggle}
+      >
+        {isChecked && <Text>X</Text>}
+      </TouchableOpacity>
       </View>
+      </View>
+      <View style={styles.bottomView}>
+          <TouchableOpacity onPress={setShopProfile} style={styles.updateBtn}>
+            <Text style={[styles.updateBtnText]}>Confirm</Text>
+          </TouchableOpacity>
       </View>
   </ScrollView>
   )
@@ -146,6 +162,9 @@ const styles = StyleSheet.create({
     padding:5,
     fontSize:18
   },
+  timeInput:{
+    width:100
+  },
   singleLineInputs:{
     width:320
   },
@@ -166,20 +185,19 @@ const styles = StyleSheet.create({
     marginVertical:20
   },
   updateBtn:{
+    marginVertical:10,
+    marginHorizontal:screenWidth/12,
     backgroundColor: '#45A053', // Background color
-    paddingLeft: 70,                // Padding
-    paddingRight: 70,                // Padding
-    paddingTop:20,
-    paddingBottom:20,
     borderRadius: 8,            // Border radius
     justifyContent: 'center',   // Center content vertically
     alignItems: 'center',
-    marginLeft:30,
-    marginRight:30
+    width:screenWidth/1.2,
+    height:screenWidth/8,
   },
   updateBtnText:{
     color:'white',
-    fontWeight:'bold'
+    fontWeight:'bold',
+    fontSize:18
   },
   pin:{
     width: 21, // Set the desired width
@@ -235,12 +253,41 @@ const styles = StyleSheet.create({
     fontSize:15,
     fontWeight:'bold',
   },
-  viewAllBtn:{
+  acceptTextView:{
+    flexDirection:'row',
+    marginTop:30
+  },
+  acceptText:{
+    marginHorizontal:30,
+    fontSize:14
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderWidth: 1,
+    borderColor: 'black',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checked: {
+    backgroundColor: 'black',
+  },
+  unchecked: {
+    backgroundColor: 'white',
   },
   farmerTextView:{
     marginVertical:20
   },
   horizontalContainer:{
     flexDirection:'row'
+  },
+  bottomView:{
+    flex: 0.5,
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    justifyContent:'center',
+    width:screenWidth // get the screen with accordingly
   }
 })

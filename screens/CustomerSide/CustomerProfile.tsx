@@ -1,5 +1,6 @@
 import React,{useState,useEffect} from 'react'
 import {fireStore} from '../../config/firebase'
+import TextLimitedByWords from '../../util/hooks/TextLimitedByWords'
 import { View, Text,TextInput, StyleSheet, TouchableOpacity, Image, ScrollView} from 'react-native'
 
 export default function CustomerProfile({navigation}:any) {
@@ -19,7 +20,7 @@ export default function CustomerProfile({navigation}:any) {
     },
     {
       id:2,
-      title:'helfsfsffs',
+      title:'helfsfsffs fsdfsfs fsdfssd fsdfsf gdfgd gdfgdfg',
       imageUrl:require('../../assets/splash.png')
     }
   ]
@@ -47,7 +48,7 @@ export default function CustomerProfile({navigation}:any) {
       <View style={styles.profileTextView}>
         <Text style={styles.profileText}>Profile</Text>
       </View>
-      <View>
+      <View style={styles.profilePicView}>
         <Image source={require('../../assets/profile.jpg')} style={styles.image1}/>
         <TouchableOpacity onPress={changeProfile}>
           <Image source={require('../../assets/photo.png')} style={styles.image2}/>
@@ -83,7 +84,7 @@ export default function CustomerProfile({navigation}:any) {
         <View style={styles.doubleRowView}>
           <Text style={styles.texts}>Phone</Text>
           <View style={styles.inputsView}>
-            <TextInput placeholder='Phone' style={[styles.inputs,styles.doubleLineInputs]}/>
+            <TextInput placeholder='Phone' keyboardType="numeric" style={[styles.inputs,styles.doubleLineInputs]}/>
           </View>
         </View>
       </View>
@@ -110,7 +111,7 @@ export default function CustomerProfile({navigation}:any) {
       <View style={styles.savedShopView}>
           <View style={styles.savedTopView}>
             <Text style={styles.mainText}>Saved Shops</Text>
-            <TouchableOpacity onPress={()=>viewAllShops()} style={styles.viewAllBtn}>
+            <TouchableOpacity onPress={viewAllShops}>
               <Text style={styles.subText}>View all</Text>
             </TouchableOpacity>
           </View>
@@ -119,7 +120,7 @@ export default function CustomerProfile({navigation}:any) {
             {savedShops.map((item, key) => (
               <TouchableOpacity>
                 <View style={styles.savedCard} key={item.id}>
-                  <Text style={styles.savedCardTitel}>{item.title}</Text>
+                  <TextLimitedByWords text={item.title}/>
                   <Image
                     resizeMode="cover"
                     source={item.imageUrl}
@@ -139,11 +140,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   profileTextView:{
-    marginTop:0
+    marginTop:0,
+    marginVertical:20
   },
   profileText:{
     fontSize:30,
     fontWeight:'bold'
+  },
+  profilePicView:{
+    marginVertical:20
   },
   image1:{
     width: 200, // Set the desired width
@@ -180,10 +185,9 @@ const styles = StyleSheet.create({
   doubleRow:{
     flexDirection: 'row', // Arrange children horizontally
     justifyContent: 'space-between',
-    marginBottom:10    
+    marginVertical:20
   },
   doubleRowView:{
-    // flex: 1, // Take equal horizontal space
     marginLeft: 10,    
   },
   updateBtnContainer:{
@@ -192,16 +196,13 @@ const styles = StyleSheet.create({
     marginRight:40
   },
   updateBtn:{
+    marginVertical:10,
     backgroundColor: '#45A053', // Background color
-    paddingLeft: 70,                // Padding
-    paddingRight: 70,                // Padding
-    paddingTop:20,
-    paddingBottom:20,
     borderRadius: 8,            // Border radius
     justifyContent: 'center',   // Center content vertically
     alignItems: 'center',
-    marginLeft:30,
-    marginRight:30
+    width:164,
+    height:40
   },
   updateBtnText:{
     color:'white',
@@ -255,12 +256,4 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius:10,
     borderBottomRightRadius:10,
   },
-  savedCardTitel:{
-    paddingLeft:10,
-    paddingBottom:10,
-    fontSize:15,
-    fontWeight:'bold',
-  },
-  viewAllBtn:{
-  }
 })
