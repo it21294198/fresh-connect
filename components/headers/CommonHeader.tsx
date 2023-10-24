@@ -3,6 +3,7 @@ import { Div, Button, Header, Icon } from 'react-native-magnus';
 import customHamburger from "../../assets/customHamburger.png"
 import infoIconEmpty from "../../assets/infoIconEmpty.png"
 import { Image } from 'react-native';
+import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 
 /**
  * 
@@ -20,34 +21,32 @@ export const CommonHeader = ({ navigation, title, headerRight }: { navigation: a
     };
 
     return (
-            <Div>
-                <Div >
-                    <Header flex={1} flexDir='row'
-                        p="lg"
-                        borderBottomWidth={1}
-                        borderBottomColor="gray200"
-                        alignment="center"
-                        textAlign='center'
+        <SafeAreaView style={{ backgroundColor: 'white' }}>
+            <Header flex={1} flexDir='row'
+                p="lg"
+                borderBottomWidth={1}
+                borderBottomColor="gray200"
+                alignment="center"
+                textAlign='center'
+                prefix={
+                    <Button bg="transparent" onPress={handleDrawer}
                         prefix={
-                            <Button bg="transparent" onPress={handleDrawer}
-                                prefix={
-                                    <Image source={customHamburger} style={{ width: 19, height: 21, resizeMode: 'contain' }} />
-                                }>
-                            </Button>
-                        }
-                        suffix={headerRight? <Button
-                            bg='transparent'
-                            color='black'
-                            rounded={25}
-                            prefix={
-                                <Image source={infoIconEmpty} style={{ width: 20, height: 20, resizeMode: 'contain', marginVertical: 0 }} />
-                            }
-                        />: null}
-                    >
-                        {title}
-                    </Header>
-                </Div>
-            </Div>
+                            <Image source={customHamburger} style={{ width: 19, height: 21, resizeMode: 'contain' }} />
+                        }>
+                    </Button>
+                }
+                suffix={headerRight ? <Button
+                    bg='transparent'
+                    color='black'
+                    rounded={25}
+                    prefix={
+                        <Image source={infoIconEmpty} style={{ width: 20, height: 20, resizeMode: 'contain', marginVertical: 0 }} />
+                    }
+                /> : null}
+            >
+                {title}
+            </Header>
+        </SafeAreaView>
 
     )
 }
