@@ -74,3 +74,4 @@ export interface ShopRegister{
   accept:boolean;
 }
 
+
