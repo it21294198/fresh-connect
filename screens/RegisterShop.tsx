@@ -3,10 +3,13 @@ import {fireStore} from '../config/firebase'
 import { View, Text,TextInput, StyleSheet, TouchableOpacity, Image, ScrollView,Dimensions,Button } from 'react-native'
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { ShopRegister } from '../util/interfaces';
+import { setUserInitials } from '../features/user/userSlice';
+import { useDispatch } from 'react-redux';
 
 const screenWidth = Dimensions.get('window').width;
 
 export default function RegisterShop({navigation}:any) {
+  const dispatch = useDispatch()
   const [locationAddress, setLocationAddress] = useState<any>('Address');
   const [email, setEmail] = useState<string>('email');
   const [isChecked, setIsChecked] = useState(false);
@@ -27,6 +30,7 @@ export default function RegisterShop({navigation}:any) {
   useEffect(() => {
     // load user profile data
     // load 2 user shops
+    setError(false)
   }, []);
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -65,7 +69,9 @@ const setShopProfile = () =>{
     }else{
       setError(true)
       console.log('error on register');
+      dispatch(setUserInitials({isSeller:true}))
     }
+    dispatch(setUserInitials({isSeller:true}))
   }
   
   const changeShopProfileImage = () =>{
@@ -209,6 +215,9 @@ const setShopProfile = () =>{
         {isChecked && <Text></Text>}
       </TouchableOpacity>
       </View>
+      </View>
+      <View style={error?styles.errorView:{display:'none'}}>
+        <Text style={styles.error}>Incorrect Details</Text>
       </View>
       <View style={styles.bottomView}>
           <TouchableOpacity onPress={setShopProfile} style={styles.updateBtn}>
@@ -389,5 +398,18 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     justifyContent:'center',
     width:screenWidth // get the screen with accordingly
-  }
+  },
+  errorView:{
+    alignItems:'center',
+    backgroundColor:'red',
+    borderRadius:20,
+    marginHorizontal:40,
+    marginVertical:10
+  },
+  error:{
+    color:'white',
+    fontWeight:'bold',
+    fontSize:15,
+    marginHorizontal:50
+  },
 })

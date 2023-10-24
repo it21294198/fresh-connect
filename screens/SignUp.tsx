@@ -21,35 +21,6 @@ export default function SignUp({navigation}:any) {
     setLoginError(false)
   }, []);
   
-  // const handleSignUp = async () => {
-  //   // Perform user registration logic here and call signUp function if successful
-  //   if (user.email && user.password && user.lastName && user.firstName) {
-  //     dispatch(setLoadingTrue())
-  //     createUserWithEmailAndPassword(auth, user.email, user.password)
-  //     .then((userCredential) => {
-  //       const user = userCredential.user;
-  //       console.log(user);
-  //       // add other details to fireStore
-  //       await setDoc(doc(fireStore, "cities", "LA"), {
-  //         name: "Los Angeles",
-  //         state: "CA",
-  //         country: "USA"
-  //       });
-  //       dispatch(setLoadingFalse())
-  //       navigation.navigate('Login');
-  //     })
-  //     .catch((error:any) => {
-  //       const errorCode = error.code;
-  //       const errorMessage = error.message;
-  //       console.log(errorCode,errorMessage);
-  //       setLoginError(true)
-  //       dispatch(setLoadingFalse())
-  //     });
-  //   }else{
-  //     setLoginError(true)
-  //   }
-  // }
-
 const handleSignUp = async () => {
   if (user.email && user.password && user.lastName && user.firstName) {
     dispatch(setLoadingTrue());
