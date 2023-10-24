@@ -1,6 +1,8 @@
 import React,{useState,useEffect} from 'react'
 import {fireStore} from '../config/firebase'
-import { View, Text,TextInput, StyleSheet, TouchableOpacity, Image, ScrollView,Dimensions } from 'react-native'
+import { View, Text,TextInput, StyleSheet, TouchableOpacity, Image, ScrollView,Dimensions,Button } from 'react-native'
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { ShopRegister } from '../util/interfaces';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -8,35 +10,96 @@ export default function RegisterShop({navigation}:any) {
   const [locationAddress, setLocationAddress] = useState<any>('Address');
   const [email, setEmail] = useState<string>('email');
   const [isChecked, setIsChecked] = useState(false);
-  const [shopLocationAddress, setShopLocationAddress] = useState('shop address');
+  const [timeInput, setTimeInput] = useState(null);
+  const [error, setError] = useState<boolean|null>(null);
+  const [openAt, setOpenAt] = useState(true);
+  const [farmerRegistrForm, setFarmerRegistrForm] = useState<ShopRegister>({
+    shopName:'',
+    email:'',
+    contactNo:0,
+    description:'',
+    openAt:undefined,
+    closeAt:undefined,
+    address:'',
+    accept:false
+  });
 
   useEffect(() => {
     // load user profile data
     // load 2 user shops
   }, []);
 
-  const setShopProfile = () =>{
-    console.log('shop profile updated');
-  }
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleConfirm = (time:any) => {
+    const timeStore = time
+    if(openAt===true){
+      setFarmerRegistrForm({...farmerRegistrForm,openAt:timeStore})
+      console.log('ran true');
+    }else{
+      setFarmerRegistrForm({...farmerRegistrForm,closeAt:timeStore})
+      console.log('ran false');
+    }
+    hideDatePicker();
+  };
+
+const setShopProfile = () =>{
+
+    if(farmerRegistrForm.accept){
+      setError(false)
+      for (const key in farmerRegistrForm) {
+        if (farmerRegistrForm.hasOwnProperty(key)) {
+          console.log(`${key}:`, farmerRegistrForm[key]);
+        }
+      }
+      // send the data to database
+      console.log('shop profile updated');
+    }else{
+      setError(true)
+      console.log('error on register');
+    }
+  }
+  
   const changeShopProfileImage = () =>{
     console.log('update shop image');
   }
-
+  
   const selectLocation = () =>{
     console.log('select location from map');
   }
-
+  
   const selectShopLocation = () =>{
     console.log('select location from map');
   }
-
+  
   const handleCheckboxToggle = () => {
+    setFarmerRegistrForm({...farmerRegistrForm,accept:!farmerRegistrForm.accept})
     setIsChecked(!isChecked);
   };
-
+  
+  const timePicker = () =>{
+    return(
+      <View>
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="time"
+        onConfirm={handleConfirm}
+        onCancel={hideDatePicker}
+        />
+    </View>
+    )
+  }
+  
   return (
-  <ScrollView contentContainerStyle={styles.mainContainer} showsVerticalScrollIndicator={false}>
+    <ScrollView contentContainerStyle={styles.mainContainer} showsVerticalScrollIndicator={false}>
       <View style={styles.farmerProfileView}>
         <View style={styles.profileTextView}>
           <Text style={styles.profileText}>Register</Text>
@@ -50,41 +113,73 @@ export default function RegisterShop({navigation}:any) {
         <View style={styles.farmerTextView}>
           <Text style={styles.texts}>Shop Name</Text>
           <View style={styles.inputsView}>
-            <TextInput placeholder={'enter name'} style={[styles.inputs,styles.singleLineInputs]}/>
+            <TextInput 
+            placeholder={'Enter name'} 
+            onChangeText={(text) => setFarmerRegistrForm({ ...farmerRegistrForm, shopName: text })}
+            style={[styles.inputs,styles.singleLineInputs]}/>
           </View>
         </View>
         <View style={styles.farmerTextView}>
           <Text style={styles.texts}>Contact Email</Text>
           <View style={styles.inputsView}>
-            <TextInput placeholder={'enter email'} style={[styles.inputs,styles.singleLineInputs]}/>
+            <TextInput 
+            placeholder={'Enter email'} 
+            onChangeText={(text) => setFarmerRegistrForm({ ...farmerRegistrForm, email: text })}
+            style={[styles.inputs,styles.singleLineInputs]}/>
           </View>
         </View>
         <View style={styles.farmerTextView}>
           <Text style={styles.texts}>Shop contact number</Text>
           <View style={styles.inputsView}>
-            <TextInput placeholder={'enter number'} keyboardType="numeric" style={[styles.inputs,styles.singleLineInputs]}/>
+            <TextInput 
+            placeholder={'Enter number'} 
+            onChangeText={(text) => {
+              const numberValue = parseInt(text, 10); // Parse the input as an integer
+              setFarmerRegistrForm({ ...farmerRegistrForm, contactNo: numberValue });
+            }}
+            keyboardType="numeric" 
+            style={[styles.inputs,styles.singleLineInputs]}/>
           </View>
         </View>
         <View style={styles.farmerTextView}>
           <Text style={styles.texts}>About the shop</Text>
           <View style={styles.inputsView}>
-            <TextInput placeholder={'enter description'} style={[styles.inputs,styles.singleLineInputs]}/>
+            <TextInput 
+            placeholder={'Enter description'} 
+            onChangeText={(text) => setFarmerRegistrForm({ ...farmerRegistrForm, description: text })}
+            style={[styles.inputs,styles.singleLineInputs]}/>
           </View>
         </View>
 
+        {timePicker()}
         <View style={styles.horizontalContainer}>
           <Text style={styles.texts}>Open hours</Text>
-        <View style={[styles.farmerTextView,{marginRight:50}]}>
-          <View style={styles.inputsView}>
-            <TextInput placeholder="to" keyboardType="numeric" style={[styles.inputs,styles.timeInput]}/>
+        <TouchableOpacity onPress={()=>{
+          setOpenAt(true)
+          showDatePicker()
+        }}>
+          <View style={[styles.farmerTextView,{marginRight:50}]}>
+              <View style={styles.inputsView}>
+                <TextInput 
+                placeholder={'From'} 
+                editable={false} 
+                style={[styles.inputs,styles.timeInput]}/>
+              </View>
           </View>
-        </View>
-        <View style={styles.farmerTextView}>
-          {/* <Text style={styles.texts}>Open hours</Text> */}
-          <View style={styles.inputsView}>
-            <TextInput placeholder="no" keyboardType="numeric" style={[styles.inputs,styles.timeInput]}/>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={()=>{
+          setOpenAt(false)
+          showDatePicker()
+        }}>
+          <View style={styles.farmerTextView}>
+            <View style={styles.inputsView}>
+              <TextInput 
+              placeholder={'To'} 
+              editable={false} 
+              style={[styles.inputs,styles.timeInput]}/>
+            </View>
           </View>
-        </View>
+        </TouchableOpacity>
         </View>
 
         <View>
@@ -96,7 +191,11 @@ export default function RegisterShop({navigation}:any) {
             source={require('../assets/pin.png')} // Replace with the path to your image
             style={styles.pin}/>
             {/* this address will be changed by map */}
-            <TextInput placeholder={shopLocationAddress} editable={false} style={[styles.inputs,styles.singleLineInputs]}/>
+            <TextInput 
+            placeholder={'Enter shop address'} 
+            onChangeText={(text) => setFarmerRegistrForm({ ...farmerRegistrForm, address: text })}
+            editable={false} 
+            style={[styles.inputs,styles.singleLineInputs]}/>
           </View>
         </TouchableOpacity>
       </View>
@@ -106,8 +205,8 @@ export default function RegisterShop({navigation}:any) {
         <TouchableOpacity
         style={[styles.checkbox, isChecked ? styles.checked : styles.unchecked]}
         onPress={handleCheckboxToggle}
-      >
-        {isChecked && <Text>X</Text>}
+        >
+        {isChecked && <Text></Text>}
       </TouchableOpacity>
       </View>
       </View>
@@ -118,6 +217,7 @@ export default function RegisterShop({navigation}:any) {
       </View>
   </ScrollView>
   )
+// }
 }
 
 const styles = StyleSheet.create({
@@ -270,7 +370,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   checked: {
-    backgroundColor: 'black',
+    backgroundColor: 'green',
   },
   unchecked: {
     backgroundColor: 'white',
