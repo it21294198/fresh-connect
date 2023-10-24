@@ -1,7 +1,7 @@
 import { View, ScrollView, TouchableOpacity, StyleSheet, } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { fireStore } from '../../config/firebase';
-import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, QuerySnapshot } from 'firebase/firestore';
 import { Div, Button, Header, Icon, Text } from 'react-native-magnus';
 import { MapDisplayHeader } from '../../components/headers/MapDisplayHeader';
 import { CommonHeader } from '../../components/headers/CommonHeader';
@@ -12,34 +12,126 @@ import { GOOGLE_MAPS_API_KEY } from "@env";
 import { locationObjectInterface, userSelectedCoordinateLocation } from '../../util/interfaces';
 import * as Location from 'expo-location';
 import LocationSelector from '../../components/LocationSelector';
+import { getShops } from '../../util/dbFunctions';
+import { shopDataInterface, LocationObj } from '../../util/interfaces';
+import { getCoordDistance } from '../../util/geoCoordinateFunctions';
 
 
 export default function ShopMapDisplay({ navigation }: any)
 {
-  console.log(GOOGLE_MAPS_API_KEY);
-  const shopColRef = collection(fireStore, 'shops');
-
+  const MAXDISTANCE = 2000;
   const [location, setLocation] = useState<Location.PermissionStatus>();
   const [errorMsg, setErrorMsg] = useState('');
   const [status, setStatus] = useState('');
+  const [shopList, setShopList] = useState<shopDataInterface[] | undefined>();
+  const [nearbyShops, setNearbyShops] = useState<shopDataInterface[] | undefined>();
+  const [currentUserLocation, setCurrentUserLocation] = useState<LocationObj>();
+
+  // defined the initial load location
+  const [mapRegion, setmapRegion] = useState({
+    latitude: 6.908767,
+    longitude: 79.966993,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
+
+  // updates when a user navigates to a new region
+  const [userSelectedRegion, setUserSelectedRegion] = useState<locationObjectInterface>()
+  const [selectedAddress, setSelectedAddress] = useState<string | undefined>();
+  const [calculatedDistancetest, setCalculatedDistancetest] = useState<number>();
+  const [shopDistances, setShopDistances] = useState<number[]>([]);
+  // data for userselected marker
+  // const [userSelectedCoordinateLocation, setUserSelectedCoordinateLocation] = useState<userSelectedCoordinateLocation | locationObjectInterface>({
+  const [userSelectedCoordinateLocation, setUserSelectedCoordinateLocation] = useState<locationObjectInterface>({
+    latitude: currentUserLocation?.coords.latitude || 0,
+    longitude: currentUserLocation?.coords.longitude || 0,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
+
+  // marker coordinates
+  const [selectedRegion, setSelectedRegion] = useState({
+    latitude: 7.290572,
+    longitude: 80.633728,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
 
   useEffect(() =>
   {
     (async () =>
     {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted')
+      try
       {
-        setStatus('Permission to access location was denied');
-        return;
-      } else
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        let currentLocation = await Location.getLastKnownPositionAsync();
+        if (status !== 'granted')
+        {
+          setStatus('Permission to access location was denied');
+          return;
+        } else
+        {
+          console.log('Access granted!!')
+          setStatus(status)
+        }
+        if (currentLocation)
+        {
+          setCurrentUserLocation(currentLocation);
+        } else
+        {
+          console.log('current user location not found');
+        }
+        const latitude = currentUserLocation?.coords.latitude;
+        const longitude = currentUserLocation?.coords.longitude;
+        const firstShop = shopList?.[2];
+        const coordinates: { latitude: number; longitude: number; } | undefined = firstShop?.coordinates;
+        // const distance = getCoordDistance({ coord1: { latitude, longitude }, coord2: coordinates })
+        const calculateDistances = async () =>
+        {
+          const distances = await Promise.all(
+            shopList?.map((shop) =>
+            {
+              return getCoordDistance(
+                {
+                  coord1: {
+                    latitude: currentUserLocation?.coords.latitude || 0,
+                    longitude: currentUserLocation?.coords.longitude || 0,
+                  },
+                  coord2: shop.coordinates,
+                }
+              );
+            }) || []
+          );
+          setShopDistances(distances);
+        };
+        calculateDistances();
+        console.log(shopDistances);
+        const nearbyShops = shopList?.filter((shop, index) => {
+          return shopDistances[index] <= MAXDISTANCE;
+        });
+        setNearbyShops(nearbyShops);
+        
+      } catch (error)
       {
-        console.log('Access granted!!')
-        setStatus(status)
+        console.log('Encountered an unknown error');
+
       }
 
     })();
+  }, [shopList]);
+
+  useEffect(() =>
+  {
+    const loader = async () =>
+    {
+      const shopListItems: shopDataInterface[] = await getShops();
+      setShopList(shopListItems);
+    }
+    loader();
+    console.log('here is the shopList', shopList);
+
   }, []);
+
 
   const watch_location = async () =>
   {
@@ -59,36 +151,7 @@ export default function ShopMapDisplay({ navigation }: any)
     }
   };
 
-
-  // defined the initial load location
-  const [mapRegion, setmapRegion] = useState({
-    latitude: 7.290572,
-    longitude: 80.633728,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
-
-  // updates when a user navigates to a new region
-  const [userSelectedRegion, setUserSelectedRegion] = useState<locationObjectInterface>()
-  const [selectedAddress, setSelectedAddress] = useState<string | undefined>();
-  // data for userselected marker
-  // const [userSelectedCoordinateLocation, setUserSelectedCoordinateLocation] = useState<userSelectedCoordinateLocation | locationObjectInterface>({
-  const [userSelectedCoordinateLocation, setUserSelectedCoordinateLocation] = useState<locationObjectInterface>({
-    latitude: 7.290572,
-    longitude: 80.633728,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
-
-  // marker coordinates
-  const [selectedRegion, setSelectedRegion] = useState({
-    latitude: 7.290572,
-    longitude: 80.633728,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
-
-  const myApiKey = ""
+  const key = ""
   function getAddressFromCoordinates({ latitude, longitude }: { latitude: number, longitude: number }): Promise<string | undefined>
   {
     return new Promise((resolve, reject) =>
@@ -99,7 +162,7 @@ export default function ShopMapDisplay({ navigation }: any)
         ',' +
         longitude +
         '&key=' +
-        myApiKey,
+        key,
       )
         .then(response => response.json())
         .then(responseJson =>
@@ -136,13 +199,14 @@ export default function ShopMapDisplay({ navigation }: any)
     }));
     const addressString = await getAddressFromCoordinates(event);
     setSelectedAddress(addressString)
-    console.log('Address from map on drag (through handleLocationDrag)',addressString);
+    console.log('Address from map on drag (through handleLocationDrag)', addressString);
 
     console.log('called handleLocationDrag: ', event);
   }
 
   const handleMarkerPress = (event: any) =>
   {
+
     console.log('called handleMarkerPress: ', event);
   }
 
@@ -154,7 +218,8 @@ export default function ShopMapDisplay({ navigation }: any)
         longitude: number
       }
     } = data.nativeEvent;
-
+    console.log('current user location', currentUserLocation);
+    console.log('NearBy shops', nearbyShops);
 
     setUserSelectedCoordinateLocation((previousState) => ({
       ...previousState,
@@ -163,7 +228,7 @@ export default function ShopMapDisplay({ navigation }: any)
     }));
     const addressString = await getAddressFromCoordinates(coordinate);
     setSelectedAddress(addressString)
-    console.log('Address from map on press (through setUserSelectedCoordinateLocation)',addressString);
+    console.log('Address from map on press (through setUserSelectedCoordinateLocation)', addressString);
 
     setTimeout(() =>
     {
@@ -171,9 +236,10 @@ export default function ShopMapDisplay({ navigation }: any)
     }, 5000);
   }
 
-  const handlePressConfirm = (coordinates: locationObjectInterface, selectedAddress: string | undefined) =>{
+  const handlePressConfirm = (coordinates: locationObjectInterface, selectedAddress: string | undefined) =>
+  {
     console.log('handlePressConfirm called ########');
-    
+
   }
 
   return (
@@ -185,42 +251,30 @@ export default function ShopMapDisplay({ navigation }: any)
           style={styles.map}
           showsUserLocation={true}
           loadingEnabled={true}
+          showsScale={true}
+          showsCompass={true}
+          showsMyLocationButton={true}
+          userLocationUpdateInterval={10000}
+          followsUserLocation={true}
+
           initialRegion={mapRegion}
           onPress={userSelectedCoordinate}
           onRegionChangeComplete={handleRegionChange}
           onMarkerPress={handleMarkerPress}
         >
-          <Marker
-            style={styles.markerToolTip}
-            coordinate={userSelectedCoordinateLocation}
-            title='Your shop address'
-            description='lorem ipsum dollar lament lol lmfao why wwhen who then react next js sample test'
-            draggable
-            onDragEnd={(e) => handleLocationDrag(e.nativeEvent.coordinate)}
-          >
-          </Marker>
+          {nearbyShops?.map((shop, index) => (
+            <Marker
+              key={index}
+              style={styles.markerToolTip}
+              coordinate={shop.coordinates}
+              title={shop.shopName}
+              description={shop.description}
+              onPress={handleMarkerPress}
+            >
+              
+            </Marker>
+          ))}
         </MapView>
-      </Div>
-      <Div style={styles.actioncard}>
-        <Text
-          fontSize="sm"
-          color='#9D9D9D'
-          mt={10}
-          ml={15}
-        >Your Location</Text>
-        <Text
-          fontSize="sm"
-          color='#343434'
-          mt={10}
-          ml={15}>{selectedAddress ? <Text> {selectedAddress}</Text> : 'Fetching location'}</Text>
-        <Button
-          alignSelf='center'
-          w='90%'
-          rounded={8}
-          bg='#45A053'
-          mt={20}
-          mb={15}
-        >Confirm</Button>
       </Div>
     </Div>
   );
