@@ -16,7 +16,7 @@ import FAQ from '../screens/FAQ';
 import UpdateStocks from '../screens/FarmerSide/UpdateStocks';
 import SelectUser from '../screens/SelectUser';
 import { useSelector } from 'react-redux';
-import { View, Image, Button } from 'react-native';
+import { View, Image} from 'react-native';
 import { customDrawerPropsInterface, UserLogin } from '../util/interfaces';
 import Svg, { Path } from "react-native-svg"
 import chatIcon from "../assets/Chat.svg"
