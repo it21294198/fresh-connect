@@ -48,6 +48,7 @@ import { paths } from '../assets/strings';
 import { Button, Div, Text } from "react-native-magnus";
 import { getHeaderTitle } from '@react-navigation/elements';
 import { DrawerProfile } from '../components/DrawerProfile';
+import { TestFile } from '../screens/CustomerSide/TestFile';
 
 
 export default function MainNavigation()
@@ -70,6 +71,7 @@ export default function MainNavigation()
         />}
       ></Button>
     ),
+    headerShown: false,
   }
 
   const drawerHomeOptions = {
@@ -214,6 +216,7 @@ export default function MainNavigation()
         <Tab.Screen name="SavedShops" component={SavedShops} />
         <Tab.Screen name="Chats" component={Chats} />
         <Tab.Screen name="CustomerProfile" component={CustomerProfile} />
+        <Tab.Screen name="Test" component={TestFile} />
       </Tab.Navigator>
 
     )
