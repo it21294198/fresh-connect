@@ -8,7 +8,8 @@ const initialUserState:UserLogin ={
     firstName:null,
     lastName:null,
     contactNo:null,
-    userId:null
+    userId:null,
+    isSeller:null
 }
 
 export const userSlice = createSlice({
@@ -37,6 +38,9 @@ export const userSlice = createSlice({
             }
             if (action.payload.userId !== undefined) {
                 state.userId = action.payload.userId;
+            }
+            if (action.payload.isSeller !== undefined) {
+                state.isSeller = action.payload.isSeller;
             }
         },
         swithcUser:(state)=>{

@@ -56,13 +56,14 @@ const handleSignUp = async () => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, user.email, user.password);
       const userRef = userCredential.user;
-      console.log(user);
+      // console.log(user);
       
       // Add other details to Firestore
       await setDoc(doc(fireStore, "users", userRef.uid), {
         email:user.email,
         firstName:user.firstName,
         lastName:user.lastName,
+        isSeller:false
       });
       dispatch(setLoadingFalse());
       navigation.navigate('Login');
