@@ -93,8 +93,7 @@ console.log(email) // you can use this any where
 ### How to use loading
 ```ts
 import { useDispatch } from 'react-redux';
-import { loaderSlice } from '../features/connection/loaderSlice';
-
+import { setLoadingFalse, setLoadingTrue } from '../features/connection/loaderSlice';
 //palace this near useStates area
 const dispatch = useDispatch()
 

@@ -1,12 +1,24 @@
 import React,{useState,useEffect} from 'react'
 import {fireStore} from '../../config/firebase'
 import { View, Text,TextInput, StyleSheet, TouchableOpacity, Image, ScrollView} from 'react-native'
+import { useDispatch, useSelector } from 'react-redux';
+import { setLoadingFalse, setLoadingTrue } from '../../features/connection/loaderSlice';
+import { UserLogin } from '../../util/interfaces';
+import { doc, getDoc } from 'firebase/firestore';
 // imorot the loctaion selector
 
 export default function FarmerHomePage({navigation}:any) {
+  const dispatch = useDispatch()
+  let uId:string|null = useSelector((state:{user:UserLogin})=>state.user.userId)
+  let userEmail:string|null = useSelector((state:{user:UserLogin})=>state.user.email)
   const [locationAddress, setLocationAddress] = useState<any>('Address');
-  const [email, setEmail] = useState<string>('email');
   const [shopLocationAddress, setShopLocationAddress] = useState('shop address');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [gender, setGender] = useState('');
+  const [contactNo, setContactNo] = useState(0);
+  const [address, setAddress] = useState('');
+
 // const [locationData, setLocationData] = useState(second)
 /* locationDtaInterfecae: {coordinates: {
             latitude: number, longitude: number
@@ -23,10 +35,33 @@ export default function FarmerHomePage({navigation}:any) {
 
   // <LocationSelector navigation={navigation} handleConfirm={handleConfirm}/>
 
-  useEffect(() => {
-    // load user profile data
-    // load 2 user shops
-  }, []);
+
+
+//palace this near useStates area
+
+
+useEffect(() => {
+  // load user profile data
+  const loadUserProfile = async () => {
+    dispatch(setLoadingTrue());
+    try {
+      const docRef = doc(fireStore, 'users', uId);
+      const docSnap = await getDoc(docRef);
+
+      console.log(docSnap);
+      // setFirstName(docSnap.data()?.firstName)
+      // setLastName(docSnap.data()?.lastName)
+
+      // load 2 user shops
+
+      dispatch(setLoadingFalse());
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+    }
+  };
+  loadUserProfile();
+}, []);
+
 
   const updateProfile = () =>{
     console.log('user updated');
@@ -67,20 +102,20 @@ export default function FarmerHomePage({navigation}:any) {
         <View style={styles.doubleRowView}>
           <Text style={styles.texts}>First Name</Text>
           <View style={styles.inputsView}>
-            <TextInput placeholder='first name' style={[styles.inputs,styles.doubleLineInputs]}  underlineColorAndroid="transparent"/>
+            <TextInput placeholder={firstName} style={[styles.inputs,styles.doubleLineInputs]}  underlineColorAndroid="transparent"/>
           </View>
         </View>
         <View style={styles.doubleRowView}>
           <Text style={styles.texts}>Last Name</Text>
           <View style={styles.inputsView}>
-            <TextInput placeholder='last name' style={[styles.inputs,styles.doubleLineInputs]}/>
+            <TextInput placeholder={lastName} style={[styles.inputs,styles.doubleLineInputs]}/>
           </View>
         </View>
       </View>
       <View>
         <Text style={styles.texts}>Email</Text>
         <View style={styles.inputsView}>
-          <TextInput placeholder={email} style={[styles.inputs,styles.singleLineInputs]}/>
+          <TextInput placeholder={userEmail} editable={false} style={[styles.inputs,styles.singleLineInputs]}/>
         </View>
       </View>
       <View style={styles.doubleRow}>
