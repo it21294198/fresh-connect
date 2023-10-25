@@ -237,7 +237,7 @@ export default function MainNavigation()
     //Removed profile screen
     return (
       // <Drawer.Navigator initialRouteName="CustomerHomePage" screenOptions={drawerOptions}
-      <Drawer.Navigator initialRouteName="CustomerHomePage" screenOptions={drawerOptions}
+      <Drawer.Navigator initialRouteName="CustomerHomePage" screenOptions={{drawerOptions, headerShown:false}}
         drawerContent={(props) =>
         {
           return (
@@ -309,7 +309,7 @@ export default function MainNavigation()
 
   function Chats(){
     return(
-      <Stack.Navigator initialRouteName='CustomerChatList'>
+      <Stack.Navigator initialRouteName='CustomerChatList' screenOptions={{ headerShown: false }}>
         <Stack.Screen name='ChatList' options={{ title: 'Chats List' }} component={CustomerChatList}/>
         <Stack.Screen name='Chat' options={({route}:any)=>({title: route.params.chatRoom.name})} component={Chat}/>
       </Stack.Navigator>
@@ -318,7 +318,7 @@ export default function MainNavigation()
   
   function CustomerHomeStack(){
     return(
-      <Stack.Navigator initialRouteName='CustomerHomePage'>
+      <Stack.Navigator initialRouteName='CustomerHomePage' screenOptions={{ headerShown: false }}>
         <Stack.Screen name='CustomerHomePage' options={{ title: 'Home' }} component={CustomerHomePage}/>
         <Stack.Screen name='CustomerShopPage' options={{title: 'Shop Page'}} component={CustomerShopPage}/>
         <Stack.Screen name='CustomerProductPage' options={({route}:any)=>({title: route.params.product.name})} component={CustomerProductPage}/>

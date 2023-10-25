@@ -2,16 +2,18 @@ import { View, ScrollView, StyleSheet, FlatList, TouchableOpacity } from 'react-
 import React, { useState, useEffect } from 'react';
 import { fireStore } from '../../config/firebase'
 import { collection, addDoc, serverTimestamp, updateDoc, getDocs, query, where } from 'firebase/firestore';
-import { Input, Icon, Button, Div, Text, Header, Image } from "react-native-magnus";
+import { Input, Icon, Button, Div, Text, Header, Image, Modal } from "react-native-magnus";
 import { getUser } from '../ChatController';
 import { useDispatch } from 'react-redux';
 import { loaderSlice, setLoadingFalse, setLoadingTrue } from '../../features/connection/loaderSlice';
+import { CustomerHeader } from '../../components/headers/CustomerHeader';
 
 export default function CustomerProductPage({ route, navigation }: any) {
     const { user, shop, product } = route.params
+
     const newPrice = "Rs " + product.price + " per " + product.per + product.qtUnit;
     const dispatch = useDispatch()
-    
+
 
     async function navigateChat() {
         //const participants = [user.id,shop.userId]
@@ -24,8 +26,8 @@ export default function CustomerProductPage({ route, navigation }: any) {
             const userChatRoomsSnapshot = await getDocs(userChatRoomsQuery);
             const shopChatRoomsSnapshot = await getDocs(shopChatRoomsQuery);
 
-            const userChatRooms:any = [];
-            const shopChatRooms:any = [];
+            const userChatRooms: any = [];
+            const shopChatRooms: any = [];
 
             //Get the chat room id of the chat rooms the user is at
             userChatRoomsSnapshot.forEach((doc) => {
@@ -37,7 +39,7 @@ export default function CustomerProductPage({ route, navigation }: any) {
             });
 
             // Find chat rooms that both users share
-            const commonChatRooms = userChatRooms.filter((roomId:string) => shopChatRooms.includes(roomId));
+            const commonChatRooms = userChatRooms.filter((roomId: string) => shopChatRooms.includes(roomId));
             //console.log(commonChatRooms)
 
             const userName = await getUser(user.id)
@@ -45,7 +47,7 @@ export default function CustomerProductPage({ route, navigation }: any) {
             const chatName = userName + " chat with " + shopUserName
 
             // const querySnapshot = await getDocs(q);
-            if (!(commonChatRooms.length===0)) {
+            if (!(commonChatRooms.length === 0)) {
                 console.log("Chat Room Available")
                 const chatRoomId = commonChatRooms[0];
                 dispatch(setLoadingFalse());
@@ -65,10 +67,12 @@ export default function CustomerProductPage({ route, navigation }: any) {
             }
         } catch (error) {
             console.log("Error Navigating: ", error)
-        }      
+        }
     }
 
     return (
+        <>
+        <CustomerHeader navigation={navigation} title={product.name} headerRight={false} back={true} />
         <ScrollView style={styles.scrollview}>
             <View style={styles.container}>
                 <Div m="sm" rounded={10} shadow='sm' p={10} bg='white'>
@@ -165,12 +169,10 @@ export default function CustomerProductPage({ route, navigation }: any) {
                             <Button w={131} h={35} mt="md" bg="#45A053" fontSize="md" rounded={17.5}>Contact</Button>
                         </Div>
                     </Div>
-                    <Div row flex={1} justifyContent='center'>
-                        <Button w={131} h={35} mt="md" bg="white" borderWidth={1} borderColor="#45A053" color="#45A053" underlayColor="red100" fontSize="md" rounded={17.5}>Price Calculator</Button>
-                    </Div>
-                </Div>
+                </Div>                
             </View>
         </ScrollView>
+        </>
     );
 }
 

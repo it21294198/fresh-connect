@@ -4,6 +4,8 @@ import { fireStore } from '../../config/firebase';
 import { collection, getDocs, DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 import { Input, Icon, Button, Div, Text, Header, Image } from "react-native-magnus";
 import { getSavedShops, getShopById, getShops } from './CustomerController';
+import { CustomerHeader } from '../../components/headers/CustomerHeader';
+import { CommonHeader } from '../../components/headers/CommonHeader';
 
 
 export default function CustomerHomePage({ navigation }: any) {
@@ -122,65 +124,71 @@ export default function CustomerHomePage({ navigation }: any) {
 
 
   return (
-    <ScrollView style={styles.scrollview}>
-      <View style={styles.container}>
-        <Input
-          placeholder="Search"
-          p={10}
-          m={20}
-          onChangeText={text => setKeyword(text)}
-          focusBorderColor="green400"
-          suffix={<Icon name="search" fontFamily="Feather" />}
-        />
-        <View style={styles.divider} />
-        <Div row justifyContent="center" alignItems="center">
-          <Button
-            mt="lg"
-            px="xl"
-            py="lg"
-            bg="white"
-            borderWidth={1}
-            borderColor="#45A053"
-            color="#45A053"
-            underlayColor="red100"
-          >
-            Vegetables
-          </Button>
-          <Button
-            mt="lg"
-            px="xl"
-            py="lg"
-            bg="white"
-            mx="xl"
-            borderWidth={1}
-            borderColor="#45A053"
-            color="#45A053"
-            underlayColor="red100"
-          >
-            Fruits
-          </Button>
-          <Button
-            mt="lg"
-            px="xl"
-            py="lg"
-            bg="white"
-            borderWidth={1}
-            borderColor="#45A053"
-            color="#45A053"
-            underlayColor="red100"
-          >
-            Dairy
-          </Button>
-        </Div>
-        <View style={styles.divider} />
-        <Div p="xl" shadow="sm" rounded="md" bg='white' mx='sm'>
-          <Text fontWeight="bold" fontSize="4xl" mt="md" textAlign='center'>Activity From Shops</Text>
+    <>
+      <CustomerHeader navigation={navigation} title='Home' headerRight={false} back={false}/>
+      <ScrollView style={styles.scrollview}>
+        <View style={styles.container}>
+          <Input
+            placeholder="Search"
+            p={10}
+            m={20}
+            onChangeText={text => setKeyword(text)}
+            focusBorderColor="green400"
+            suffix={<Icon name="search" fontFamily="Feather" />}
+          />
+          <View style={styles.divider} />
+          <Div row justifyContent="center" alignItems="center">
+            <Button
+              mt="lg"
+              px="xl"
+              py="lg"
+              bg="white"
+              borderWidth={1}
+              borderColor="#45A053"
+              color="#45A053"
+              underlayColor="red100"
+              onPress={() => setKeyword('Vegetables')}
+            >
+              Vegetables
+            </Button>
+            <Button
+              mt="lg"
+              px="xl"
+              py="lg"
+              bg="white"
+              mx="xl"
+              borderWidth={1}
+              borderColor="#45A053"
+              color="#45A053"
+              underlayColor="red100"
+              onPress={() => setKeyword('Fruits')}
+            >
+              Fruits
+            </Button>
+            <Button
+              mt="lg"
+              px="xl"
+              py="lg"
+              bg="white"
+              borderWidth={1}
+              borderColor="#45A053"
+              color="#45A053"
+              underlayColor="red100"
+              onPress={() => setKeyword('Dairy')}
+            >
+              Dairy
+            </Button>
+          </Div>
+          <View style={styles.divider} />
+          <Div p="xl" shadow="sm" rounded="md" bg='white' mx='sm'>
+            <Text fontWeight="bold" fontSize="4xl" mt="md" textAlign='center'>Activity From Shops</Text>
 
-          {renderActvity}
+            {renderActvity}
 
-        </Div>
-      </View>
-    </ScrollView>
+          </Div>
+        </View>
+      </ScrollView>
+    </>
   );
 }
 

@@ -2,6 +2,8 @@ import { View, Text } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { GiftedChat } from 'react-native-gifted-chat'
 import { getMessages, getUser, sendMessage } from './ChatController'
+import { CustomerHeader } from '../components/headers/CustomerHeader'
+import { Div } from 'react-native-magnus'
 
 export default function Chat({ route, navigation }: any) {
   const [messages, setMessages] = useState<any[]>([])
@@ -44,6 +46,10 @@ export default function Chat({ route, navigation }: any) {
   }
 
   return (
+    <>
+    <Div flex={0.5}>
+    <CustomerHeader navigation={navigation} title='Chat' headerRight={false} back={true} />
+    </Div>
     <GiftedChat
       messages={messages}
       onSend={onSend}
@@ -52,5 +58,6 @@ export default function Chat({ route, navigation }: any) {
       }}
       scrollToBottom
     />
+    </>
   )
 }
