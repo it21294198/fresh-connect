@@ -1,32 +1,56 @@
 import { View, Text,TextInput,StyleSheet, TouchableOpacity } from 'react-native'
 import React,{useEffect, useState} from 'react'
-import { User } from '../util/interfaces';
+import { User, UserSignIn } from '../util/interfaces';
 import { useDispatch } from "react-redux";
-import { logUser } from '../features/user/userSlice';
+import { logUser, setUserInitials } from '../features/user/userSlice';
 import SignUp from './SignUp';
+import { setLoadingFalse, setLoadingTrue } from '../features/connection/loaderSlice';
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth,fireStore } from '../config/firebase';
+import { doc,getDoc } from "firebase/firestore";
 
 export default function Login({navigation}:any) {
   const dispatch = useDispatch()
-  const [user, setUser] = useState<User>({
+  const [user, setUser] = useState<UserSignIn>({
     email:'',
     password:''
   });
   const [loginError, setLoginError] = useState(false);
   
   useEffect(() => {
-    setLoginError(true)
+    setLoginError(false)
   }, []);
 
-  const handleLogin = () => {
-    // Perform authentication logic here and call login function if successful
-    dispatch(logUser('demo'))
-    if (user.email === 'demo' && user.password === 'password') {
-      // login({ username }); // You can store user data in context
+  const handleLogin = async () => {
+  // Perform authentication logic here and call login function if successful
+  if (user.email && user.password) {
+    dispatch(setLoadingTrue());
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, user.email, user.password);
+      const userLogged = userCredential.user.uid;
+      
+      // Make sure to use the correct document path for your Firestore database
+      const docRef = doc(fireStore, "users", userLogged);
+      const docSnap = await getDoc(docRef);
+      // console.log("Document data:", docSnap.data());
+      dispatch(setUserInitials({
+        firstName: docSnap.data()?.firstName||'',
+        lastName: docSnap.data()?.lastName||'',
+        userId: userLogged,
+        isSeller:docSnap.data()?.isSeller
+      }))
+      dispatch(setLoadingFalse());
+      dispatch(logUser(user.email));
+      // console.log(userLogged);
+    } catch (error) {
+      console.log(error);
+      dispatch(setLoadingFalse());
+      setLoginError(true);
     }
-
   }
+}
 
-  const pressSignUp = () =>{
+const pressSignUp = () =>{
     navigation.navigate('SignUp');
   }
 
@@ -34,7 +58,8 @@ export default function Login({navigation}:any) {
     <View style={styles.container}>
       <View style={styles.middleText}>
         <Text style={styles.middleTextMain}>Welcome Back</Text>
-        <Text style={styles.middleTextSub}>Your Lorem ipsum dolor sit amet hgfhg gfhh gdfgdfg dgdfgd</Text>
+        <Text style={styles.middleTextSub}>Your Lorem ipsum dolor</Text>
+        <Text style={styles.middleTextSub}>amet</Text>
       </View>
       <View style={styles.bottom}>
           <View style={styles.bottomTextTopView}>
@@ -45,13 +70,11 @@ export default function Login({navigation}:any) {
           style={styles.input}
           onChangeText={(text)=>{setUser({...user,email:text})}}
           placeholder='Email Address'
-          value={user.email}
           />
           <TextInput
           style={styles.input}
           onChangeText={(text)=>{setUser({...user,password:text})}}
           placeholder='Password'
-          value={user.password}
           />
           {/* this line will be visible is there is a login error */}
           <View style={loginError?styles.errorView:{display:'none'}}>
@@ -61,7 +84,7 @@ export default function Login({navigation}:any) {
           <View style={styles.loginBtnContainer}>
           <TouchableOpacity
             style={styles.loginBtn}
-            onPress={()=>{handleLogin()}}
+            onPress={()=>handleLogin()}
             ><Text style={styles.loginBtnText}>Login</Text></TouchableOpacity>
           </View>
           <View style={styles.signupContainer}>
