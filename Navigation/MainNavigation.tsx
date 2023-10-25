@@ -1,6 +1,7 @@
-// import * as React from 'react';
-import { createDrawerNavigator, DrawerItem, DrawerNavigationProp, DrawerItemList, DrawerContentScrollView } from '@react-navigation/drawer';
+import React, { useState } from 'react';
+import { createDrawerNavigator, DrawerItem, DrawerNavigationProp, DrawerItemList, DrawerContentScrollView, DrawerContentComponentProps } from '@react-navigation/drawer';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CustomerHomePage from '../screens/CustomerSide/CustomerHomePage';
 import CustomerProfile from '../screens/CustomerSide/CustomerProfile';
@@ -15,6 +16,7 @@ import Logout from '../screens/Logout';
 import FAQ from '../screens/FAQ';
 import UpdateStocks from '../screens/FarmerSide/UpdateStocks';
 import SelectUser from '../screens/SelectUser';
+
 import { useSelector } from 'react-redux';
 import { View, Image} from 'react-native';
 import { customDrawerPropsInterface, UserLogin } from '../util/interfaces';
@@ -36,13 +38,18 @@ import logoutEmptyIconImg from "../assets/logoutEmptyIconImg.png"
 import customHamburger from "../assets/customHamburger.png"
 
 
-import { useState } from 'react';
-import React from 'react'
+import CustomerChatList from '../screens/CustomerSide/CustomerChatList';
+import Chat from '../screens/Chat';
+import CustomerShopPage from '../screens/CustomerSide/CustomerShopPage';
+import CustomerProductPage from '../screens/CustomerSide/CustomerProductPage';
+
+
 import { paths } from '../assets/strings';
 import { Button, Div, Text } from "react-native-magnus";
 import { getHeaderTitle } from '@react-navigation/elements';
 import { DrawerProfile } from '../components/DrawerProfile';
 import { TestFile } from '../screens/CustomerSide/TestFile';
+
 
 export default function MainNavigation()
 {
@@ -183,6 +190,7 @@ export default function MainNavigation()
 
   const Drawer = createDrawerNavigator();
   const Tab = createBottomTabNavigator();
+  const Stack = createStackNavigator();
 
   let farmer:boolean|null = useSelector((state:{user:UserLogin})=> state.user.type)
 
@@ -203,12 +211,14 @@ export default function MainNavigation()
   {
     return (
       <Tab.Navigator initialRouteName='Home' screenOptions={{ headerShown: false, }}>
-        <Tab.Screen name="Home" component={CustomerHomePage} />
+        <Tab.Screen name="Home" component={CustomerHomeStack} />
         <Tab.Screen name="ShopMapDisplay" component={ShopMapDisplay} options={{ headerShown: false, tabBarShowLabel: true, }} />
         <Tab.Screen name="SavedShops" component={SavedShops} />
+        <Tab.Screen name="Chats" component={Chats} />
         <Tab.Screen name="CustomerProfile" component={CustomerProfile} />
         <Tab.Screen name="Test" component={TestFile} />
       </Tab.Navigator>
+
     )
   }
 
@@ -261,9 +271,9 @@ export default function MainNavigation()
           listeners={({ navigation }) => ({
             drawerItemPress: () => handleItemClick('Logout'),
           })} />
-      </Drawer.Navigator>
-    )
-  }
+  </Drawer.Navigator>
+  )
+}
 
   function ForFarmerSide()
   { //TODO: Add Shop page, chats, buttons
@@ -300,6 +310,26 @@ export default function MainNavigation()
     )
   }
 
+  function Chats(){
+    return(
+      <Stack.Navigator initialRouteName='CustomerChatList'>
+        <Stack.Screen name='ChatList' options={{ title: 'Chats List' }} component={CustomerChatList}/>
+        <Stack.Screen name='Chat' options={({route}:any)=>({title: route.params.chatRoom.name})} component={Chat}/>
+      </Stack.Navigator>
+    )
+  }
+  
+  function CustomerHomeStack(){
+    return(
+      <Stack.Navigator initialRouteName='CustomerChatList'>
+        <Stack.Screen name='CustomerHomePage' options={{ title: 'Home' }} component={CustomerHomePage}/>
+        <Stack.Screen name='CustomerShopPage' options={({route}:any)=>({title: route.params.shop.shopName})} component={CustomerShopPage}/>
+        <Stack.Screen name='CustomerProductPage' options={({route}:any)=>({title: route.params.products.name})} component={CustomerProductPage}/>
+      </Stack.Navigator>
+    )
+  
+  }
+
   return (
     <NavigationContainer>
       {/* {farmer? */}
@@ -312,3 +342,4 @@ export default function MainNavigation()
   )
 
 }
+
