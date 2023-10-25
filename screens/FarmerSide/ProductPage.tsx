@@ -1,25 +1,26 @@
 import { View, Text, TextInput, Button, StatusBar, ScrollView, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native';
 import { FarmerHeader } from '../../components/headers/FarmerHeader';
 import { Div } from 'react-native-magnus';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Picker } from '@react-native-picker/picker';
 import CheckBox from 'expo-checkbox';
+import { Product, fetchCategories } from '../../util/FarmerDbHooks';
 
-export default function ProductPage() {
+export default function ProductPage({ route }) {
 	const navigation = useNavigation();
 	const insets = useSafeAreaInsets();
-	const [stockName, setStockName] = useState('');
-	const [category, setCategory] = useState('');
-	const [quantity, setQuantity] = useState('');
-	const [qtUnit, setQtUnit] = useState('');
-	const [price1, setPrice1] = useState('');
-	const [price2, setPrice2] = useState('');
-	const [isOrganic, setIsOrganic] = useState(false);
-	const [specialNote, setSpecialNote] = useState('');
+	const { product } = route.params as { product: Product };
+	// const [stockName, setStockName] = useState(product.name);
+	// const [category, setCategory] = useState(product.category);
+	// const [quantity, setQuantity] = useState(`${product.quantity}`);
+	// const [qtUnit, setQtUnit] = useState(product.qtUnit);
+	// const [price, setPrice] = useState(`${product.price}`);
+	// const [perUnit, setPerUnit] = useState(`${product.per}${product.perUnit}`);
+	// const [isOrganic, setIsOrganic] = useState(product.organic);
+	// const [specialNote, setSpecialNote] = useState(product.specialMsg || '');
 	const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-	const categories = ['Category 1', 'Category 2', 'Category 3'];
 
 
 	return (
@@ -50,82 +51,37 @@ export default function ProductPage() {
 
 						<View style={{ marginTop: 45, padding: 15, borderWidth: 5, borderRadius: 15, borderColor: 'rgba(128, 128, 128, 0.1)', overflow: 'hidden' }}>
 
-							{/* Stock Name */}
-							<TextInput
-								style={styles.inputDefault}
-								placeholder="Stock Name"
-								value={stockName}
-								onChangeText={(text) => setStockName(text)}
-								editable={false}
-							/>
-
-							{/* Category Dropdown */}
-							<Picker
-								selectedValue={category} 
-								onValueChange={(itemValue) => setCategory(itemValue)}
-								enabled={false}
-							>
-								{categories.map((cat, index) => (
-									<Picker.Item label={cat} value={cat} key={index} />
-								))}
-							</Picker>
-
-							{/* Quantity */}
-							<View style={styles.priceContainer}>
-								<TextInput
-									style={[styles.inputDefault, {flex:2, marginEnd:15}]}
-									placeholder="Quantity (number)"
-									value={quantity}
-									onChangeText={(text) => setQuantity(text)}
-									editable={false}
-								/>
-								<TextInput
-									style={[styles.inputDefault, {flex:1}]}
-									placeholder="Unit"
-									value={qtUnit}
-									onChangeText={(text) => setQtUnit(text)}
-									editable={false}
-								/>
+							<View style={styles.inputDefault}>
+								<Text style={{fontSize:19, fontWeight:'bold'}}>{product.name}</Text>
 							</View>
+							<Text>{`\n`}</Text>
+							<View>
+								{product.organic ? (<Image source={require('./assets/organic.png')} style={styles.logo} />) : null}
+								<Text>{`\n`}</Text>
 
-							{/* Price per Unit */}
-							<View style={styles.priceContainer}>
-								<TextInput
-									style={styles.input}
-									placeholder="Price (RS)"
-									value={price1}
-									onChangeText={(text) => setPrice1(text)}
-									editable={false}
-								/>
-								<Text>per</Text>
-								<TextInput
-									style={styles.input}
-									placeholder="Unit | eg: 100g"
-									value={price2}
-									onChangeText={(text) => setPrice2(text)}
-									editable={false}
-								/>
+								<View style={styles.priceContainer}>
+									<Text style={styles.normalText}>{` CATEGORY:`}</Text>
+									<Text style={styles.normalText}>{`${product.category} `}</Text>
+								</View>
+								<View style={styles.priceContainer}>
+									<Text style={styles.normalText}>{` STOCK:`}</Text>
+									<Text style={styles.normalText}>{`${product.quantity} ${product.qtUnit} `}</Text>
+								</View>
+								<View style={styles.priceContainer}>
+									<Text style={styles.normalText}>{` PRICE:`}</Text>
+									<Text style={styles.normalText}>{`Rs:${product.price} per ${product.per}${product.perUnit} `}</Text>
+								</View>
+								<Text>{`\n`}</Text>
+
+								{product.specialMsg ? (
+									<View style={styles.textArea}>
+										<Text>{product.specialMsg}</Text>
+									</View>
+								) : null}
 							</View>
-
-							{/* Organically made product */}
-							<View style={styles.checkboxContainer}>
-								<CheckBox value={isOrganic} onValueChange={setIsOrganic} disabled />
-								<Text>     Organically made product</Text>
-							</View>
-
-							{/* Special Note */}
-							<TextInput
-								style={styles.textArea}
-								placeholder="Anything special you want to say to the customer about this product? Type here"
-								multiline={true}
-								numberOfLines={4}
-								value={specialNote}
-								onChangeText={(text) => setSpecialNote(text)}
-								editable={false}
-							/>
 
 							{/* Edit Button */}
-							<TouchableOpacity style={styles.editButton} onPress={() => {navigation.navigate('UpdateStocks')}}>
+							<TouchableOpacity style={styles.editButton} onPress={() => {navigation.navigate('UpdateStocks', {product})}}>
 								<Text style={styles.buttonText}>Edit</Text>
 							</TouchableOpacity>
 						</View>
@@ -138,6 +94,9 @@ export default function ProductPage() {
 
 
 const styles = StyleSheet.create({
+	normalText: {
+		fontSize: 15
+	},
 	scrollContainer: {
 		flexGrow: 1,
 	},
@@ -158,14 +117,6 @@ const styles = StyleSheet.create({
 		width: '100%',
 		height: '100%',
 	},
-	input: {
-		height: 40,
-		borderColor: 'gray',
-		borderWidth: 1,
-		borderRadius: 17,
-		marginVertical: 10,
-		paddingHorizontal: 10,
-	},
 	inputDefault: {
 		height: 40,
 		borderWidth: 1,
@@ -181,26 +132,14 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		marginVertical: 10,
 	},
-	checkboxContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		marginVertical: 15,
-	},
 	textArea: {
-		height: 100,
+		minHeight: 100,
+		maxHeight: 'auto',
 		borderColor: 'gray',
 		borderWidth: 1,
 		borderRadius: 10,
 		marginVertical: 10,
 		paddingLeft: 10,
-	},
-	uploadImageButton: {
-		position: 'absolute',
-		borderRadius: 10,
-		overflow: 'hidden',
-		marginVertical: 10,
-		backgroundColor: 'rgba(128, 128, 128, 0.4)',
-		padding: 8
 	},
 	editButton: {
 		backgroundColor: '#10893E', // #3c802f  #10893E
@@ -217,5 +156,10 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
 		fontSize: 15
+  },
+	logo: {
+    width: 37,
+    height: 37,
+		margin: 5
   },
 });

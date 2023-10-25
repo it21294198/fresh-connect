@@ -1,10 +1,11 @@
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { Product } from '../../util/FarmerDbHooks';
 
 const { width } = Dimensions.get('window');
 
-const CustomCard = ({ name, date, price, } :{name:string, date:string, price:string}) => {
+const CustomCard = ({ product, date, price } :{product:Product, date:string, price:string}) => {
   const navigation = useNavigation();
 	const iconSource = './assets/Edit-Square.png';
 	const logoSource = './assets/organic.png';
@@ -12,18 +13,21 @@ const CustomCard = ({ name, date, price, } :{name:string, date:string, price:str
 
   return (
     // TODO link to a product view 
-    <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('ProductPage')}>
+    <TouchableOpacity style={styles.card} 
+    onPress={() => navigation.navigate('ProductPage', {product})} >
+      
       <View style={styles.imageArea}>
         <Image source={require(imageSource)} style={styles.image} />
         {/* edit button */}
-				<TouchableOpacity style={styles.editIconContainer} onPress={() => navigation.navigate('UpdateStocks')}>
+				<TouchableOpacity style={styles.editIconContainer} 
+        onPress={() => navigation.navigate('UpdateStocks', {product})} >
         	<Image source={require(iconSource)} style={styles.editIcon} />
 				</TouchableOpacity>
       </View>
 
       <View style={styles.textArea}>
         <View style={styles.header}>
-          <Text style={styles.title}>{name}</Text>
+          <Text style={styles.title}>{product.name}</Text>
           {/* organic logo */}
           <Image source={require(logoSource)} style={styles.logo} />
         </View>
