@@ -18,12 +18,9 @@ export const TestFile = ({ navigation }: any) =>
     }
     return (
         <>
-            <Div style={{flex:1, flexDirection: 'column'}}>
-                <SafeAreaView style={{ height: 'auto' }}>
-                    <CommonHeader navigation={navigation} title='Test page' headerRight={false} />
-                </SafeAreaView>
-                    <LocationSelector navigation={navigation} handleConfirm={handleConfirmPress} />
-
+            <Div style={{ flex: 1, flexDirection: 'column' }}>
+                <CommonHeader navigation={navigation} title='Test page' headerRight={false} />
+                <LocationSelector navigation={navigation} handleConfirm={handleConfirmPress} />
             </Div>
         </>
 
