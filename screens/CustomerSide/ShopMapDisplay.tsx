@@ -19,7 +19,7 @@ import { getCoordDistance } from '../../util/geoCoordinateFunctions';
 
 export default function ShopMapDisplay({ navigation }: any)
 {
-  const MAXDISTANCE = 2000;
+  const MAXDISTANCE = 3000;
   const [location, setLocation] = useState<Location.PermissionStatus>();
   const [errorMsg, setErrorMsg] = useState('');
   const [status, setStatus] = useState('');
