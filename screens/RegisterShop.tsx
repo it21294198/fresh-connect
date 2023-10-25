@@ -1,14 +1,15 @@
 import React,{useState,useEffect} from 'react'
 import {fireStore} from '../config/firebase'
-import { View, Text,TextInput, StyleSheet, TouchableOpacity, Image, ScrollView,Dimensions,Button } from 'react-native'
+import { View, Text,TextInput, StyleSheet, TouchableOpacity, Image, ScrollView,Dimensions,Button, Modal } from 'react-native'
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { ShopRegister } from '../util/interfaces';
+import { ShopRegister, locationObjectInterface } from '../util/interfaces';
 import { setUserInitials } from '../features/user/userSlice';
 import { useDispatch } from 'react-redux';
 import { setLoadingFalse, setLoadingTrue } from '../features/connection/loaderSlice';
 import { UserLogin } from '../util/interfaces'; // get the path accordingly
 import { useSelector } from 'react-redux';
 import { Timestamp, doc, setDoc } from 'firebase/firestore';
+import LocationSelector from '../components/LocationSelector';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -23,6 +24,7 @@ export default function RegisterShop({navigation}:any) {
   const [timeInput, setTimeInput] = useState(null);
   const [error, setError] = useState<boolean|null>(null);
   const [openAt, setOpenAt] = useState(true);
+  const [addressUser, setAddress] = useState<any>('');
   const [farmerRegistrForm, setFarmerRegistrForm] = useState<ShopRegister>({
     shopName:'',
     email:'',
@@ -33,6 +35,9 @@ export default function RegisterShop({navigation}:any) {
     address:'test',
     accept:false
   });
+
+  const [locationData, setLocationData] = useState<any>()
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
     // load user profile data
@@ -50,7 +55,21 @@ export default function RegisterShop({navigation}:any) {
     setDatePickerVisibility(false);
   };
 
-  const handleConfirm = (time:any) => {
+const handleConfirm = (coordinates: locationObjectInterface, selectedAddress: string | undefined) =>
+{
+  console.log('Called handleConfirm in FarmerHomePage', selectedAddress);
+  console.log('geo code',coordinates);
+  setAddress(selectedAddress)
+  setLocationData(coordinates)
+  }
+
+   const selectShopLocation = () =>{
+      // setShopLocationAddress('test location')
+      // console.log('select location from map');
+      setIsModalVisible(true)
+    }
+
+  const handleConfirmTime = (time:any) => {
     const timeStore = time
     if(openAt===true){
       setFarmerRegistrForm({...farmerRegistrForm,openAt:timeStore})
@@ -102,19 +121,10 @@ const setShopProfile = async () => {
   }
 };
 
-  
   const changeShopProfileImage = () =>{
     console.log('update shop image');
   }
-  
-  const selectLocation = () =>{
-    console.log('select location from map');
-  }
-  
-  const selectShopLocation = () =>{
-    console.log('select location from map');
-  }
-  
+    
   const handleCheckboxToggle = () => {
     setFarmerRegistrForm({...farmerRegistrForm,accept:!farmerRegistrForm.accept})
     setIsChecked(!isChecked);
@@ -126,13 +136,40 @@ const setShopProfile = async () => {
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="time"
-        onConfirm={handleConfirm}
+        onConfirm={handleConfirmTime}
         onCancel={hideDatePicker}
         />
     </View>
     )
   }
   
+  const mapModalView = () =>{
+      return(
+      <Modal
+        transparent={true}
+        visible={isModalVisible}
+        animationType="slide"
+        onRequestClose={() => setIsModalVisible(false)}>
+        <View style={styles.modalMapContainer}>
+          <LocationSelector
+            navigation={navigation}
+            handleConfirm={handleConfirm}
+          />
+          <TouchableOpacity
+            style={styles.mapCancelButton}
+            onPress={() => setIsModalVisible(false)}>
+            <Text style={{    
+              fontSize:20,
+              fontWeight:'bold',
+              color:'white'
+            }}
+              >Ok</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+      )
+    }
+
   return (
     <ScrollView contentContainerStyle={styles.mainContainer} showsVerticalScrollIndicator={false}>
       <View style={styles.farmerProfileView}>
@@ -217,6 +254,8 @@ const setShopProfile = async () => {
         </TouchableOpacity>
         </View>
 
+            {mapModalView()}
+
         <View>
         <Text style={styles.texts}>Shop Address</Text>
         <TouchableOpacity onPress={selectShopLocation}>
@@ -227,7 +266,7 @@ const setShopProfile = async () => {
             style={styles.pin}/>
             {/* this address will be changed by map */}
             <TextInput 
-            placeholder={'Enter shop address'} 
+            placeholder={addressUser} 
             onChangeText={(text) => setFarmerRegistrForm({ ...farmerRegistrForm, address: text })}
             editable={false} 
             style={[styles.inputs,styles.singleLineInputs]}/>
@@ -441,4 +480,21 @@ const styles = StyleSheet.create({
     fontSize:15,
     marginHorizontal:50
   },
+  modalMapContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    // alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  mapCancelButton:{
+    backgroundColor: 'green',
+    borderRadius: 10,
+    paddingVertical:5,
+    paddingHorizontal:5,
+    marginVertical:10,
+    width: 150,
+    justifyContent:'center',
+    alignItems: 'center',
+    marginLeft:screenWidth/3.3
+  }
 })
