@@ -3,7 +3,7 @@ import {fireStore} from '../../config/firebase'
 import { View, Text,TextInput, StyleSheet, TouchableOpacity, Image, ScrollView, RefreshControl, Modal,Dimensions } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoadingFalse, setLoadingTrue } from '../../features/connection/loaderSlice';
-import { UserLogin } from '../../util/interfaces';
+import { UserLogin, locationObjectInterface } from '../../util/interfaces';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 // imported the location selector
 import LocationSelector from '../../components/LocationSelector';
@@ -33,15 +33,15 @@ export default function FarmerHomePage({navigation}:any) {
   const [contactEmail, setContactEmail] = useState('');
   const [shopDescription, setShopDescription] = useState('');
   const [shopContactNumber, setShopContactNumber] = useState<any>(0);
-  const [locationData, setLocationData] = useState<any>(null)
+  const [locationData, setLocationData] = useState<string>()
 /* locationDtaInterfecae: {coordinates: {latitude: number, longitude: number},address:string}*/
 
 //palace this near useStates area
-  const handleConfirm = (data:any) =>{
-    const {address} = data;
-    console.log('##################',address);
-    setLocationData(address)
-  }
+const handleConfirm = (coordinates: locationObjectInterface, selectedAddress: string | undefined) =>
+{
+  console.log('Called handleConfirm in FarmerHomePage', selectedAddress);
+  setLocationData(selectedAddress)
+}
 
 useEffect(() => {
   // load user profile data
