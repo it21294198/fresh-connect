@@ -1,16 +1,18 @@
 import React,{useState,useEffect} from 'react'
 import {fireStore} from '../../config/firebase'
-import { View, Text,TextInput, StyleSheet, TouchableOpacity, Image, ScrollView} from 'react-native'
+import { View, Text,TextInput, StyleSheet, TouchableOpacity, Image, ScrollView, RefreshControl} from 'react-native'
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoadingFalse, setLoadingTrue } from '../../features/connection/loaderSlice';
 import { UserLogin } from '../../util/interfaces';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 // imorot the loctaion selector
 
 export default function FarmerHomePage({navigation}:any) {
   const dispatch = useDispatch()
-  let uId:string|null = useSelector((state:{user:UserLogin})=>state.user.userId)
-  let userEmail:string|null = useSelector((state:{user:UserLogin})=>state.user.email)
+  let uId:any = useSelector((state:{user:UserLogin})=>state.user.userId)
+  let userEmail:any = useSelector((state:{user:UserLogin})=>state.user.email)
+
+  // user profile side
   const [locationAddress, setLocationAddress] = useState<any>('Address');
   const [shopLocationAddress, setShopLocationAddress] = useState('shop address');
   const [firstName, setFirstName] = useState('');
@@ -18,7 +20,14 @@ export default function FarmerHomePage({navigation}:any) {
   const [gender, setGender] = useState('');
   const [contactNo, setContactNo] = useState(0);
   const [address, setAddress] = useState('');
+  const [refresher, setRefresher] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
 
+  // farmer profile side
+  const [shopName, setShopName] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
+  const [shopDescription, setShopDescription] = useState('');
+  const [shopContactNumber, setShopContactNumber] = useState(0);
 // const [locationData, setLocationData] = useState(second)
 /* locationDtaInterfecae: {coordinates: {
             latitude: number, longitude: number
@@ -42,32 +51,84 @@ export default function FarmerHomePage({navigation}:any) {
 
 useEffect(() => {
   // load user profile data
+  dispatch(setLoadingTrue());
   const loadUserProfile = async () => {
-    dispatch(setLoadingTrue());
+    // user profile side
     try {
       const docRef = doc(fireStore, 'users', uId);
       const docSnap = await getDoc(docRef);
-
       console.log(docSnap);
-      // setFirstName(docSnap.data()?.firstName)
-      // setLastName(docSnap.data()?.lastName)
+      // Access data from docSnap, not docRef
+      setFirstName(docSnap.data()?.firstName)
+      setLastName(docSnap.data()?.lastName)
+      setContactNo(docSnap.data()?.contactNo)
+      setGender(docSnap.data()?.gender)
 
-      // load 2 user shops
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+    }
 
-      dispatch(setLoadingFalse());
+    // farmer profile side
+    try {
+      const docRef = doc(fireStore, 'shops', uId);
+      const docSnap = await getDoc(docRef);
+      console.log(docSnap);
+      // Access data from docSnap, not docRef
+      setShopName(docSnap.data()?.shopName)
+      setContactEmail(docSnap.data()?.email)
+      setShopDescription(docSnap.data()?.description)
+      setShopContactNumber(docSnap.data()?.contactNo)
+
     } catch (error) {
       console.error('Error loading user profile:', error);
     }
   };
   loadUserProfile();
-}, []);
+  dispatch(setLoadingFalse());
+}, [refresher]);
 
 
-  const updateProfile = () =>{
+  const updateProfile = async () =>{
+    dispatch(setLoadingTrue());
+
+    const userData = {
+      firstName:firstName,
+      lastName:lastName,
+      gender:gender,
+      contactNo:contactNo,
+      address:address
+    }
+
+    try {
+        const updatedUserDocRef = doc(fireStore, 'users', uId);
+        await setDoc(updatedUserDocRef, userData,{ merge: true });
+    } catch (error) {
+      console.log('error on update user profile');
+    }
+
+    dispatch(setLoadingFalse());
+    setRefresher(refresher + 1);
     console.log('user updated');
   }
 
-  const updateShopProfile = () =>{
+  const updateShopProfile = async () =>{
+    dispatch(setLoadingTrue());
+    const userData = {
+      shopName:shopName,
+      email:contactEmail,
+      contactNo:shopContactNumber,
+      description:shopDescription,
+      shopAddress:address
+    }
+    try {
+        const updatedShopDocRef = doc(fireStore, 'shops', uId);
+        await setDoc(updatedShopDocRef, userData,{ merge: true });
+    } catch (error) {
+      console.log('error on update user profile');
+    }
+    dispatch(setLoadingFalse());
+    setRefresher(refresher + 1);
+    console.log('user updated');
     console.log('shop profile updated');
   }
 
@@ -80,15 +141,27 @@ useEffect(() => {
   }
 
   const selectLocation = () =>{
+    setLocationAddress('place value')
     console.log('select location from map');
   }
 
   const selectShopLocation = () =>{
+    setShopLocationAddress('test location')
     console.log('select location from map');
   }
 
+  const onRefresh = () => {
+  // You can add your refresh logic here
+  // setRefreshing(true);
+    setRefresher(refresher + 1);
+  // setRefreshing(false);
+  } 
+
   return (
-  <ScrollView contentContainerStyle={styles.mainContainer} showsVerticalScrollIndicator={false}>
+  <ScrollView 
+    contentContainerStyle={styles.mainContainer}
+    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+    showsVerticalScrollIndicator={false}>
       <View style={styles.profileTextView}>
         <Text style={styles.profileText}>Profile</Text>
       </View>
@@ -102,33 +175,52 @@ useEffect(() => {
         <View style={styles.doubleRowView}>
           <Text style={styles.texts}>First Name</Text>
           <View style={styles.inputsView}>
-            <TextInput placeholder={firstName} style={[styles.inputs,styles.doubleLineInputs]}  underlineColorAndroid="transparent"/>
+            <TextInput 
+            value={firstName}
+            onChange={(text:any)=>{setFirstName(text)}}
+            style={[styles.inputs,styles.doubleLineInputs]}  
+            underlineColorAndroid="transparent"/>
           </View>
         </View>
         <View style={styles.doubleRowView}>
           <Text style={styles.texts}>Last Name</Text>
           <View style={styles.inputsView}>
-            <TextInput placeholder={lastName} style={[styles.inputs,styles.doubleLineInputs]}/>
+            <TextInput 
+            value={lastName}
+            onChange={(text:any)=>{setLastName(text)}}
+            style={[styles.inputs,styles.doubleLineInputs]}/>
           </View>
         </View>
       </View>
       <View>
         <Text style={styles.texts}>Email</Text>
         <View style={styles.inputsView}>
-          <TextInput placeholder={userEmail} editable={false} style={[styles.inputs,styles.singleLineInputs]}/>
+          <TextInput 
+          placeholder={userEmail} 
+          editable={false} style={[styles.inputs,styles.singleLineInputs]}/>
         </View>
       </View>
       <View style={styles.doubleRow}>
         <View style={styles.doubleRowView}>
           <Text style={styles.texts}>Gender</Text>
           <View style={styles.inputsView}>
-            <TextInput placeholder='gender' style={[styles.inputs,styles.doubleLineInputs]}/>
+            <TextInput 
+            value={gender}
+            onChange={(text:any)=>setGender(text)}
+            style={[styles.inputs,styles.doubleLineInputs]}/>
           </View>
         </View>
         <View style={styles.doubleRowView}>
           <Text style={styles.texts}>Phone</Text>
           <View style={styles.inputsView}>
-            <TextInput placeholder='Phone' keyboardType="numeric" style={[styles.inputs,styles.doubleLineInputs]}/>
+            <TextInput 
+              value={contactNo.toString()}  // Convert the value to a string
+              onChangeText={(text:any) => {
+                setContactNo(text);
+              }}
+              keyboardType="numeric" 
+              style={[styles.inputs, styles.doubleLineInputs]}
+            />
           </View>
         </View>
       </View>
@@ -167,25 +259,42 @@ useEffect(() => {
         <View style={styles.farmerTextView}>
           <Text style={styles.texts}>Shop Name</Text>
           <View style={styles.inputsView}>
-            <TextInput placeholder={'enter name'} style={[styles.inputs,styles.singleLineInputs]}/>
+            <TextInput 
+            value={shopName}
+            onChange={(text:any)=>setShopName(text)}
+            style={[styles.inputs,styles.singleLineInputs]}/>
           </View>
         </View>
         <View style={styles.farmerTextView}>
           <Text style={styles.texts}>Contact Email</Text>
           <View style={styles.inputsView}>
-            <TextInput placeholder={'enter email'} style={[styles.inputs,styles.singleLineInputs]}/>
+            <TextInput 
+            value={contactEmail}
+            onChange={(text:any)=>setContactEmail(text)}
+            style={[styles.inputs,styles.singleLineInputs]}/>
           </View>
         </View>
         <View style={styles.farmerTextView}>
           <Text style={styles.texts}>Shop Description</Text>
           <View style={styles.inputsView}>
-            <TextInput placeholder={'About the shop'} style={[styles.inputs,styles.singleLineInputs]}/>
+            <TextInput 
+            value={shopDescription}
+            onChange={(text:any)=>setShopDescription(text)}
+            style={[styles.inputs,styles.singleLineInputs]}/>
           </View>
         </View>
         <View style={styles.farmerTextView}>
           <Text style={styles.texts}>Shop contact number</Text>
           <View style={styles.inputsView}>
-            <TextInput placeholder={'enter number'} keyboardType="numeric" style={[styles.inputs,styles.singleLineInputs]}/>
+            <TextInput 
+            value={shopContactNumber.toString()}
+            onChangeText={(text) => {
+              // Use parseInt to convert the text to a number
+              const numericValue = parseInt(text); 
+              setShopContactNumber(isNaN(numericValue) ? '' : numericValue);
+            }}
+            keyboardType="numeric" 
+            style={[styles.inputs,styles.singleLineInputs]}/>
           </View>
         </View>
         <View>
@@ -197,7 +306,10 @@ useEffect(() => {
             source={require('../../assets/pin.png')} // Replace with the path to your image
             style={styles.pin}/>
             {/* this address will be changed by map */}
-            <TextInput placeholder={shopLocationAddress} editable={false} style={[styles.inputs,styles.singleLineInputs]}/>
+            <TextInput 
+            value={shopLocationAddress}
+            editable={false} 
+            style={[styles.inputs,styles.singleLineInputs]}/>
           </View>
         </TouchableOpacity>
       </View>
