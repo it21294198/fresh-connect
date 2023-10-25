@@ -19,11 +19,7 @@ import SelectUser from '../screens/SelectUser';
 
 import { useSelector } from 'react-redux';
 import { View, Image} from 'react-native';
-import { customDrawerPropsInterface, UserLogin } from '../util/interfaces';
-import Svg, { Path } from "react-native-svg"
-import chatIcon from "../assets/Chat.svg"
-import emptyHome from "../assets/homeEmptyIcon.svg"
-import filledHome from "../assets/homeFilledIcon.svg"
+import {UserLogin } from '../util/interfaces';
 import filledHomeImg2 from "../assets/homeFilledIcon2.png"
 import emptyHomeImg from "../assets/homeEmptyImg.png"
 import accountsFilledIconImg from "../assets/accountsFilledIconImg.png"
@@ -36,24 +32,16 @@ import switchTypeFilledIconImg from "../assets/switchTypeFilledIconImg.png"
 import switchTypeEmptyIconImg from "../assets/switchTypeEmptyIconImg.png"
 import logoutEmptyIconImg from "../assets/logoutEmptyIconImg.png"
 import customHamburger from "../assets/customHamburger.png"
-
-
 import CustomerChatList from '../screens/CustomerSide/CustomerChatList';
 import Chat from '../screens/Chat';
 import CustomerShopPage from '../screens/CustomerSide/CustomerShopPage';
 import CustomerProductPage from '../screens/CustomerSide/CustomerProductPage';
-
-
-import { paths } from '../assets/strings';
 import { Button, Div, Text } from "react-native-magnus";
-import { getHeaderTitle } from '@react-navigation/elements';
 import { DrawerProfile } from '../components/DrawerProfile';
 import { TestFile } from '../screens/CustomerSide/TestFile';
 
-
 export default function MainNavigation()
 {
-  const [isHomeActive, setIsHomeActive] = useState(false);
   const [currentPage, setCurrentPage] = useState('CustomerHomePage');
   // const navigation = useNavigation()
 

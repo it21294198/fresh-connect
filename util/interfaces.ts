@@ -74,7 +74,6 @@ export interface shopDataInterface {
   contactNo?: number;
 }
 
-<<<<<<< HEAD
 export interface LocationObj{
   coords: {
     accuracy: number | null;
@@ -94,7 +93,6 @@ export interface coordComparisionObject{
   
   coord2: {latitude: number| undefined; longitude: number| undefined;};
 }
-=======
 export interface ShopRegister{
   shopName:string;
   email:string;
@@ -106,4 +104,3 @@ export interface ShopRegister{
   accept:boolean;
 }
 
->>>>>>> cea62a602ad1a584b98ea71d6b8e20488d366ecf
