@@ -51,24 +51,24 @@ export default function ShopMapDisplay({ navigation }: any)
           const latitude = currentUserLocation?.coords.latitude;
           const longitude = currentUserLocation?.coords.longitude;
           const firstShop = shopList?.[2];
-          const coordinates: { latitude: number; longitude: number; } | undefined = firstShop?.coordinates;
+          // const coordinates: { latitude: number; longitude: number; } | undefined = firstShop?.coordinates;
           const distances = await Promise.all(
             shopList?.map((shop) =>
             {
+              let shopLatLng = {latitude: shop.shopAddress.latitude, longitude: shop.shopAddress.longitude};
               return getCoordDistance(
                 {
                   coord1: {
                     latitude: currentUserLocation!.coords.latitude,
                     longitude: currentUserLocation!.coords.longitude,
                   },
-                  coord2: shop.coordinates,
+                  coord2: shop.shopAddress,
                 }
               );
             }) || []
           );
-          console.log('Distances', distances);
           distancesArry = distances as number[];
-          console.log('Shop distances', distancesArry);
+          console.log('All Shop distances from current user location ', distancesArry);
 
           const nearbyShops = shopList?.filter((shop, index) =>
           {
@@ -78,7 +78,7 @@ export default function ShopMapDisplay({ navigation }: any)
         }
       } catch (error)
       {
-        console.log('Encountered an unknown error');
+        console.log('Encountered an unknown error', error);
       }
 
     })();
@@ -180,30 +180,24 @@ export default function ShopMapDisplay({ navigation }: any)
     navigation.navigate('CustomerShopPage', { shopId: selectedShop?.shopId});
   }
 
-  const userSelectedCoordinate = async (data: any) =>
-  {
-    const { coordinate }: {
-      coordinate: {
-        latitude: number,
-        longitude: number
-      }
-    } = data.nativeEvent;
-    console.log('current user location', currentUserLocation);
-    console.log('NearBy shops', nearbyShops);
-
-    setUserSelectedCoordinateLocation((previousState) => ({
-      ...previousState,
-      latitude: coordinate.latitude,
-      longitude: coordinate.longitude,
-    }));
-    const addressString = await getAddressFromCoordinates(coordinate);
-    setSelectedAddress(addressString)
-
-    setTimeout(() =>
-    {
-      console.log(userSelectedCoordinateLocation);
-    }, 5000);
-  }
+  // const userSelectedCoordinate = async (data: any) =>
+  // {
+  //   const { coordinate }: {
+  //     coordinate: {
+  //       latitude: number,
+  //       longitude: number
+  //     }
+  //   } = data.nativeEvent;
+  //   console.log('current user location', currentUserLocation);
+  //   console.log('NearBy shops', nearbyShops);
+  //   setUserSelectedCoordinateLocation((previousState) => ({
+  //     ...previousState,
+  //     latitude: coordinate.latitude,
+  //     longitude: coordinate.longitude,
+  //   }));
+  //   const addressString = await getAddressFromCoordinates(coordinate);
+  //   setSelectedAddress(addressString)
+  // }
 
   const handleRangeSelect = (range: number) =>
   {
@@ -227,7 +221,6 @@ export default function ShopMapDisplay({ navigation }: any)
           followsUserLocation={true}
 
           initialRegion={mapRegion}
-          onPress={userSelectedCoordinate}
           onRegionChangeComplete={handleRegionChange}
           onMarkerPress={handleMarkerPress}
         >
@@ -235,7 +228,7 @@ export default function ShopMapDisplay({ navigation }: any)
             <Marker
               key={index}
               style={styles.markerToolTip}
-              coordinate={shop.coordinates}
+              coordinate={shop.shopAddress}
               title={shop.shopName}
               description={shop.description}
               onPress={(event) => handleMarkerPress(index)} >

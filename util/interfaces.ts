@@ -66,12 +66,15 @@ export interface shopDataInterface {
   shopName: string;
   address: string;
   description: string;
-  coordinates: {
+  shopAddress: {
     latitude: number;
     longitude: number;
+    latitudeDelta?: number;
+    longitudeDelta?: number;
   }
   email?: string;
-  openHours?: string[];
+  openAt?: any;
+  closeAt?: any;
   contactNo?: number;
   shopId?: string;
 }
