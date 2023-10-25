@@ -32,14 +32,15 @@ export default function FarmerHomePage({navigation}:any) {
   const [shopName, setShopName] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [shopDescription, setShopDescription] = useState('');
-  const [shopContactNumber, setShopContactNumber] = useState(0);
-  const [locationData, setLocationData] = useState(null)
+  const [shopContactNumber, setShopContactNumber] = useState<any>(0);
+  const [locationData, setLocationData] = useState<any>(null)
 /* locationDtaInterfecae: {coordinates: {latitude: number, longitude: number},address:string}*/
 
 //palace this near useStates area
   const handleConfirm = (data:any) =>{
-    // {address} = data;
-    // setLocationData(data)
+    const {address} = data;
+    console.log('##################',address);
+    setLocationData(address)
   }
 
 useEffect(() => {
@@ -332,7 +333,7 @@ const updateShopProfile = async () =>{
             style={styles.pin}/>
             {/* this address will be changed by map */}
             <TextInput 
-            value={shopLocationAddress}
+            value={locationData}
             editable={false} 
             style={[styles.inputs,styles.singleLineInputs]}/>
           </View>
