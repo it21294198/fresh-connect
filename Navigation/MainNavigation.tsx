@@ -18,8 +18,12 @@ import UpdateStocks from '../screens/FarmerSide/UpdateStocks';
 import SelectUser from '../screens/SelectUser';
 
 import { useSelector } from 'react-redux';
+
 import { View, Image } from 'react-native';
 import { UserLogin } from '../util/interfaces';
+
+import { customDrawerPropsInterface, UserLogin } from '../util/interfaces';
+
 import filledHomeImg2 from "../assets/homeFilledIcon2.png"
 import emptyHomeImg from "../assets/homeEmptyImg.png"
 import accountsFilledIconImg from "../assets/accountsFilledIconImg.png"
@@ -40,11 +44,18 @@ import chatEmptyIcon from "../assets/chatEmptyIcon.png"
 import chatFilledIcon from "../assets/chatFilledIcon.png"
 import searchIcon from "../assets/searchIcon.png"
 import customHamburger from "../assets/customHamburger.png"
+
 import CustomerChatList from '../screens/CustomerSide/CustomerChatList';
 import Chat from '../screens/Chat';
 import CustomerShopPage from '../screens/CustomerSide/CustomerShopPage';
 import CustomerProductPage from '../screens/CustomerSide/CustomerProductPage';
+
+
+import { paths } from '../assets/strings';
+
 import { Button, Div, Icon, Text } from "react-native-magnus";
+import { getHeaderTitle } from '@react-navigation/elements';
+
 import { DrawerProfile } from '../components/DrawerProfile';
 import RegisterShop from '../screens/RegisterShop';
 import { TestFile } from '../screens/CustomerSide/TestFile';
@@ -301,6 +312,7 @@ export default function MainNavigation()
   function FarmerTabNavigation()
   {
     return (
+
       <Tab.Navigator initialRouteName='Home' screenOptions={({ route }) => ({
         headerShown: true,
         tabBarActiveTintColor: '#45A053',
@@ -346,6 +358,7 @@ export default function MainNavigation()
 
       })}>
         <Tab.Screen name='Home' component={FarmerHomePage} />
+
         <Tab.Screen name='FarmerShopPage' component={FarmerShopPage} />
         <Tab.Screen name='Add' component={AddStocks} options={{ tabBarShowLabel: false }} />
         <Tab.Screen name='FarmerProfile' component={FarmerProfile} />
@@ -360,7 +373,7 @@ export default function MainNavigation()
     //Removed profile screen
     return (
       // <Drawer.Navigator initialRouteName="CustomerHomePage" screenOptions={drawerOptions}
-      <Drawer.Navigator initialRouteName="CustomerHomePage" screenOptions={drawerOptions}
+      <Drawer.Navigator initialRouteName="CustomerHomePage" screenOptions={{drawerOptions, headerShown:false}}
         drawerContent={(props) =>
         {
           return (
@@ -436,38 +449,38 @@ export default function MainNavigation()
     )
   }
 
-  function Chats()
-  {
-    return (
-      <Stack.Navigator initialRouteName='CustomerChatList'>
-        <Stack.Screen name='ChatList' options={{ title: 'Chats List' }} component={CustomerChatList} />
-        <Stack.Screen name='Chat' options={({ route }: any) => ({ title: route.params.chatRoom.name })} component={Chat} />
+  function Chats(){
+    return(
+      <Stack.Navigator initialRouteName='CustomerChatList' screenOptions={{ headerShown: false }}>
+        <Stack.Screen name='ChatList' options={{ title: 'Chats List' }} component={CustomerChatList}/>
+        <Stack.Screen name='Chat' options={({route}:any)=>({title: route.params.chatRoom.name})} component={Chat}/>
       </Stack.Navigator>
     )
   }
-
-  function CustomerHomeStack()
-  {
-    return (
-      <Stack.Navigator initialRouteName='CustomerChatList'>
-        <Stack.Screen name='CustomerHomePage' options={{ title: 'Home' }} component={CustomerHomePage} />
-        <Stack.Screen name='CustomerShopPage' options={({ route }: any) => ({ title: route.params.shop.shopName })} component={CustomerShopPage} />
-        <Stack.Screen name='CustomerProductPage' options={({ route }: any) => ({ title: route.params.products.name })} component={CustomerProductPage} />
+  
+  function CustomerHomeStack(){
+    return(
+      <Stack.Navigator initialRouteName='CustomerHomePage' screenOptions={{ headerShown: false }}>
+        <Stack.Screen name='CustomerHomePage' options={{ title: 'Home' }} component={CustomerHomePage}/>
+        <Stack.Screen name='CustomerShopPage' options={{title: 'Shop Page'}} component={CustomerShopPage}/>
+        <Stack.Screen name='CustomerProductPage' options={({route}:any)=>({title: route.params.product.name})} component={CustomerProductPage}/>
+        <Stack.Screen name='Chat' options={{ title: 'Chat' }} component={Chat}/>
       </Stack.Navigator>
     )
 
   }
 
-  return (
-    <NavigationContainer>
-      {farmer ? (
-        isSeller ? <ForFarmerSide /> : <RegisterShop />
-      ) : (
-        <ForCustomerSide />
-      )}
-    </NavigationContainer>
-  );
 
 
+return (
+  <NavigationContainer>
+    {farmer ? (
+      isSeller ? <ForFarmerSide /> : <RegisterShop />
+    ) : (
+      <ForCustomerSide />
+    )}
+  </NavigationContainer>
+);
 }
+
 
