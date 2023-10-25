@@ -2,6 +2,10 @@ import { View, Text,StyleSheet,TextInput, TouchableOpacity } from 'react-native'
 import React,{useEffect, useState} from 'react'
 import { UserSignIn } from '../util/interfaces';
 import { useDispatch } from 'react-redux';
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth,fireStore } from '../config/firebase';
+import { doc, setDoc } from "firebase/firestore"; 
+import { setLoadingFalse, setLoadingTrue } from '../features/connection/loaderSlice';
 
 export default function SignUp({navigation}:any) {
   const dispatch = useDispatch()
@@ -14,26 +18,52 @@ export default function SignUp({navigation}:any) {
   });
 
   useEffect(() => {
-    setLoginError(true)
+    setLoginError(false)
   }, []);
   
-  const handleSignUp = () => {
-    // Perform user registration logic here and call signUp function if successful
-    navigation.navigate('Login');
-    if (user.email && user.password && user.lastName && user.firstName) {
-
+const handleSignUp = async () => {
+  if (user.email && user.password && user.lastName && user.firstName) {
+    dispatch(setLoadingTrue());
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, user.email, user.password);
+      const userRef = userCredential.user;
+      // console.log(user);
+      
+      // Add other details to Firestore
+      await setDoc(doc(fireStore, "users", userRef.uid), {
+        email:user.email,
+        firstName:user.firstName,
+        lastName:user.lastName,
+        isSeller:false,
+        gender:'',
+        contactNo:0,
+        savedShops: [],
+      });
+      dispatch(setLoadingFalse());
+      navigation.navigate('Login');
+    } catch (error) {
+      console.log(error);
+      setLoginError(true);
+      dispatch(setLoadingFalse());
     }
+  } else {
+    setLoginError(true);
   }
+};
 
-  const pressLogin = () =>{
+const pressLogin = () =>{
     navigation.navigate('Login');
   }
 
   return (
     <View style={styles.container}>
       <View style={styles.middleText}>
-        <Text style={styles.middleTextMain}>Welcome Back</Text>
-        <Text style={styles.middleTextSub}>Your Lorem ipsum dolor sit amet hgfhg gfhh gdfgdfg dgdfgd</Text>
+        <View style={styles.middleTextMainView}>
+          <Text style={styles.middleTextMain}>Welcome to</Text>
+          <Text style={styles.middleTextMain}>FreshConnect</Text>
+        </View>
+        <Text style={styles.middleTextSub}>Your Lorem ipsum dolor</Text>
+        <Text style={styles.middleTextSub}>amet</Text>
       </View>
       <View style={styles.bottom}>
           <View style={styles.bottomTextTopView}>
@@ -44,29 +74,26 @@ export default function SignUp({navigation}:any) {
           style={styles.input}
           onChangeText={(text)=>{setUser({...user,firstName:text})}}
           placeholder='First Name'
-          value={user.email}
           />
           <TextInput
           style={styles.input}
           onChangeText={(text)=>{setUser({...user,lastName:text})}}
           placeholder='Last Name'
-          value={user.password}
           />
           <TextInput
           style={styles.input}
           onChangeText={(text)=>{setUser({...user,email:text})}}
           placeholder='Email Address'
-          value={user.password}
           />
           <TextInput
           style={styles.input}
           onChangeText={(text)=>{setUser({...user,password:text})}}
           placeholder='Password'
-          value={user.password}
+          secureTextEntry={true}
           />
           {/* this line will be visible is there is a login error */}
           <View style={loginError?styles.errorView:{display:'none'}}>
-            <Text style={styles.error}>Incorrect email</Text>
+            <Text style={styles.error}>Incorrect Details</Text>
           </View>
           </View>
           <View style={styles.loginBtnContainer}>
@@ -109,7 +136,12 @@ const styles = StyleSheet.create({
   middleTextMain:{
     fontSize:29,
     fontWeight:'bold',
-    marginBottom:50
+  },
+  middleTextMainView:{
+    marginBottom:50,
+    marginTop:20,
+    alignItems:'center',
+    textAlign:'justify'
   },
   middleTextSub:{
     fontSize:22,
@@ -126,10 +158,12 @@ const styles = StyleSheet.create({
     marginTop:20
   },
   errorView:{
-    alignItems:'center'
+    alignItems:'center',
+    backgroundColor:'red',
+    borderRadius:20
   },
   error:{
-    color:'red',
+    color:'white',
     fontWeight:'bold',
     fontSize:15
   },
