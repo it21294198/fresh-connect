@@ -68,7 +68,7 @@ export default function LocationSelector({ navigation, handleConfirm }: { naviga
     longitudeDelta: 0.0421,
   });
 
-  const myApiKey = ""
+  const myApiKey = "AIzaSyD1zXbosA4kkCMF7LhfD3Xw0IQotezwHHM"
   function getAddressFromCoordinates({ latitude, longitude }: { latitude: number, longitude: number }): Promise<string | undefined>
   {
     return new Promise((resolve, reject) =>
