@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
 		paddingLeft: 10,
 	},
 	editButton: {
-		backgroundColor: '#10893E', // #3c802f  #10893E
+		backgroundColor: '#45A053', // fig #45A053   #3c802f  #10893E #10893E
     borderRadius: 10,
     paddingVertical: 15,
 		paddingHorizontal: 30,

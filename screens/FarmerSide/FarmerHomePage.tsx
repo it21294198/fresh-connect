@@ -12,7 +12,7 @@ import { setLoadingFalse, setLoadingTrue } from '../../features/connection/loade
 
 export default function FarmerHomePage() {
   let uId:string|null = useSelector((state:{user:UserLogin})=>state.user.userId);
-	uId = 'JAAcrEfH1LPGi9NddZz16ZegLVK2'; // remove later
+	// uId = 'JAAcrEfH1LPGi9NddZz16ZegLVK2'; // remove later
   const dispatch = useDispatch()
   const navigation = useNavigation();
 	const insets = useSafeAreaInsets();
@@ -45,6 +45,18 @@ export default function FarmerHomePage() {
     const month = (date.getMonth() + 1).toString().padStart(2, '0'); // months start from 0
     const day = date.getDate().toString().padStart(2, '0');
     return `${year}/${month}/${day}`;
+  }
+
+  // format time
+  function formatTime(timestamp: Timestamp) {
+    const jsDate = timestamp.toDate();
+    // Use Intl.DateTimeFormat for formatting
+    const options: Intl.DateTimeFormatOptions = {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    };
+    return new Intl.DateTimeFormat('en-US', options).format(jsDate);
   }
 
 
@@ -143,7 +155,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   addButton: {
-    backgroundColor: '#10893E', // #3c802f  #10893E
+    backgroundColor: '#45A053', // fig #45A053   #3c802f  #10893E #10893E
     borderRadius: 10,
     paddingVertical: 15,
 		paddingHorizontal: 30,
