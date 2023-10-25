@@ -43,7 +43,7 @@ export default function FarmerHomePage() {
 
       <View style={styles.divider} />
 
-      <TouchableOpacity style={styles.addButton}>
+      <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddStocks')}>
         <Text style={styles.addButtonText}>Add Stock</Text>
       </TouchableOpacity>
 

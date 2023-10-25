@@ -224,9 +224,8 @@ export default function MainNavigation()
     return (
       <Tab.Navigator initialRouteName='Home' screenOptions={{ headerShown: false, }}>
         <Tab.Screen name='Home' component={FarmerHomePage} />
-        <Tab.Screen name='FarmerShopPage' component={FarmerShopPage} />
         <Tab.Screen name='FarmerProfile' component={FarmerProfile} />
-        <Tab.Screen name='ProductPage' component={ProductPage} />
+        <Tab.Screen name='Chat' component={ProductPage} />
       </Tab.Navigator>
     )
   }
