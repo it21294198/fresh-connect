@@ -1,126 +1,283 @@
-import { View, ScrollView, StyleSheet, FlatList } from 'react-native';
+import { View, ScrollView, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { Input, Icon, Button, Div, Text, Header, Image } from "react-native-magnus";
-
-interface ShopData {
-    id: string;
-    text: string;
-  }
+import { getProducts, getShopById } from './CustomerController';
+import { CustomerHeader } from '../../components/headers/CustomerHeader';
 
 export default function CustomerShopPage({ route, navigation }: any) {
-    const [data, setData] = useState<ShopData[]>([]);
+  const [data, setData] = useState<any[]>([]);
+  const [shop, setShop] = useState<any>();
+  const [Keyword, setKeyword] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState<string>("null")
+  const { user, shopId } = route.params
+  let openTime: string = "Open"
+  if (shop) {
+    openTime = shop.openAt.toDate().toLocaleTimeString() + " - " + shop.closeAt.toDate().toLocaleTimeString()
+  }
 
-    const products =[
-    {
-        name: 'Carrot',
-        category:'Vegetables',
-        price: 1000,
-        organic: true
-    },
-    {
-        name: 'Mango',
-        category:'Fruits',
-        price: 1000,
-        organic: true
-    },
-    {
-        name: 'Milk',
-        category:'Dairy',
-        price: 1000,
-        organic: true
-    }
-    ]
+  async function receiveData() {
+    const newData: any = await getProducts(shopId)
+    setData(newData)
+    console.log(newData)
+  }
 
-    const renderProducts = products.map((product) => {
+  async function receiveShop() {
+    const newData: any = await getShopById(shopId)
+    setShop(newData)
+    console.log(newData)
+  }
+
+  const filteredData = data.filter((data) => {
+    const name = data.name.toLowerCase()
+    const category = data.category.toLowerCase()
+    const price = data.price.toString().toLowerCase()
+    const organic = data.organic.toString().toLowerCase()
+    const specialMsg = data.specialMsg.toLowerCase()
+    const keyword = Keyword.toLowerCase()
+
+    return name.includes(keyword) || category.includes(keyword) || price.includes(keyword) || organic.includes(keyword) || specialMsg.includes(keyword)
+  })
+
+  useEffect(() => {
+    receiveShop()
+    receiveData()
+  }, [])
+
+  const openNow = () => {
+    if (shop) {
+      let currentTime = new Date().getTime()
+      let openH = shop.openAt.toDate().getTime()
+      let closeH = shop.closeAt.toDate().getTime()
+
+      if (currentTime >= openH && currentTime <= closeH) {
+        console.log("Now open")
         return (
-          <Div m="sm" rounded="md" shadow='sm' p="md">
-            <Div row alignItems="center">
-              <Div flex={1}>
-                <Text fontWeight="bold" fontSize="xl" mt="sm">
-                  {product.name}
-                </Text>
-              </Div>
-              <Image h={50} w={50} source={require("./Assets/organic.png")} />
-            </Div>
-            <Div row alignItems="center">
+          <Text fontSize="xl" color="green500">
+            Open Now
+          </Text>
+        )
+      } else {
+        console.log("Now closed")
+        return (
+          <Text fontSize="xl" color="red">
+            Closed Now
+          </Text>
+        )
+      }
+    }
+  }
+
+  const products = [
+    {
+      name: 'Carrot',
+      category: 'Vegetables',
+      price: 100,
+      per: 500,
+      qtUnit: 'g',
+      quantity: 500,
+      organic: true,
+      createdAt: '08/10/2023',
+      buyBefore: '09/10/2023',
+      specialMsg: "Please Contact us for any further queries",
+      imageId: require("./Assets/carrot.jpg")
+    },
+    {
+      name: 'Mango',
+      category: 'Fruits',
+      price: 200,
+      per: 500,
+      qtUnit: 'g',
+      quantity: 500,
+      organic: false,
+      createdAt: '08/10/2023',
+      buyBefore: '09/10/2023',
+      specialMsg: "Please Contact us for any further queries",
+      imageId: require("./Assets/mangoes.webp")
+    },
+    {
+      name: 'Milk',
+      category: 'Dairy',
+      price: 300,
+      per: 500,
+      qtUnit: 'g',
+      quantity: 500,
+      organic: false,
+      createdAt: '08/10/2023',
+      buyBefore: '09/10/2023',
+      specialMsg: "Please Contact us for any further queries",
+      imageId: require("./Assets/milk.jpg")
+    }
+  ]
+
+  const renderProducts = filteredData
+    .filter((product) => {
+      if (selectedCategory === "null") {
+        // If no category is selected, show all products
+        return true;
+      } else {
+        // Otherwise, show products that match the selected category
+        return product.category === selectedCategory;
+      }
+    })
+    .map((product, index) => {
+      const newPrice = "Rs " + product.price + "/" + product.per + product.qtUnit;
+      return (
+        <Div key={index} m="sm" rounded="lg" bg="white" shadow="md" p="md">
+          <Div row>
+            <TouchableOpacity onPress={() => navigation.navigate('CustomerProductPage', { user: user, shop: shop, product: product })}>
               <Div
                 rounded="xl"
                 h={150}
-                w={150}
-                bgImg={require("./Assets/store.jpg")}
+                w={300}
+                alignItems='center'
+                bgImg={product.imageId}
               />
-              <Div flex={1}>
-                <Text fontSize="xl" m="sm">
-                  {product.price}
-                </Text>
-              </Div>
+            </TouchableOpacity>
+          </Div>
+          <Div row>
+            <Div flex={1} alignItems='flex-start'>
+              <Text fontWeight="bold" fontSize="xl" mt="sm">
+                {product.name}
+              </Text>
             </Div>
-            <Div row flex={1}>
-              <Button alignItems='flex-end' onPress={() => navigation.navigate('CustomerShopPage', { product:product })}>View</Button>
+            <Div flex={1} alignItems='flex-end'>
+              {product.organic
+                ? <Image h={50} w={50} source={require("./Assets/organic.png")} /> : null
+              }
             </Div>
           </Div>
-        )
-      })
-    
-    return (
-<ScrollView style={styles.scrollview}>
-      <View style={styles.container}>
-        <Input
-          placeholder="Search"
-          p={10}
-          m={20}
-          focusBorderColor="green400"
-          suffix={<Icon name="search" fontFamily="Feather" />}
-        />
-        <View style={styles.divider} />
-        <Div row justifyContent="center" alignItems="center">
-          <Button
-            mt="lg"
-            px="xl"
-            py="lg"
-            bg="white"
-            borderWidth={1}
-            borderColor="#45A053"
-            color="#45A053"
-            underlayColor="red100"
-          >
-            Vegetables
-          </Button>
-          <Button
-            mt="lg"
-            px="xl"
-            py="lg"
-            bg="white"
-            mx="xl"
-            borderWidth={1}
-            borderColor="#45A053"
-            color="#45A053"
-            underlayColor="red100"
-          >
-            Fruits
-          </Button>
-          <Button
-            mt="lg"
-            px="xl"
-            py="lg"
-            bg="white"
-            borderWidth={1}
-            borderColor="#45A053"
-            color="#45A053"
-            underlayColor="red100"
-          >
-            Dairy
-          </Button>
+          <Div row>
+            <Div flex={1} alignItems='flex-start'>
+              <Text fontSize="md" mt={20} color="gray500">
+                Date Added
+              </Text>
+            </Div>
+            <Div flex={1} alignItems='center'>
+              <Text fontSize="md" mt={20}>
+                {product.createdAt.toDate().toLocaleDateString()}
+              </Text>
+            </Div>
+            <Div flex={1} alignItems='flex-end' mr="sm" flexWrap='wrap'>
+              <Button mt="md" bg="#45A053" fontSize="md" rounded={17.5}>{newPrice}</Button>
+            </Div>
+          </Div>
         </Div>
-        <View style={styles.divider} />
-        <Div p="xl" shadow="sm" rounded="md" bg='white' mx='sm'>
-          <Text fontWeight="bold" fontSize="4xl" mt="md" textAlign='center'>Activity From Shops</Text>
+      )
+    })
 
-          {renderProducts}
+  return (
+    <>
+      <CustomerHeader navigation={navigation} title="Shop" headerRight={false} back={true} />
+      <ScrollView style={styles.scrollview}>
+        <View style={styles.container}>
+          <Div row flex={1} justifyContent='center' mt="sm">
+            <Div
+              w={150}
+              h={150}
+              rounded="circle"
+              bgImg={require("./Assets/store.jpg")}
+            />
+          </Div>
+          <Div row>
+            <Div flex={1} alignItems='flex-start' ml="lg">
+              <Text fontSize="xl" fontWeight='bold' mt={20}>
+                Address
+              </Text>
+            </Div>
+            <Div flex={1} alignItems='flex-end' mr="lg">
+              <Text fontSize="md" mt={25}>
+                {shop && shop.address ? shop.address : null}
+              </Text>
+            </Div>
+          </Div>
+          <Div row mt="md">
+            <Div flex={1} alignItems='flex-start' ml="lg">
+              <Text fontSize="xl" fontWeight='bold'>
+                Open Hours
+              </Text>
+            </Div>
+            <Div flex={1} alignItems='flex-end' mr="lg">
+              <Text fontSize="md">
+                Monday - Friday
+              </Text>
+            </Div>
+          </Div>
+          <Div row>
+            <Div flex={1} alignItems='flex-end' mr="lg">
+              <Text fontSize="md">
+                {openTime}
+              </Text>
+            </Div>
+          </Div>
+          <Div row>
+            <Div flex={2} alignItems='flex-start' mt={20} ml="lg">
+              {openNow()}
+            </Div>
+            <Div flex={1} alignItems='flex-end' mt="lg" mr="xs">
+              <Button bg="#45A053" fontSize="md" rounded={17.5} suffix={<Icon px="md" name="star" color="gray100" />}>Save shop</Button>
+            </Div>
+          </Div>
+          <Input
+            placeholder="Search"
+            p={10}
+            m={20}
+            onChangeText={text => setKeyword(text)}
+            focusBorderColor="green400"
+            suffix={<Icon name="search" fontFamily="Feather" />}
+          />
+          <View style={styles.divider} />
+          <Div row justifyContent="center" alignItems="center">
+            <Button
+              mt="lg"
+              px="xl"
+              py="lg"
+              bg="white"
+              borderWidth={1}
+              borderColor="#45A053"
+              color="#45A053"
+              underlayColor="red100"
+              onPress={() => setSelectedCategory('Vegetables')}
+            >
+              Vegetables
+            </Button>
+            <Button
+              mt="lg"
+              px="xl"
+              py="lg"
+              bg="white"
+              mx="xl"
+              borderWidth={1}
+              borderColor="#45A053"
+              color="#45A053"
+              underlayColor="red100"
+              onPress={() => setSelectedCategory('Fruits')}
+            >
+              Fruits
+            </Button>
+            <Button
+              mt="lg"
+              px="xl"
+              py="lg"
+              bg="white"
+              borderWidth={1}
+              borderColor="#45A053"
+              color="#45A053"
+              underlayColor="red100"
+              onPress={() => setSelectedCategory('Dairy')}
+            >
+              Dairy
+            </Button>
+          </Div>
+          <View style={styles.divider} />
+          <Div p="xl" shadow="sm" rounded="md" bg='white' mx='sm'>
+            <Text fontWeight="bold" fontSize="4xl" mt="md" textAlign='center'>Newest Additions</Text>
 
-        </Div>
-      </View>
-    </ScrollView>
+            {renderProducts}
+
+          </Div>
+        </View>
+      </ScrollView>
+    </>
   );
 }
 
@@ -131,6 +288,7 @@ const styles = StyleSheet.create({
   divider: {
     marginTop: 30,
     borderColor: '#D9D9D9',
+    backgroundColor: '#D9D9D9',
     borderWidth: 3,
     marginHorizontal: 10,
     marginBottom: 30

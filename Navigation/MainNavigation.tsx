@@ -19,11 +19,13 @@ import SelectUser from '../screens/SelectUser';
 
 import { useSelector } from 'react-redux';
 import { View, Image} from 'react-native';
+
 import { customDrawerPropsInterface, UserLogin } from '../util/interfaces';
 import Svg, { Path } from "react-native-svg"
 import chatIcon from "../assets/Chat.svg"
 import emptyHome from "../assets/homeEmptyIcon.svg"
 import filledHome from "../assets/homeFilledIcon.svg"
+
 import filledHomeImg2 from "../assets/homeFilledIcon2.png"
 import emptyHomeImg from "../assets/homeEmptyImg.png"
 import accountsFilledIconImg from "../assets/accountsFilledIconImg.png"
@@ -37,27 +39,22 @@ import switchTypeEmptyIconImg from "../assets/switchTypeEmptyIconImg.png"
 import logoutEmptyIconImg from "../assets/logoutEmptyIconImg.png"
 import customHamburger from "../assets/customHamburger.png"
 
-
 import CustomerChatList from '../screens/CustomerSide/CustomerChatList';
 import Chat from '../screens/Chat';
 import CustomerShopPage from '../screens/CustomerSide/CustomerShopPage';
 import CustomerProductPage from '../screens/CustomerSide/CustomerProductPage';
 
-
 import { paths } from '../assets/strings';
+
 import { Button, Div, Icon, Text } from "react-native-magnus";
 import { getHeaderTitle } from '@react-navigation/elements';
+
 import { DrawerProfile } from '../components/DrawerProfile';
-
 import RegisterShop from '../screens/RegisterShop';
-
 import { TestFile } from '../screens/CustomerSide/TestFile';
-
-
 
 export default function MainNavigation()
 {
-  const [isHomeActive, setIsHomeActive] = useState(false);
   const [currentPage, setCurrentPage] = useState('CustomerHomePage');
   // const navigation = useNavigation()
   let isSeller:boolean|null = useSelector((state:{user:UserLogin})=>state.user.isSeller)
@@ -250,7 +247,7 @@ export default function MainNavigation()
     //Removed profile screen
     return (
       // <Drawer.Navigator initialRouteName="CustomerHomePage" screenOptions={drawerOptions}
-      <Drawer.Navigator initialRouteName="CustomerHomePage" screenOptions={drawerOptions}
+      <Drawer.Navigator initialRouteName="CustomerHomePage" screenOptions={{drawerOptions, headerShown:false}}
         drawerContent={(props) =>
         {
           return (
@@ -322,7 +319,7 @@ export default function MainNavigation()
 
   function Chats(){
     return(
-      <Stack.Navigator initialRouteName='CustomerChatList'>
+      <Stack.Navigator initialRouteName='CustomerChatList' screenOptions={{ headerShown: false }}>
         <Stack.Screen name='ChatList' options={{ title: 'Chats List' }} component={CustomerChatList}/>
         <Stack.Screen name='Chat' options={({route}:any)=>({title: route.params.chatRoom.name})} component={Chat}/>
       </Stack.Navigator>
@@ -331,14 +328,16 @@ export default function MainNavigation()
   
   function CustomerHomeStack(){
     return(
-      <Stack.Navigator initialRouteName='CustomerChatList'>
+      <Stack.Navigator initialRouteName='CustomerHomePage' screenOptions={{ headerShown: false }}>
         <Stack.Screen name='CustomerHomePage' options={{ title: 'Home' }} component={CustomerHomePage}/>
-        <Stack.Screen name='CustomerShopPage' options={({route}:any)=>({title: route.params.shop.shopName})} component={CustomerShopPage}/>
-        <Stack.Screen name='CustomerProductPage' options={({route}:any)=>({title: route.params.products.name})} component={CustomerProductPage}/>
+        <Stack.Screen name='CustomerShopPage' options={{title: 'Shop Page'}} component={CustomerShopPage}/>
+        <Stack.Screen name='CustomerProductPage' options={({route}:any)=>({title: route.params.product.name})} component={CustomerProductPage}/>
+        <Stack.Screen name='Chat' options={{ title: 'Chat' }} component={Chat}/>
       </Stack.Navigator>
     )
   
   }
+
 
 return (
   <NavigationContainer>
@@ -352,4 +351,5 @@ return (
 
 
 }
+
 
