@@ -6,6 +6,7 @@ export interface UserLogin {
   lastName?:string|null|undefined;
   contactNo?:number|null|undefined;
   userId?:string|null|undefined;
+  isSeller?:boolean|null;
 }
 
 export interface User {
@@ -103,4 +104,5 @@ export interface ShopRegister{
   address:string;
   accept:boolean;
 }
+
 

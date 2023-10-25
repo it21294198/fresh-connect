@@ -10,12 +10,15 @@ export default function SelectUser() {
   let email:string|null = useSelector((state:{user:UserLogin})=> state.user.email)
   let type:boolean|null = useSelector((state:{user:UserLogin})=> state.user.type)
   let uId:string|null = useSelector((state:{user:UserLogin})=>state.user.userId)
+  let isSeller:boolean|null = useSelector((state:{user:UserLogin})=>state.user.isSeller)
 
   useEffect(() => {
     dispatch(swithcUser())
     console.log(uId);
+    console.log(isSeller);
     console.log(email);
   }, []);
+  
   return (
     <View style={styles.container}>
       <View style={styles.middleText}>
