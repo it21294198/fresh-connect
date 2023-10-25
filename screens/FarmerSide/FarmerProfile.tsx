@@ -1,16 +1,21 @@
 import React,{useState,useEffect} from 'react'
 import {fireStore} from '../../config/firebase'
-import { View, Text,TextInput, StyleSheet, TouchableOpacity, Image, ScrollView, RefreshControl} from 'react-native'
+import { View, Text,TextInput, StyleSheet, TouchableOpacity, Image, ScrollView, RefreshControl, Modal,Dimensions } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoadingFalse, setLoadingTrue } from '../../features/connection/loaderSlice';
 import { UserLogin } from '../../util/interfaces';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-// imorot the loctaion selector
+// imported the location selector
+import LocationSelector from '../../components/LocationSelector';
+
+const screenWidth = Dimensions.get('window').width;
 
 export default function FarmerHomePage({navigation}:any) {
   const dispatch = useDispatch()
   let uId:any = useSelector((state:{user:UserLogin})=>state.user.userId)
   let userEmail:any = useSelector((state:{user:UserLogin})=>state.user.email)
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   // user profile side
   const [locationAddress, setLocationAddress] = useState<any>('Address');
@@ -19,7 +24,7 @@ export default function FarmerHomePage({navigation}:any) {
   const [lastName, setLastName] = useState('');
   const [gender, setGender] = useState('');
   const [contactNo, setContactNo] = useState(0);
-  const [address, setAddress] = useState('');
+  const [addressUser, setAddress] = useState('');
   const [refresher, setRefresher] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -28,26 +33,14 @@ export default function FarmerHomePage({navigation}:any) {
   const [contactEmail, setContactEmail] = useState('');
   const [shopDescription, setShopDescription] = useState('');
   const [shopContactNumber, setShopContactNumber] = useState(0);
-// const [locationData, setLocationData] = useState(second)
-/* locationDtaInterfecae: {coordinates: {
-            latitude: number, longitude: number
-          },
-          address:string
-}
-*/
-
-  // const handleConfirm = (data:locationDtaInterfecae) =>{
-  //   {address} = data;
-
-  //   setlocaData(data)
-  // }
-
-  // <LocationSelector navigation={navigation} handleConfirm={handleConfirm}/>
-
-
+  const [locationData, setLocationData] = useState(null)
+/* locationDtaInterfecae: {coordinates: {latitude: number, longitude: number},address:string}*/
 
 //palace this near useStates area
-
+  const handleConfirm = (data:any) =>{
+    // {address} = data;
+    // setLocationData(data)
+  }
 
 useEffect(() => {
   // load user profile data
@@ -78,7 +71,7 @@ useEffect(() => {
       setContactEmail(docSnap.data()?.email)
       setShopDescription(docSnap.data()?.description)
       setShopContactNumber(docSnap.data()?.contactNo)
-
+      
     } catch (error) {
       console.error('Error loading user profile:', error);
     }
@@ -88,80 +81,108 @@ useEffect(() => {
 }, [refresher]);
 
 
-  const updateProfile = async () =>{
-    dispatch(setLoadingTrue());
-
-    const userData = {
-      firstName:firstName,
-      lastName:lastName,
-      gender:gender,
-      contactNo:contactNo,
-      address:address
-    }
-
-    try {
-        const updatedUserDocRef = doc(fireStore, 'users', uId);
-        await setDoc(updatedUserDocRef, userData,{ merge: true });
-    } catch (error) {
-      console.log('error on update user profile');
-    }
-
-    dispatch(setLoadingFalse());
-    setRefresher(refresher + 1);
-    console.log('user updated');
+const updateProfile = async () =>{
+  dispatch(setLoadingTrue());
+  
+  const userData = {
+    firstName:firstName,
+    lastName:lastName,
+    gender:gender,
+    contactNo:contactNo,
+    address:addressUser
   }
+  
+  try {
+    const updatedUserDocRef = doc(fireStore, 'users', uId);
+    await setDoc(updatedUserDocRef, userData,{ merge: true });
+  } catch (error) {
+    console.log('error on update user profile');
+  }
+  
+  dispatch(setLoadingFalse());
+  setRefresher(refresher + 1);
+  console.log('user updated');
+}
 
-  const updateShopProfile = async () =>{
-    dispatch(setLoadingTrue());
-    const userData = {
-      shopName:shopName,
-      email:contactEmail,
-      contactNo:shopContactNumber,
-      description:shopDescription,
-      shopAddress:address
+const updateShopProfile = async () =>{
+  dispatch(setLoadingTrue());
+  const userData = {
+    shopName:shopName,
+    email:contactEmail,
+    contactNo:shopContactNumber,
+    description:shopDescription,
+    shopAddress:addressUser
     }
     try {
         const updatedShopDocRef = doc(fireStore, 'shops', uId);
         await setDoc(updatedShopDocRef, userData,{ merge: true });
-    } catch (error) {
-      console.log('error on update user profile');
+      } catch (error) {
+        console.log('error on update user profile');
+      }
+      dispatch(setLoadingFalse());
+      setRefresher(refresher + 1);
+      console.log('user updated');
+      console.log('shop profile updated');
     }
-    dispatch(setLoadingFalse());
-    setRefresher(refresher + 1);
-    console.log('user updated');
-    console.log('shop profile updated');
-  }
+    
+    const changeProfile = () =>{
+      console.log('update profile')
+    }
+    
+    const changeShopProfileImage = () =>{
+      console.log('update shop image');
+    }
+    
+    const selectLocation = () =>{
+      setLocationAddress('place value')
+      console.log('select location from map');
+    }
+    
+    const selectShopLocation = () =>{
+      // setShopLocationAddress('test location')
+      // console.log('select location from map');
+      setIsModalVisible(true)
+    }
+    
+    const onRefresh = () => {
+      // You can add your refresh logic here
+      // setRefreshing(true);
+      setRefresher(refresher + 1);
+      // setRefreshing(false);
+    } 
 
-  const changeProfile = () =>{
-    console.log('update profile')
-  }
-
-  const changeShopProfileImage = () =>{
-    console.log('update shop image');
-  }
-
-  const selectLocation = () =>{
-    setLocationAddress('place value')
-    console.log('select location from map');
-  }
-
-  const selectShopLocation = () =>{
-    setShopLocationAddress('test location')
-    console.log('select location from map');
-  }
-
-  const onRefresh = () => {
-  // You can add your refresh logic here
-  // setRefreshing(true);
-    setRefresher(refresher + 1);
-  // setRefreshing(false);
-  } 
-
-  return (
-  <ScrollView 
-    contentContainerStyle={styles.mainContainer}
-    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-    showsVerticalScrollIndicator={false}>
+    const mapModalView = () =>{
+      return(
+      <Modal
+        transparent={true}
+        visible={isModalVisible}
+        animationType="slide"
+        onRequestClose={() => setIsModalVisible(false)}>
+        <View style={styles.modalMapContainer}>
+          <LocationSelector
+            navigation={navigation}
+            handleConfirm={handleConfirm}
+          />
+          <TouchableOpacity
+            style={styles.mapCancelButton}
+            onPress={() => setIsModalVisible(false)}>
+            <Text style={{    
+              fontSize:20,
+              fontWeight:'bold',
+              color:'white'
+            }}
+              >Cancel</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+      )
+    }
+    
+    return (
+      <ScrollView 
+      contentContainerStyle={styles.mainContainer}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      showsVerticalScrollIndicator={false}>
       <View style={styles.profileTextView}>
         <Text style={styles.profileText}>Profile</Text>
       </View>
@@ -226,7 +247,7 @@ useEffect(() => {
       </View>
       <View>
         <Text style={styles.texts}>Address</Text>
-        <TouchableOpacity onPress={selectLocation}>
+        <TouchableOpacity onPress={selectShopLocation}>
           <View style={styles.inputsView}>
             <Image
             resizeMode="contain"
@@ -290,7 +311,7 @@ useEffect(() => {
             value={shopContactNumber.toString()}
             onChangeText={(text) => {
               // Use parseInt to convert the text to a number
-              const numericValue = parseInt(text); 
+              const numericValue:number = parseInt(text); 
               setShopContactNumber(isNaN(numericValue) ? '' : numericValue);
             }}
             keyboardType="numeric" 
@@ -299,6 +320,10 @@ useEffect(() => {
         </View>
         <View>
         <Text style={styles.texts}>Shop Address</Text>
+
+        {/* modal view */}
+        {mapModalView()}
+
         <TouchableOpacity onPress={selectShopLocation}>
           <View style={styles.inputsView}>
             <Image
@@ -457,5 +482,22 @@ const styles = StyleSheet.create({
   },
   farmerTextView:{
     marginVertical:20
+  },
+  modalMapContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    // alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  mapCancelButton:{
+    backgroundColor: 'green',
+    borderRadius: 10,
+    paddingVertical:5,
+    paddingHorizontal:5,
+    marginVertical:10,
+    width: 150,
+    justifyContent:'center',
+    alignItems: 'center',
+    marginLeft:screenWidth/3.3
   }
 })
