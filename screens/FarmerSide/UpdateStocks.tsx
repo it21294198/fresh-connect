@@ -1,32 +1,79 @@
-import { View, Text, TextInput, Button, StatusBar, ScrollView, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Button, StatusBar, ScrollView, StyleSheet, Image, TouchableOpacity, Modal } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import CheckBox from 'expo-checkbox';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native';
 import { FarmerHeader } from '../../components/headers/FarmerHeader';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Product, deleteProduct, fetchCategories, updateProduct } from '../../util/FarmerDbHooks';
+import { useDispatch, useSelector } from 'react-redux';
+import { setLoadingFalse, setLoadingTrue } from '../../features/connection/loaderSlice';
+import { UserLogin } from '../../util/interfaces';
 
-export default function UpdateStocks() {
+export default function UpdateStocks({route}) {
+	const dispatch = useDispatch();
   const navigation = useNavigation();
 	const insets = useSafeAreaInsets();
-	const [stockName, setStockName] = useState('');
-	const [category, setCategory] = useState('');
-	const [quantity, setQuantity] = useState('');
-	const [qtUnit, setQtUnit] = useState('');
-	const [price1, setPrice1] = useState('');
-	const [price2, setPrice2] = useState('');
-	const [isOrganic, setIsOrganic] = useState(false);
-	const [specialNote, setSpecialNote] = useState('');
+	const { product } = route.params as { product: Product };
+	const [stockName, setStockName] = useState(product.name);
+	const [category, setCategory] = useState(product.category);
+	const [categories, setCategories] = useState<string[]>([]);
+	const [quantity, setQuantity] = useState(`${product.quantity}`);
+	const [qtUnit, setQtUnit] = useState(product.qtUnit);
+	const [price, setPrice] = useState(`${product.price}`);
+	const [perUnit, setPerUnit] = useState(`${product.per}${product.perUnit}`);
+	const [isOrganic, setIsOrganic] = useState(product.organic);
+	const [specialNote, setSpecialNote] = useState(product.specialMsg || '');
 	const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+	const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
-	const categories = ['Category 1', 'Category 2', 'Category 3'];
+	let uId:string|null = useSelector((state:{user:UserLogin})=>state.user.userId);
+	uId = 'JAAcrEfH1LPGi9NddZz16ZegLVK2'; // remove later
 
-	const handleAddStock = () => {
-		// TODO
+	useEffect(() => {
+    async function fetchData() {
+			dispatch(setLoadingTrue());
+      setCategories(await fetchCategories());
+			dispatch(setLoadingFalse());
+		}
+		fetchData();
+  }, [])
+
+	const handleUpdateStock = async () => {
+		dispatch(setLoadingTrue());
+
+		// separate unit and amount
+		let iPer = 0;
+		let iPerUnit = '';
+		const matches = perUnit.match(/(\d+)([a-zA-Z]+)/);
+		if (matches) {
+			iPer = parseInt(matches[1]);
+			iPerUnit = matches[2];
+		}
+
+		// set variables
+		product.name = stockName;
+		product.category = category;
+		product.quantity = parseInt(quantity);
+		product.qtUnit = qtUnit;
+		product.price = parseInt(price);
+		product.per = iPer;
+		product.perUnit = iPerUnit;
+		product.organic = isOrganic;
+		product.specialMsg = specialNote;
+
+		await updateProduct(product, uId);
+
+		dispatch(setLoadingFalse());
+		navigation.goBack();
 	};
 
-	const handleDeleteStock = () => {
-		// TODO
+	const handleDeleteStock = async () => {
+		dispatch(setLoadingTrue());
+		await deleteProduct(uId, product.id);
+		setDeleteModalVisible(false);
+		dispatch(setLoadingFalse());
+		navigation.goBack();
 	};
 
 	const handleImageUpload = () => {
@@ -112,15 +159,15 @@ export default function UpdateStocks() {
 								<TextInput
 									style={styles.input}
 									placeholder="Price (RS)"
-									value={price1}
-									onChangeText={(text) => setPrice1(text)}
+									value={price}
+									onChangeText={(text) => setPrice(text)}
 								/>
 								<Text>per</Text>
 								<TextInput
 									style={styles.input}
 									placeholder="Unit | eg: 100g"
-									value={price2}
-									onChangeText={(text) => setPrice2(text)}
+									value={perUnit}
+									onChangeText={(text) => setPerUnit(text)}
 								/>
 							</View>
 
@@ -141,14 +188,47 @@ export default function UpdateStocks() {
 							/>
 
 							{/* Add Button */}
-							<TouchableOpacity style={styles.addButton} onPress={handleAddStock}>
-								<Text style={styles.buttonText}>Add</Text>
+							<TouchableOpacity style={styles.addButton} onPress={handleUpdateStock}>
+								<Text style={styles.buttonText}>Update</Text>
 							</TouchableOpacity>
 
 							{/* Delete Button */}
-							<TouchableOpacity style={styles.deleteButton} onPress={handleDeleteStock} >
+							<TouchableOpacity style={styles.deleteButton} onPress={() => setDeleteModalVisible(true)} >
 								<Text style={styles.buttonText}>Delete</Text>
 							</TouchableOpacity>
+
+							{/* Delete Confirmation Modal */}
+							<Modal
+								visible={deleteModalVisible}
+								transparent={true} 
+								animationType="fade"
+								hardwareAccelerated
+								onRequestClose={() => {
+									setDeleteModalVisible(false);
+								}}
+							>
+								<View style={styles.modalContainer}>
+									<View style={styles.modalContent}>
+										<Text style={styles.modalText}>
+											{`⚠️ \nAre you sure you want to delete this item?\n`}
+										</Text>
+										<View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+											<TouchableOpacity
+												onPress={() => setDeleteModalVisible(false)}
+												style={styles.cancelButton}
+											>
+												<Text style={styles.buttonText}>Cancel</Text>
+											</TouchableOpacity>
+											<TouchableOpacity
+												onPress={handleDeleteStock}
+												style={styles.confirmButton}
+											>
+												<Text style={styles.buttonText}>Confirm</Text>
+											</TouchableOpacity>
+										</View>
+									</View>
+								</View>
+							</Modal>
 						</View>
 					</View>
 				</View>
@@ -237,7 +317,8 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
-		fontSize: 15
+		fontSize: 15,
+		textAlign: 'center',
   },
 	deleteButton: {
 		borderRadius: 10,
@@ -249,5 +330,39 @@ const styles = StyleSheet.create({
 		alignSelf: 'center',
 		marginBottom: 40,
 		backgroundColor: 'red',
-	}
+	},
+
+	modalContainer: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+},
+modalContent: {
+		backgroundColor: 'white',
+		borderWidth: 1,
+		borderColor: 'red',
+		borderRadius: 10,
+		padding: 20,
+		width: 300,
+		elevation: 20
+},
+modalText: {
+		fontSize: 18,
+		marginBottom: 10,
+		color: '#333',
+		textAlign: 'center'
+},
+cancelButton: {
+		backgroundColor: 'lightgray',
+		paddingVertical: 10,
+		paddingHorizontal: 20,
+		borderRadius: 5,
+		marginRight: 10,
+},
+confirmButton: {
+		backgroundColor: 'red', 
+		paddingVertical: 10,
+		paddingHorizontal: 20,
+		borderRadius: 5,
+},
 });

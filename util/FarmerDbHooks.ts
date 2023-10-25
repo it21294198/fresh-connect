@@ -52,7 +52,9 @@ export async function fetchProducts(uid: string) {
 export async function updateProduct(product: Product, uid:string) {
 	try {
 		await updateDoc(doc(fireStore, 'shops', uid, 'products', product.id), {
-			...product
+			...product,
+			createdAt: serverTimestamp(),
+			updatedAt: serverTimestamp()
 		})
 	} catch (error) {
 		console.log('error updating product: ', error);
