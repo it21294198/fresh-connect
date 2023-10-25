@@ -12,6 +12,7 @@ export default function UpdateStocks() {
 	const [stockName, setStockName] = useState('');
 	const [category, setCategory] = useState('');
 	const [quantity, setQuantity] = useState('');
+	const [qtUnit, setQtUnit] = useState('');
 	const [price1, setPrice1] = useState('');
 	const [price2, setPrice2] = useState('');
 	const [isOrganic, setIsOrganic] = useState(false);
@@ -59,10 +60,11 @@ export default function UpdateStocks() {
 
 						{/* Area for the image */}
 						<View style={styles.imageContainer}>
-							<Image
-								source={uploadedImage ? { uri: uploadedImage } : null}
-								style={uploadedImage ? styles.image : { display: 'none' }}
-							/>
+							{uploadedImage ? (
+								<Image source={require('./assets/carrot-head.png')} style={styles.image} />
+							) : (
+								<Image source={require('./assets/carrot-head.png')} style={styles.image} />
+							)}
 							{/* Image Upload Button */}
 							<TouchableOpacity style={styles.uploadImageButton} onPress={handleImageUpload}>
 								<Text style={styles.buttonText}>Upload Image</Text>
@@ -90,12 +92,20 @@ export default function UpdateStocks() {
 							</Picker>
 
 							{/* Quantity */}
-							<TextInput
-								style={styles.inputDefault}
-								placeholder="Quantity"
-								value={quantity}
-								onChangeText={(text) => setQuantity(text)}
-							/>
+							<View style={styles.priceContainer}>
+								<TextInput
+									style={[styles.inputDefault, {flex:2, marginEnd:15}]}
+									placeholder="Quantity (number)"
+									value={quantity}
+									onChangeText={(text) => setQuantity(text)}
+								/>
+								<TextInput
+									style={[styles.inputDefault, {flex:1}]}
+									placeholder="Unit"
+									value={qtUnit}
+									onChangeText={(text) => setQtUnit(text)}
+								/>
+							</View>
 
 							{/* Price per Unit */}
 							<View style={styles.priceContainer}>
@@ -206,6 +216,7 @@ const styles = StyleSheet.create({
 		paddingLeft: 10,
 	},
 	uploadImageButton: {
+		position: 'absolute',
 		borderRadius: 10,
 		overflow: 'hidden',
 		marginVertical: 10,

@@ -1,27 +1,70 @@
 import { View, Text, TextInput, Button, StatusBar, ScrollView, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import CheckBox from 'expo-checkbox';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native';
 import { FarmerHeader } from '../../components/headers/FarmerHeader';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Product, addNewProduct, fetchCategories } from '../../util/FarmerDbHooks';
+import { useSelector, useDispatch } from 'react-redux';
+import { UserLogin } from '../../util/interfaces';
+import { setLoadingFalse, setLoadingTrue } from '../../features/connection/loaderSlice';
 
 export default function AddStocks() {
+	const dispatch = useDispatch();
 	const navigation = useNavigation();
 	const insets = useSafeAreaInsets();
 	const [stockName, setStockName] = useState('');
 	const [category, setCategory] = useState('');
 	const [quantity, setQuantity] = useState('');
+	const [qtUnit, setQtUnit] = useState('');
 	const [price1, setPrice1] = useState('');
 	const [price2, setPrice2] = useState('');
 	const [isOrganic, setIsOrganic] = useState(false);
 	const [specialNote, setSpecialNote] = useState('');
 	const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+	const [categories, setCategories] = useState<string[]>([]);
+	const [isDisabled, setIsDisabled] = useState(false);
 
-	const categories = ['Category 1', 'Category 2', 'Category 3'];
+	let uId:string|null = useSelector((state:{user:UserLogin})=>state.user.userId);
+	uId = 'JAAcrEfH1LPGi9NddZz16ZegLVK2'; // remove later
 
-	const handleAddStock = () => {
-		// TODO
+	useEffect(() => {
+		async function fetchData() {
+			setCategories(await fetchCategories())
+		}
+		fetchData();
+	}, []);
+
+	const handleAddStock = async () => {
+		dispatch(setLoadingTrue());
+		setIsDisabled(true);
+
+		// separate unit and amount
+		let iPer = 0;
+		let iPerUnit = '';
+		const matches = price2.match(/(\d+)([a-zA-Z]+)/);
+		if (matches) {
+			iPer = parseInt(matches[1]);
+			iPerUnit = matches[2];
+		}
+
+		const newProduct = {
+			name: stockName,
+			category: category,
+			quantity: parseInt(quantity),
+			qtUnit: qtUnit,
+			price: parseInt(price1),
+			per: iPer,
+			perUnit: iPerUnit,
+			organic: isOrganic,
+			specialMsg: specialNote
+		};
+
+		await addNewProduct(newProduct as Product, uId as string);
+		setIsDisabled(false);
+		dispatch(setLoadingFalse());
+		navigation.goBack();
 	};
 
 	const handleImageUpload = () => {
@@ -55,10 +98,11 @@ export default function AddStocks() {
 
 						{/* Area for the image */}
 						<View style={styles.imageContainer}>
-							<Image
-								source={uploadedImage ? { uri: uploadedImage } : null}
-								style={uploadedImage ? styles.image : { display: 'none' }}
-							/>
+							{uploadedImage ? (
+								<Image source={require('./assets/carrot-head.png')} style={styles.image} />
+							) : (
+								<Image source={require('./assets/carrot-head.png')} style={styles.image} />
+							)}
 							{/* Image Upload Button */}
 							<TouchableOpacity style={styles.uploadImageButton} onPress={handleImageUpload} >
 								<Text style={styles.buttonText}>Upload Image</Text>
@@ -86,12 +130,20 @@ export default function AddStocks() {
 							</Picker>
 
 							{/* Quantity */}
-							<TextInput
-								style={styles.inputDefault}
-								placeholder="Quantity"
-								value={quantity}
-								onChangeText={(text) => setQuantity(text)}
-							/>
+							<View style={styles.priceContainer}>
+								<TextInput
+									style={[styles.inputDefault, {flex:2, marginEnd:15}]}
+									placeholder="Quantity (number)"
+									value={quantity}
+									onChangeText={(text) => setQuantity(text)}
+								/>
+								<TextInput
+									style={[styles.inputDefault, {flex:1}]}
+									placeholder="Unit"
+									value={qtUnit}
+									onChangeText={(text) => setQtUnit(text)}
+								/>
+							</View>
 
 							{/* Price per Unit */}
 							<View style={styles.priceContainer}>
@@ -127,7 +179,7 @@ export default function AddStocks() {
 							/>
 
 							{/* Add Button */}
-							<TouchableOpacity style={styles.addButton} onPress={handleAddStock}>
+							<TouchableOpacity style={styles.addButton} onPress={handleAddStock} disabled={isDisabled}>
 								<Text style={styles.buttonText}>Add</Text>
 							</TouchableOpacity>
 						</View>
@@ -197,6 +249,7 @@ const styles = StyleSheet.create({
 		paddingLeft: 10,
 	},
 	uploadImageButton: {
+		position: 'absolute',
 		borderRadius: 10,
 		overflow: 'hidden',
 		marginVertical: 10,
