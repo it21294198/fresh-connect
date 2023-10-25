@@ -31,12 +31,20 @@ import helpCenterEmptyIconImg from "../assets/helpCenterEmptyIconImg.png"
 import switchTypeFilledIconImg from "../assets/switchTypeFilledIconImg.png"
 import switchTypeEmptyIconImg from "../assets/switchTypeEmptyIconImg.png"
 import logoutEmptyIconImg from "../assets/logoutEmptyIconImg.png"
+import addFilledIcon from "../assets/addFilledIcon.png"
+import dashboardEmptyIcon from "../assets/dashboardEmptyIcon.png"
+import dashboardFilledIcon from "../assets/dashboardFilledIcon.png"
+import shopEmptyIcon from "../assets/shopEmptyIcon.png"
+import shopFilledIcon from "../assets/shopFilledIcon.png"
+import chatEmptyIcon from "../assets/chatEmptyIcon.png"
+import chatFilledIcon from "../assets/chatFilledIcon.png"
+import searchIcon from "../assets/searchIcon.png"
 import customHamburger from "../assets/customHamburger.png"
 import CustomerChatList from '../screens/CustomerSide/CustomerChatList';
 import Chat from '../screens/Chat';
 import CustomerShopPage from '../screens/CustomerSide/CustomerShopPage';
 import CustomerProductPage from '../screens/CustomerSide/CustomerProductPage';
-import { Button, Div, Text } from "react-native-magnus";
+import { Button, Div, Icon, Text } from "react-native-magnus";
 import { DrawerProfile } from '../components/DrawerProfile';
 import RegisterShop from '../screens/RegisterShop';
 import { TestFile } from '../screens/CustomerSide/TestFile';
@@ -46,7 +54,7 @@ export default function MainNavigation()
   const [currentPage, setCurrentPage] = useState('CustomerHomePage');
   const [userData, setUserData] = useState<UserLogin>();
   // const navigation = useNavigation()
-  let isSeller:boolean|null = useSelector((state:{user:UserLogin})=>state.user.isSeller)
+  let isSeller: boolean | null = useSelector((state: { user: UserLogin }) => state.user.isSeller)
 
   const drawerOptions = {
     drawerActiveTintColor: '#45A053',
@@ -123,6 +131,21 @@ export default function MainNavigation()
 
   };
 
+  const drawerChatsOptions = {
+    drawerIcon: () => (
+      currentPage === 'My Chats' ?
+        <Image
+          source={chatFilledIcon}
+          style={{ width: 22, height: 22, resizeMode: 'contain' }}
+        /> : <Image
+          source={chatEmptyIcon}
+          style={{ width: 22, height: 22, resizeMode: 'contain' }}
+        />
+    ),
+    drawerItemStyle: { marginVertical: 5 },
+
+  };
+
   const drawerHelpOptions = {
     drawerIcon: () => (
       currentPage === 'HelpCenter' ?
@@ -168,14 +191,17 @@ export default function MainNavigation()
     drawerIcon: () => (
       currentPage === 'SavedShops' ?
         <Image
-          source={favoutitesFilledIconImg}
+          source={chatFilledIcon}
           style={{ width: 22, height: 22, resizeMode: 'contain' }}
         /> : <Image
-          source={favoutitesEmptyIconImg}
+          source={chatEmptyIcon}
           style={{ width: 22, height: 22, resizeMode: 'contain' }}
         />
     ),
   }
+  // const tabHomeOptions = {{({route}) => {
+  //   tabBarIcon: 
+  // }}}
 
 
 
@@ -198,16 +224,75 @@ export default function MainNavigation()
   //   drawerItemPress: () => handleItemClick('CustomerProfile'),
   // })
 
+  /**
+   * <Tab.Navigator initialRouteName='Home' screenOptions={{ headerShown: false, tabBarActiveTintColor: '#45A053'}}>
+
+   * <Tab.Navigator initialRouteName='Home' screenOptions={({route}) => ({
+   * 
+   * 
+   * })}>
+
+   */
+
   function CustomerTabNavigation()
   {
     return (
-      <Tab.Navigator initialRouteName='Home' screenOptions={{ headerShown: false, }}>
+      <Tab.Navigator initialRouteName='Home' screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarActiveTintColor: '#45A053',
+        tabBarIcon: ({ focused, color, size }) =>
+        {
+          let icon;
+          if (route.name === 'Home')
+          {
+            icon = focused ? <Image
+              source={filledHomeImg2}
+              style={{ width: 19, height: 20, resizeMode: 'contain' }}
+            /> : <Image
+              source={emptyHomeImg}
+              style={{ width: 19, height: 20, resizeMode: 'contain', tintColor: '#A89797' }}
+            />
+          } else if (route.name === 'Shops')
+          {
+            icon = focused ? <Image
+              source={shopFilledIcon}
+              style={{ width: 19, height: 20, resizeMode: 'contain', tintColor: '#45A053' }}
+            /> : <Image
+              source={shopEmptyIcon}
+              style={{ width: 25, height: 26, resizeMode: 'contain', tintColor: '#A89797' }}
+            />
+          }
+          else if (route.name === 'Saved Shops')
+          {
+            icon = focused ? <Image
+              source={favoutitesFilledIconImg}
+              style={{ width: 19, height: 20, resizeMode: 'contain' }}
+            /> : <Image
+              source={favoutitesEmptyIconImg}
+              style={{ width: 19, height: 20, resizeMode: 'contain', tintColor: '#A89797' }}
+            />
+          }
+          else if (route.name === 'Profile')
+          {
+            icon = focused ? <Image
+              source={accountsFilledIconImg}
+              style={{ width: 19, height: 20, resizeMode: 'contain' }}
+            /> : <Image
+              source={accountEmptyIconImg}
+              style={{ width: 19, height: 20, resizeMode: 'contain', tintColor: '#A89797' }}
+            />
+          }
+
+
+          return icon;
+        }
+      })}>
         <Tab.Screen name="Home" component={CustomerHomeStack} />
-        <Tab.Screen name="ShopMapDisplay" component={ShopMapDisplay} options={{ headerShown: false, tabBarShowLabel: true, }} />
-        <Tab.Screen name="SavedShops" component={SavedShops} />
-        <Tab.Screen name="Chats" component={Chats} />
-        <Tab.Screen name="CustomerProfile" component={CustomerProfile} />
-        <Tab.Screen name="Test" component={TestFile} />
+        <Tab.Screen name="Shops" component={ShopMapDisplay} options={{ headerShown: false, tabBarShowLabel: true, }} />
+        <Tab.Screen name="Saved Shops" component={SavedShops} />
+        {/* <Tab.Screen name="Chats" component={Chats} /> */}
+        <Tab.Screen name="Profile" component={CustomerProfile} />
+        {/* <Tab.Screen name="Test" component={TestFile} /> */}
       </Tab.Navigator>
 
     )
@@ -216,9 +301,53 @@ export default function MainNavigation()
   function FarmerTabNavigation()
   {
     return (
-      <Tab.Navigator initialRouteName='Home'>
+      <Tab.Navigator initialRouteName='Home' screenOptions={({ route }) => ({
+        headerShown: true,
+        tabBarActiveTintColor: '#45A053',
+        tabBarIcon: ({ focused, color, size }) =>
+        {
+          let farmerIcon;
+          if (route.name === 'Home')
+          {
+            farmerIcon = focused ? <Image
+              source={filledHomeImg2}
+              style={{ width: 19, height: 20, resizeMode: 'contain' }}
+            /> : <Image
+              source={emptyHomeImg}
+              style={{ width: 19, height: 20, resizeMode: 'contain', tintColor: '#A89797' }}
+            />
+          } else if (route.name === 'FarmerShopPage')
+          {
+            farmerIcon = focused ? <Image
+              source={dashboardFilledIcon}
+              style={{ width: 27, height: 28, resizeMode: 'contain', tintColor: '#45A053' }}
+            /> : <Image
+              source={dashboardEmptyIcon}
+              style={{ width: 27, height: 28, resizeMode: 'contain', tintColor: '#A89797' }}
+            />
+          } else if (route.name === 'FarmerProfile')
+          {
+            farmerIcon = focused ? <Image
+              source={accountsFilledIconImg}
+              style={{ width: 19, height: 20, resizeMode: 'contain', tintColor: '#45A053' }}
+            /> : <Image
+              source={accountEmptyIconImg}
+              style={{ width: 19, height: 20, resizeMode: 'contain', tintColor: '#A89797' }}
+            />
+          } else if (route.name === 'Add')
+          {
+            farmerIcon = <Image
+              source={addFilledIcon}
+              style={{ width: 30, height: 31, resizeMode: 'contain', tintColor: '#45A053' }}
+            />
+          }
+          return farmerIcon;
+        }
+
+      })}>
         <Tab.Screen name='Home' component={FarmerHomePage} />
         <Tab.Screen name='FarmerShopPage' component={FarmerShopPage} />
+        <Tab.Screen name='Add' component={AddStocks} options={{ tabBarShowLabel: false }} />
         <Tab.Screen name='FarmerProfile' component={FarmerProfile} />
         <Tab.Screen name='ProductPage' component={ProductPage} />
       </Tab.Navigator>
@@ -251,6 +380,9 @@ export default function MainNavigation()
         })} />
         <Drawer.Screen name="SavedShops" component={SavedShops} options={drawerFavouritesOptions} listeners={({ navigation }) => ({
           drawerItemPress: () => handleItemClick('SavedShops'),
+        })} />
+        <Drawer.Screen name="My Chats" component={Chat} options={drawerChatsOptions} listeners={({ navigation }) => ({
+          drawerItemPress: () => handleItemClick('My Chats'),
         })} />
         <Drawer.Screen name="HelpCenter" component={FAQ} options={drawerHelpOptions} listeners={({ navigation }) => ({
           drawerItemPress: () => handleItemClick('HelpCenter'),
@@ -288,6 +420,9 @@ export default function MainNavigation()
         <Drawer.Screen name='FarmerHomePage' component={FarmerTabNavigation} options={drawerHomeOptions} listeners={({ navigation }) => ({
           drawerItemPress: () => handleItemClick('FarmerHomePage'),
         })} />
+        <Drawer.Screen name="My Chats" component={Chat} options={drawerChatsOptions} listeners={({ navigation }) => ({
+          drawerItemPress: () => handleItemClick('My Chats'),
+        })} />
         <Drawer.Screen name="HelpCenter" component={FAQ} options={drawerHelpOptions} listeners={({ navigation }) => ({
           drawerItemPress: () => handleItemClick('HelpCenter'),
         })} />
@@ -323,15 +458,15 @@ export default function MainNavigation()
 
   }
 
-return (
-  <NavigationContainer>
-    {farmer ? (
-      isSeller ? <ForFarmerSide /> : <RegisterShop />
-    ) : (
-      <ForCustomerSide />
-    )}
-  </NavigationContainer>
-);
+  return (
+    <NavigationContainer>
+      {farmer ? (
+        isSeller ? <ForFarmerSide /> : <RegisterShop />
+      ) : (
+        <ForCustomerSide />
+      )}
+    </NavigationContainer>
+  );
 
 
 }
