@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Button, StatusBar, ScrollView, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, Button, StatusBar, ScrollView, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import CheckBox from 'expo-checkbox';
 import React, { useState } from 'react'
@@ -27,7 +27,7 @@ export default function AddStocks() {
 	const handleImageUpload = () => {
 		// TODO
 		try {
-			setUploadedImage('assets/carrot-head.png');
+			setUploadedImage('./assets/carrot-head.png');
 			console.log(uploadedImage);
 		} catch (error) {
 			console.error("Error setting the image:", error);
@@ -60,9 +60,9 @@ export default function AddStocks() {
 								style={uploadedImage ? styles.image : { display: 'none' }}
 							/>
 							{/* Image Upload Button */}
-							<View style={styles.button}>
-								<Button title="Upload Image" onPress={handleImageUpload} />
-							</View>
+							<TouchableOpacity style={styles.uploadImageButton} onPress={handleImageUpload} >
+								<Text style={styles.buttonText}>Upload Image</Text>
+							</TouchableOpacity>
 						</View>
 
 						<View style={{ marginTop: 45, padding: 15, borderWidth: 5, borderRadius: 15, borderColor: 'rgba(128, 128, 128, 0.1)', overflow: 'hidden' }}>
@@ -127,9 +127,9 @@ export default function AddStocks() {
 							/>
 
 							{/* Add Button */}
-							<View style={styles.addButton}>
-								<Button title="Add" onPress={handleAddStock} />
-							</View>
+							<TouchableOpacity style={styles.addButton} onPress={handleAddStock}>
+								<Text style={styles.buttonText}>Add</Text>
+							</TouchableOpacity>
 						</View>
 					</View>
 				</View>
@@ -196,15 +196,27 @@ const styles = StyleSheet.create({
 		marginVertical: 10,
 		paddingLeft: 10,
 	},
-	button: {
+	uploadImageButton: {
 		borderRadius: 10,
 		overflow: 'hidden',
 		marginVertical: 10,
+		backgroundColor: 'rgba(128, 128, 128, 0.4)',
+		padding: 8
 	},
 	addButton: {
-		borderRadius: 10,
-		overflow: 'hidden',
-		marginTop: 70,
-		marginBottom: 40,
-	}
+		backgroundColor: '#10893E', // #3c802f  #10893E
+    borderRadius: 10,
+    paddingVertical: 15,
+		paddingHorizontal: 30,
+    alignItems: 'center',
+    marginBottom: 40,
+    marginTop: 70,
+		width: 'auto',
+		alignSelf: 'center',
+	},
+	buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+		fontSize: 15
+  },
 });

@@ -1,18 +1,22 @@
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
 const CustomCard = ({ name, date, price, } :{name:string, date:string, price:string}) => {
+  const navigation = useNavigation();
 	const iconSource = './assets/Edit-Square.png';
 	const logoSource = './assets/organic.png';
 	const imageSource = './assets/carrot-head.png';
 
   return (
+    // TODO link to a product view 
     <TouchableOpacity style={styles.card}>
       <View style={styles.imageArea}>
         <Image source={require(imageSource)} style={styles.image} />
-				<TouchableOpacity style={styles.editIconContainer}>
+        {/* edit button */}
+				<TouchableOpacity style={styles.editIconContainer} onPress={() => navigation.navigate('UpdateStocks')}>
         	<Image source={require(iconSource)} style={styles.editIcon} />
 				</TouchableOpacity>
       </View>
