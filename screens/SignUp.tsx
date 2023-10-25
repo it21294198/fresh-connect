@@ -34,7 +34,10 @@ const handleSignUp = async () => {
         email:user.email,
         firstName:user.firstName,
         lastName:user.lastName,
-        isSeller:false
+        isSeller:false,
+        gender:'',
+        contactNo:0,
+        savedShops: [],
       });
       dispatch(setLoadingFalse());
       navigation.navigate('Login');
