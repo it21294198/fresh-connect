@@ -62,6 +62,7 @@ export interface userSelectedCoordinateLocation{
       y: number;
     }
 }
+
 export interface shopDataInterface {
   shopName: string;
   address: string;
@@ -94,6 +95,7 @@ export interface coordComparisionObject{
   
   coord2: {latitude: number| undefined; longitude: number| undefined;};
 }
+
 export interface ShopRegister{
   shopName:string;
   email:string;
@@ -104,5 +106,4 @@ export interface ShopRegister{
   address:string;
   accept:boolean;
 }
-
 
