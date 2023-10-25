@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createDrawerNavigator, DrawerItem, DrawerNavigationProp, DrawerItemList, DrawerContentScrollView, DrawerContentComponentProps } from '@react-navigation/drawer';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -18,8 +18,8 @@ import UpdateStocks from '../screens/FarmerSide/UpdateStocks';
 import SelectUser from '../screens/SelectUser';
 
 import { useSelector } from 'react-redux';
-import { View, Image} from 'react-native';
-import {UserLogin } from '../util/interfaces';
+import { View, Image } from 'react-native';
+import { UserLogin } from '../util/interfaces';
 import filledHomeImg2 from "../assets/homeFilledIcon2.png"
 import emptyHomeImg from "../assets/homeEmptyImg.png"
 import accountsFilledIconImg from "../assets/accountsFilledIconImg.png"
@@ -43,7 +43,7 @@ import { TestFile } from '../screens/CustomerSide/TestFile';
 export default function MainNavigation()
 {
   const [currentPage, setCurrentPage] = useState('CustomerHomePage');
-  // const navigation = useNavigation()
+  const [userData, setUserData] = useState<UserLogin>();
 
   const drawerOptions = {
     drawerActiveTintColor: '#45A053',
@@ -180,7 +180,7 @@ export default function MainNavigation()
   const Tab = createBottomTabNavigator();
   const Stack = createStackNavigator();
 
-  let farmer:boolean|null = useSelector((state:{user:UserLogin})=> state.user.type)
+  let farmer: boolean | null = useSelector((state: { user: UserLogin }) => state.user.type)
 
   const handleItemClick = (id: string) =>
   {
@@ -259,9 +259,9 @@ export default function MainNavigation()
           listeners={({ navigation }) => ({
             drawerItemPress: () => handleItemClick('Logout'),
           })} />
-  </Drawer.Navigator>
-  )
-}
+      </Drawer.Navigator>
+    )
+  }
 
   function ForFarmerSide()
   { //TODO: Add Shop page, chats, buttons
@@ -298,24 +298,26 @@ export default function MainNavigation()
     )
   }
 
-  function Chats(){
-    return(
+  function Chats()
+  {
+    return (
       <Stack.Navigator initialRouteName='CustomerChatList'>
-        <Stack.Screen name='ChatList' options={{ title: 'Chats List' }} component={CustomerChatList}/>
-        <Stack.Screen name='Chat' options={({route}:any)=>({title: route.params.chatRoom.name})} component={Chat}/>
+        <Stack.Screen name='ChatList' options={{ title: 'Chats List' }} component={CustomerChatList} />
+        <Stack.Screen name='Chat' options={({ route }: any) => ({ title: route.params.chatRoom.name })} component={Chat} />
       </Stack.Navigator>
     )
   }
-  
-  function CustomerHomeStack(){
-    return(
+
+  function CustomerHomeStack()
+  {
+    return (
       <Stack.Navigator initialRouteName='CustomerChatList'>
-        <Stack.Screen name='CustomerHomePage' options={{ title: 'Home' }} component={CustomerHomePage}/>
-        <Stack.Screen name='CustomerShopPage' options={({route}:any)=>({title: route.params.shop.shopName})} component={CustomerShopPage}/>
-        <Stack.Screen name='CustomerProductPage' options={({route}:any)=>({title: route.params.products.name})} component={CustomerProductPage}/>
+        <Stack.Screen name='CustomerHomePage' options={{ title: 'Home' }} component={CustomerHomePage} />
+        <Stack.Screen name='CustomerShopPage' options={({ route }: any) => ({ title: route.params.shop.shopName })} component={CustomerShopPage} />
+        <Stack.Screen name='CustomerProductPage' options={({ route }: any) => ({ title: route.params.products.name })} component={CustomerProductPage} />
       </Stack.Navigator>
     )
-  
+
   }
 
   return (
