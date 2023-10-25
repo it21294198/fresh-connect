@@ -72,6 +72,7 @@ export interface shopDataInterface {
   email?: string;
   openHours?: string[];
   contactNo?: number;
+  shopId?: string;
 }
 
 export interface LocationObj{
