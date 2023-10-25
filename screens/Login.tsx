@@ -37,6 +37,7 @@ export default function Login({navigation}:any) {
         firstName: docSnap.data()?.firstName||'',
         lastName: docSnap.data()?.lastName||'',
         userId: userLogged,
+        isSeller:docSnap.data()?.isSeller
       }))
       dispatch(setLoadingFalse());
       dispatch(logUser(user.email));
