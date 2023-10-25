@@ -12,7 +12,7 @@ const CustomCard = ({ name, date, price, } :{name:string, date:string, price:str
 
   return (
     // TODO link to a product view 
-    <TouchableOpacity style={styles.card}>
+    <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('ProductPage')}>
       <View style={styles.imageArea}>
         <Image source={require(imageSource)} style={styles.image} />
         {/* edit button */}
@@ -20,9 +20,11 @@ const CustomCard = ({ name, date, price, } :{name:string, date:string, price:str
         	<Image source={require(iconSource)} style={styles.editIcon} />
 				</TouchableOpacity>
       </View>
+
       <View style={styles.textArea}>
         <View style={styles.header}>
           <Text style={styles.title}>{name}</Text>
+          {/* organic logo */}
           <Image source={require(logoSource)} style={styles.logo} />
         </View>
         <View style={styles.details}>

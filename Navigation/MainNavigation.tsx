@@ -237,6 +237,7 @@ export default function MainNavigation()
         <Stack.Screen name='LandingPage' component={FarmerTabNavigation} />
         <Stack.Screen name='AddStocks' component={AddStocks} />
         <Stack.Screen name='UpdateStocks' component={UpdateStocks} />
+        <Stack.Screen name='ProductPage' component={ProductPage} />
       </Stack.Navigator>
     )
   }
