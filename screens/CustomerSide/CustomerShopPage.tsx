@@ -130,7 +130,7 @@ export default function CustomerShopPage({ route, navigation }: any) {
                 h={150}
                 w={300}
                 alignItems='center'
-                bgImg={product.imageId}
+                bgImg={require("./Assets/carrot.jpg")}
               />
             </TouchableOpacity>
           </Div>
@@ -157,7 +157,7 @@ export default function CustomerShopPage({ route, navigation }: any) {
                 {product.createdAt.toDate().toLocaleDateString()}
               </Text>
             </Div>
-            <Div flex={1} alignItems='flex-end' mr="sm" flexWrap='wrap'>
+            <Div flex={1} alignItems='flex-end' ml="xs">
               <Button mt="md" bg="#45A053" fontSize="md" rounded={17.5}>{newPrice}</Button>
             </Div>
           </Div>
@@ -175,7 +175,7 @@ export default function CustomerShopPage({ route, navigation }: any) {
               w={150}
               h={150}
               rounded="circle"
-              bgImg={require("./Assets/store.jpg")}
+              bgImg={require("../../assets/shop.jpg")}
             />
           </Div>
           <Div row>

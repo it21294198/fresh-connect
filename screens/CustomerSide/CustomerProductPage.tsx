@@ -4,6 +4,7 @@ import { fireStore } from '../../config/firebase'
 import { collection, addDoc, serverTimestamp, updateDoc, getDocs, query, where } from 'firebase/firestore';
 import { Input, Icon, Button, Div, Text, Header, Image, Modal } from "react-native-magnus";
 import { getUser } from '../ChatController';
+import * as Linking from 'expo-linking'
 import { useDispatch } from 'react-redux';
 import { loaderSlice, setLoadingFalse, setLoadingTrue } from '../../features/connection/loaderSlice';
 import { CustomerHeader } from '../../components/headers/CustomerHeader';
@@ -84,7 +85,7 @@ export default function CustomerProductPage({ route, navigation }: any) {
                             w="100%"
                             mb="md"
                             alignItems='center'
-                            bgImg={product.imageId}
+                            bgImg={require("./Assets/mangoes.webp")}
                         />
                     </Div>
                     <Div row>
@@ -163,10 +164,10 @@ export default function CustomerProductPage({ route, navigation }: any) {
                     </Div>
                     <Div row flex={1} justifyContent='center'>
                         <Div mx="lg">
-                            <Button w={131} h={35} mt="md" bg="#45A053" fontSize="md" rounded={17.5} onPress={() => navigateChat()}>Chat</Button>
+                            <Button w={131} h={40} mt="md" bg="#45A053" fontSize="md" rounded={17.5} onPress={() => navigateChat()}>Chat</Button>
                         </Div>
                         <Div mx="lg">
-                            <Button w={131} h={35} mt="md" bg="#45A053" fontSize="md" rounded={17.5}>Contact</Button>
+                            <Button w={131} h={40} mt="md" bg="#45A053" fontSize="md" rounded={17.5} onPress={() => Linking.openURL(`tel:${shop.contactNo}`)}>Contact</Button>
                         </Div>
                     </Div>
                 </Div>                
