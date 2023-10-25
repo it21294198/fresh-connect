@@ -19,7 +19,7 @@ async function sendMessage(msg:any){
 async function getMessages(roomId:string){
     const messages:any = [];
     try{
-        const q = query(collection(fireStore,"messages"), where('chatRoom','==',roomId))
+        const q = query(collection(fireStore,"messages"), where('chatRoom','==',roomId), orderBy("timestamp", "desc"))
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
             messages.push(doc.data())
@@ -30,8 +30,19 @@ async function getMessages(roomId:string){
     }
 }
 
-async function getChatRooms(){
-    
+async function getChatRooms(id: string){
+    const chatRooms:any = [];
+    try{
+        const q = query(collection(fireStore, "chatRooms"), where("participants", "array-contains", id));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+            chatRooms.push(doc.data())
+        });
+        console.log(chatRooms)
+        return chatRooms
+    }catch(error){
+        console.log("Error retrieving Chat Rooms: ",error)
+    }
 }
 
 async function getUser(id:any){
@@ -41,7 +52,7 @@ async function getUser(id:any){
         const querySnapshot = await getDoc(docRef);
         if(querySnapshot.exists()){
             const newData = querySnapshot.data()
-            return newData.name
+            return newData.firstName
         }else{
             console.log("No such user")
         }
@@ -50,4 +61,4 @@ async function getUser(id:any){
     }
 }
 
-export {sendMessage, getMessages, getUser}
+export {sendMessage, getMessages, getUser, getChatRooms}

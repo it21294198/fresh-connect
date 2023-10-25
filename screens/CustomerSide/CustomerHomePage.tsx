@@ -3,14 +3,20 @@ import React, { useState, useEffect } from 'react';
 import { fireStore } from '../../config/firebase';
 import { collection, getDocs, DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 import { Input, Icon, Button, Div, Text, Header, Image } from "react-native-magnus";
+import { getShops } from './CustomerController';
 
-interface ShopData {
-  id: string;
-  text: string;
-}
 
 export default function CustomerHomePage({ navigation }: any) {
-  const [data, setData] = useState<ShopData[]>([]);
+  const [data, setData] = useState<any[]>([]);
+
+  async function receiveData(){
+    const newData: any = await getShops("123")
+    setData(newData)
+  }
+
+  useEffect(()=>{
+    receiveData()
+  },[])
 
   const user = {
     id: "8SoZKFk8U0q6l2lEbogL",
@@ -71,7 +77,7 @@ export default function CustomerHomePage({ navigation }: any) {
 
   const renderActvity = savedShops.map((shop, index) => {
     return (
-      <Div key={index} m="sm" rounded="md" shadow='sm' p="md">
+      <Div key={index} m="sm" rounded="lg" bg="white" shadow="md" p="xl">
         <Div row alignItems="center">
           <Div flex={1}>
             <Text fontWeight="bold" fontSize="xl" mt="sm">
@@ -172,6 +178,7 @@ const styles = StyleSheet.create({
   divider: {
     marginTop: 30,
     borderColor: '#D9D9D9',
+    backgroundColor:'#D9D9D9',
     borderWidth: 3,
     marginHorizontal: 10,
     marginBottom: 30

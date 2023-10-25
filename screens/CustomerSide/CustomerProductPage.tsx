@@ -4,15 +4,20 @@ import { fireStore } from '../../config/firebase'
 import { collection, addDoc, serverTimestamp, updateDoc, getDocs, query, where } from 'firebase/firestore';
 import { Input, Icon, Button, Div, Text, Header, Image } from "react-native-magnus";
 import { getUser } from '../ChatController';
+import { useDispatch } from 'react-redux';
+import { loaderSlice, setLoadingFalse, setLoadingTrue } from '../../features/connection/loaderSlice';
 
 export default function CustomerProductPage({ route, navigation }: any) {
     const { user, shop, product } = route.params
     const newPrice = "Rs " + product.price + " per " + product.per + product.qtUnit;
+    const dispatch = useDispatch()
+    
 
     async function navigateChat() {
         //const participants = [user.id,shop.userId]
         try {
             //Find the chat room where users are at
+            dispatch(setLoadingTrue());
             const userChatRoomsQuery = query(collection(fireStore, "chatRooms"), where("participants", "array-contains", user.id));
             const shopChatRoomsQuery = query(collection(fireStore, "chatRooms"), where("participants", "array-contains", shop.userId));
 
@@ -43,6 +48,7 @@ export default function CustomerProductPage({ route, navigation }: any) {
             if (!(commonChatRooms.length===0)) {
                 console.log("Chat Room Available")
                 const chatRoomId = commonChatRooms[0];
+                dispatch(setLoadingFalse());
                 navigation.navigate('Chat', { user: user, chatRoom: chatRoomId });
             } else {
                 console.log("Chat Room Not Available so creating one")
@@ -54,11 +60,12 @@ export default function CustomerProductPage({ route, navigation }: any) {
                     id: newChatRoomRef.id,
                     timestamp: serverTimestamp(),
                 });
+                dispatch(setLoadingFalse());
                 navigation.navigate('Chat', { user: user, chatRoom: newChatRoomRef.id });
             }
         } catch (error) {
             console.log("Error Navigating: ", error)
-        }
+        }      
     }
 
     return (

@@ -37,8 +37,8 @@ export default function Chat({ route, navigation }: any) {
       senderName:user.name,
       chatRoom: chatRoom,
       message:newMessage[0].text,
-      date: new Date().toDateString(),
-      time: new Date().toLocaleTimeString(), 
+      // date: new Date().toDateString(),
+      // time: new Date().toLocaleTimeString(), 
     }
     sendMessage(msg)
   }
