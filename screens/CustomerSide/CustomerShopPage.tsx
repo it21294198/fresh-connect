@@ -1,42 +1,82 @@
 import { View, ScrollView, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { Input, Icon, Button, Div, Text, Header, Image } from "react-native-magnus";
-import { getProducts } from './CustomerController';
+import { getProducts, getShopById } from './CustomerController';
 
+interface shop {
+  shopId?: string,
+  userId: string,
+  shopName?: string,
+  email?: string,
+  contactNo?: number,
+  openAt?: any,
+  closeAt?: any,
+  address?: string,
+  shopAddress?: { lat: number, lng: number },
+  products?: { products:any } //subcollection
+  description?: string
+}
 
 export default function CustomerShopPage({ route, navigation }: any) {
   const [data, setData] = useState<any[]>([]);
-  const { user, shop } = route.params
-  const openTime = shop.openHours[0] + " - " + shop.openHours[1]
-
-  async function receiveData(){
-    const newData: any = await getProducts("123")
-    setData(newData)
+  const [shop, setShop] = useState<any>();
+  const [Keyword, setKeyword] = useState("")
+  const [selectedCategory,setSelectedCategory] = useState<string>("null")
+  const { user, shopId } = route.params
+  let openTime:string = "Open"
+  if(shop){
+    openTime = shop.openAt.toDate().toLocaleTimeString() + " - " + shop.closeAt.toDate().toLocaleTimeString()
   }
 
-  useEffect(()=>{
+  async function receiveData() {
+    const newData: any = await getProducts(shopId)
+    setData(newData)
+    console.log(newData)
+  }
+
+  async function receiveShop() {
+    const newData: any = await getShopById(shopId)
+    setShop(newData)
+    console.log(newData)
+  }
+
+  const filteredData = data.filter((data)=>{
+    const name = data.name.toLowerCase()
+    const category = data.category.toLowerCase()
+    const price = data.price.toString().toLowerCase()
+    const organic = data.organic.toString().toLowerCase()
+    const specialMsg = data.specialMsg.toLowerCase()
+    const keyword = Keyword.toLowerCase()
+
+    return name.includes(keyword) || category.includes(keyword) || price.includes(keyword) || organic.includes(keyword) || specialMsg.includes(keyword)
+  })
+
+  useEffect(() => {
+    receiveShop()
     receiveData()
-  },[])
+  }, [])
 
   const openNow = () => {
-    var d = new Date();
-    var h = d.getHours();
-    if (h === 0) { h = 24 }
-    const openH = shop.openHours[0].split(":")
-    const closeH = shop.openHours[1].split(":")
-
-    if (h >= openH[0] && h <= closeH[0]) {
-      return (
-        <Text fontSize="xl" color="green500">
-          Open Now
-        </Text>
-      )
-    } else {
-      return (
-        <Text fontSize="xl" color="red">
-          Closed Now
-        </Text>
-      )
+    if(shop){
+      let currentTime = new Date().getTime()
+      let openH = shop.openAt.toDate().getTime()
+      let closeH = shop.closeAt.toDate().getTime()
+  
+      if (currentTime >= openH && currentTime <= closeH) {
+        console.log("Now open")
+        return (
+          <Text fontSize="xl" color="green500">
+            Open Now
+          </Text>
+        )
+      } else {
+        console.log("Now closed")
+        return (
+          <Text fontSize="xl" color="red">
+            Closed Now
+          </Text>
+        )
+      }
     }
   }
 
@@ -82,7 +122,17 @@ export default function CustomerShopPage({ route, navigation }: any) {
     }
   ]
 
-  const renderProducts = products.map((product,index) => {
+  const renderProducts = filteredData
+  .filter((product) => {
+    if (selectedCategory === "null") {
+      // If no category is selected, show all products
+      return true;
+    } else {
+      // Otherwise, show products that match the selected category
+      return product.category === selectedCategory;
+    }
+  })
+  .map((product, index) => {
     const newPrice = "Rs " + product.price + "/" + product.per + product.qtUnit;
     return (
       <Div key={index} m="sm" rounded="lg" bg="white" shadow="md" p="md">
@@ -117,10 +167,10 @@ export default function CustomerShopPage({ route, navigation }: any) {
           </Div>
           <Div flex={1} alignItems='center'>
             <Text fontSize="md" mt={20}>
-              {product.createdAt}
+              {product.createdAt.toDate().toLocaleDateString()}
             </Text>
           </Div>
-          <Div flex={1} alignItems='flex-end' mr="sm">
+          <Div flex={1} alignItems='flex-end' mr="sm" flexWrap='wrap'>
             <Button mt="md" bg="#45A053" fontSize="md" rounded={17.5}>{newPrice}</Button>
           </Div>
         </Div>
@@ -132,11 +182,11 @@ export default function CustomerShopPage({ route, navigation }: any) {
     <ScrollView style={styles.scrollview}>
       <View style={styles.container}>
         <Div row flex={1} justifyContent='center' mt="sm">
-          <Div          
+          <Div
             w={150}
             h={150}
-            rounded="circle"           
-            bgImg={ require("./Assets/store.jpg")}
+            rounded="circle"
+            bgImg={require("./Assets/store.jpg")}
           />
         </Div>
         <Div row>
@@ -146,8 +196,8 @@ export default function CustomerShopPage({ route, navigation }: any) {
             </Text>
           </Div>
           <Div flex={1} alignItems='flex-end' mr="lg">
-            <Text fontSize="md" mt={20}>
-              {shop.address}
+            <Text fontSize="md" mt={25}>
+            {shop && shop.address ? shop.address : null}
             </Text>
           </Div>
         </Div>
@@ -174,10 +224,18 @@ export default function CustomerShopPage({ route, navigation }: any) {
           <Div flex={2} alignItems='flex-start' mt={20} ml="lg">
             {openNow()}
           </Div>
-          <Div flex={1} alignItems='flex-end' mt="sm" mr="xs">
+          <Div flex={1} alignItems='flex-end' mt="lg" mr="xs">
             <Button bg="#45A053" fontSize="md" rounded={17.5} suffix={<Icon px="md" name="star" color="gray100" />}>Save shop</Button>
           </Div>
         </Div>
+        <Input
+          placeholder="Search"
+          p={10}
+          m={20}
+          onChangeText={text => setKeyword(text)}
+          focusBorderColor="green400"
+          suffix={<Icon name="search" fontFamily="Feather" />}
+        />
         <View style={styles.divider} />
         <Div row justifyContent="center" alignItems="center">
           <Button
@@ -189,6 +247,7 @@ export default function CustomerShopPage({ route, navigation }: any) {
             borderColor="#45A053"
             color="#45A053"
             underlayColor="red100"
+            onPress={() => setSelectedCategory('Vegetables')}
           >
             Vegetables
           </Button>
@@ -202,6 +261,7 @@ export default function CustomerShopPage({ route, navigation }: any) {
             borderColor="#45A053"
             color="#45A053"
             underlayColor="red100"
+            onPress={() => setSelectedCategory('Fruits')}
           >
             Fruits
           </Button>
@@ -214,6 +274,7 @@ export default function CustomerShopPage({ route, navigation }: any) {
             borderColor="#45A053"
             color="#45A053"
             underlayColor="red100"
+            onPress={() => setSelectedCategory('Dairy')}
           >
             Dairy
           </Button>
@@ -237,7 +298,7 @@ const styles = StyleSheet.create({
   divider: {
     marginTop: 30,
     borderColor: '#D9D9D9',
-    backgroundColor:'#D9D9D9',
+    backgroundColor: '#D9D9D9',
     borderWidth: 3,
     marginHorizontal: 10,
     marginBottom: 30

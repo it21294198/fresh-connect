@@ -103,7 +103,7 @@ export default function CustomerProductPage({ route, navigation }: any) {
                         </Div>
                         <Div flex={1} alignItems='flex-end' mr="lg">
                             <Text fontSize="md" mt={20}>
-                                {product.createdAt}
+                                {product.createdAt.toDate().toLocaleDateString()}
                             </Text>
                         </Div>
                     </Div>
@@ -131,7 +131,7 @@ export default function CustomerProductPage({ route, navigation }: any) {
                             </Text>
                         </Div>
                     </Div>
-                    <Div row>
+                    {/* <Div row>
                         <Div flex={1} alignItems='flex-start' ml="lg">
                             <Text fontSize="md" color="gray500" mt="lg">
                                 Buy Before
@@ -139,10 +139,10 @@ export default function CustomerProductPage({ route, navigation }: any) {
                         </Div>
                         <Div flex={1} alignItems='flex-end' mr="lg">
                             <Text fontSize="md" mt="lg">
-                                {product.buyBefore}
+                                {product.buyBefore.toDate().toLocaleDateString()}
                             </Text>
                         </Div>
-                    </Div>
+                    </Div> */}
                     <Div row>
                         <Div flex={1} alignItems='flex-start' ml="lg">
                             <Text fontSize="md" color="gray500" mt="lg">
