@@ -3,20 +3,51 @@ import React, { useState, useEffect } from 'react';
 import { fireStore } from '../../config/firebase';
 import { collection, getDocs, DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 import { Input, Icon, Button, Div, Text, Header, Image } from "react-native-magnus";
-import { getShops } from './CustomerController';
+import { getSavedShops, getShopById, getShops } from './CustomerController';
 
 
 export default function CustomerHomePage({ navigation }: any) {
   const [data, setData] = useState<any[]>([]);
+  const [Keyword, setKeyword] = useState("")
 
-  async function receiveData(){
-    const newData: any = await getShops("123")
-    setData(newData)
+  async function receiveData() {
+    // const newData: any = await getShops()
+    // setData(newData)
+    const newD: any = await getSavedShops("JAAcrEfH1LPGi9NddZz16ZegLVK2")
+    const savedShopsPromises = newD.map((data: any) => getShopById(data))
+    Promise.all(savedShopsPromises)
+      .then((shops) => {
+        // 'shops' will be an array of results
+        setData(shops)
+        console.log(shops);
+      })
+      .catch((error) => {
+        // Handle errors
+        console.error(error);
+      });
+    // const savedShops:any = [];
+    // newD.map((data:any)=>{
+    //   savedShops.push(getShopById(data))
+    // })
+    // setData(savedShops.object)
+    // console.log(savedShops)
+    // console.log(newD)
   }
 
-  useEffect(()=>{
+  const filteredData = data.filter((data) => {
+    const name = data.shopName.toLowerCase()
+    const description = data.description.toLowerCase()
+    const email = data.email.toLowerCase()
+    const contactNo = data.contactNo.toString().toLowerCase()
+    const address = data.address.toLowerCase()
+    const keyword = Keyword.toLowerCase()
+
+    return name.includes(keyword) || description.includes(keyword) || email.includes(keyword) || contactNo.includes(keyword) || address.includes(keyword)
+  })
+
+  useEffect(() => {
     receiveData()
-  },[])
+  }, [])
 
   const user = {
     id: "8SoZKFk8U0q6l2lEbogL",
@@ -27,55 +58,36 @@ export default function CustomerHomePage({ navigation }: any) {
     {
       shopId: '123',
       shopName: 'Nuwara Farm',
-      userId:"Z04NU1rDCHE8GNus2HbL",
+      userId: "Z04NU1rDCHE8GNus2HbL",
       description: 'Fresh fruits and vegatables available',
-      openHours:["10:00","16:30"],
-      contactNo:"0777124568",
-      email:"farmer@email.com",
+      openHours: ["10:00", "16:30"],
+      contactNo: "0777124568",
+      email: "farmer@email.com",
       address: 'No.43, Main Street, Kandy'
     },
     {
       shopId: '124',
       shopName: 'Emerald Tea',
-      userId:"Z04NU1rDCHE8GNus2HbL",
+      userId: "Z04NU1rDCHE8GNus2HbL",
       description: 'All varieties of export quality tea available',
-      openHours:["09:00","16:30"],
-      contactNo:"0777124568",
-      email:"farmer@email.com",
+      openHours: ["09:00", "16:30"],
+      contactNo: "0777124568",
+      email: "farmer@email.com",
       address: 'No.43, Main Street, Kany'
     },
     {
       shopId: '125',
       shopName: 'Coconut Groves',
-      userId:"Z04NU1rDCHE8GNus2HbL",
+      userId: "Z04NU1rDCHE8GNus2HbL",
       description: 'Coconut and coconut related products available',
-      openHours:["09:00","16:30"],
-      contactNo:"0777124568",
-      email:"farmer@email.com",
+      openHours: ["09:00", "16:30"],
+      contactNo: "0777124568",
+      email: "farmer@email.com",
       address: 'No.43, Main Street, Kany'
     }
   ]
 
-  useEffect(() => {
-    fetchDataFromFirestore();
-  }, []);
-
-  const fetchDataFromFirestore = async () => {
-    try {
-      const querySnapshot = await getDocs(collection(fireStore, 'text'));
-      const items: any = querySnapshot.docs.map(
-        (doc: QueryDocumentSnapshot<DocumentData>) => ({
-          id: doc.id,
-          ...doc.data(),
-        })
-      );
-      setData(items);
-    } catch (error) {
-      console.error('Error fetching data: ', error);
-    }
-  };
-
-  const renderActvity = savedShops.map((shop, index) => {
+  const renderActvity = filteredData.map((shop, index) => {
     return (
       <Div key={index} m="sm" rounded="lg" bg="white" shadow="md" p="xl">
         <Div row alignItems="center">
@@ -102,7 +114,7 @@ export default function CustomerHomePage({ navigation }: any) {
           </Div>
         </Div>
         <Div row justifyContent='flex-end'>
-          <Button bg='#45A053' rounded={17.5} onPress={() => navigation.navigate('CustomerShopPage', { user: user, shop: shop })}>View</Button>
+          <Button bg='#45A053' rounded={17.5} onPress={() => navigation.navigate('CustomerShopPage', { user: user, shopId: shop.userId })}>View</Button>
         </Div>
       </Div>
     )
@@ -116,6 +128,7 @@ export default function CustomerHomePage({ navigation }: any) {
           placeholder="Search"
           p={10}
           m={20}
+          onChangeText={text => setKeyword(text)}
           focusBorderColor="green400"
           suffix={<Icon name="search" fontFamily="Feather" />}
         />
@@ -178,7 +191,7 @@ const styles = StyleSheet.create({
   divider: {
     marginTop: 30,
     borderColor: '#D9D9D9',
-    backgroundColor:'#D9D9D9',
+    backgroundColor: '#D9D9D9',
     borderWidth: 3,
     marginHorizontal: 10,
     marginBottom: 30
