@@ -24,7 +24,7 @@ export default function FarmerHomePage({navigation}:any) {
   const [lastName, setLastName] = useState('');
   const [gender, setGender] = useState('');
   const [contactNo, setContactNo] = useState(0);
-  const [addressUser, setAddress] = useState('');
+  const [addressUser, setAddress] = useState<any>('');
   const [refresher, setRefresher] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -33,19 +33,20 @@ export default function FarmerHomePage({navigation}:any) {
   const [contactEmail, setContactEmail] = useState('');
   const [shopDescription, setShopDescription] = useState('');
   const [shopContactNumber, setShopContactNumber] = useState<any>(0);
-  const [locationData, setLocationData] = useState<string>()
+  const [locationData, setLocationData] = useState<any>()
 /* locationDtaInterfecae: {coordinates: {latitude: number, longitude: number},address:string}*/
 
 //palace this near useStates area
 const handleConfirm = (coordinates: locationObjectInterface, selectedAddress: string | undefined) =>
 {
   console.log('Called handleConfirm in FarmerHomePage', selectedAddress);
-  setLocationData(selectedAddress)
+  console.log('geo code',coordinates);
+  setAddress(selectedAddress)
+  setLocationData(coordinates)
 }
 
 useEffect(() => {
   // load user profile data
-  dispatch(setLoadingTrue());
   const loadUserProfile = async () => {
     // user profile side
     try {
@@ -57,7 +58,7 @@ useEffect(() => {
       setLastName(docSnap.data()?.lastName)
       setContactNo(docSnap.data()?.contactNo)
       setGender(docSnap.data()?.gender)
-
+      
     } catch (error) {
       console.error('Error loading user profile:', error);
     }
@@ -72,11 +73,12 @@ useEffect(() => {
       setContactEmail(docSnap.data()?.email)
       setShopDescription(docSnap.data()?.description)
       setShopContactNumber(docSnap.data()?.contactNo)
-      
+      setAddress(docSnap.data()?.address)
     } catch (error) {
       console.error('Error loading user profile:', error);
     }
   };
+  dispatch(setLoadingTrue());
   loadUserProfile();
   dispatch(setLoadingFalse());
 }, [refresher]);
@@ -90,7 +92,8 @@ const updateProfile = async () =>{
     lastName:lastName,
     gender:gender,
     contactNo:contactNo,
-    address:addressUser
+    address:addressUser,
+    addressCoordinates:locationData
   }
   
   try {
@@ -112,7 +115,8 @@ const updateShopProfile = async () =>{
     email:contactEmail,
     contactNo:shopContactNumber,
     description:shopDescription,
-    shopAddress:addressUser
+    address:addressUser,
+    shopAddress:locationData
     }
     try {
         const updatedShopDocRef = doc(fireStore, 'shops', uId);
@@ -172,7 +176,7 @@ const updateShopProfile = async () =>{
               fontWeight:'bold',
               color:'white'
             }}
-              >Cancel</Text>
+              >Ok</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -255,7 +259,7 @@ const updateShopProfile = async () =>{
             source={require('../../assets/pin.png')} // Replace with the path to your image
             style={styles.pin}/>
             {/* this address will be changed by map */}
-            <TextInput placeholder={locationAddress} editable={false} style={[styles.inputs,styles.singleLineInputs]}/>
+            <TextInput placeholder={addressUser} editable={false} style={[styles.inputs,styles.singleLineInputs]}/>
           </View>
         </TouchableOpacity>
       </View>
@@ -333,7 +337,7 @@ const updateShopProfile = async () =>{
             style={styles.pin}/>
             {/* this address will be changed by map */}
             <TextInput 
-            value={locationData}
+            placeholder={addressUser}
             editable={false} 
             style={[styles.inputs,styles.singleLineInputs]}/>
           </View>
