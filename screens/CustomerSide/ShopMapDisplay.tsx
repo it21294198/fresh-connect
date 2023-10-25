@@ -1,6 +1,6 @@
 import { StyleSheet, } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { Div, Button, Header, Icon, Text } from 'react-native-magnus';
+import { Div, Button, Header, Icon, Text, Dropdown, DropdownRef } from 'react-native-magnus';
 import { MapDisplayHeader } from '../../components/headers/MapDisplayHeader';
 import MapView from 'react-native-maps';
 import { Marker, PROVIDER_GOOGLE, Circle } from 'react-native-maps';
@@ -12,7 +12,7 @@ import { getCoordDistance } from '../../util/geoCoordinateFunctions';
 
 export default function ShopMapDisplay({ navigation }: any)
 {
-  const MAXDISTANCE = 7500;
+  const [MAXDISTANCE, setMAXDISTANCE] = useState<number>(5000);
   const [status, setStatus] = useState('');
   const [shopList, setShopList] = useState<shopDataInterface[] | undefined>();
   const [nearbyShops, setNearbyShops] = useState<shopDataInterface[] | undefined>();
@@ -38,7 +38,7 @@ export default function ShopMapDisplay({ navigation }: any)
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
-
+  const dropdownRef = React.createRef();
   useEffect(() =>
   {
     (async () =>
@@ -51,24 +51,24 @@ export default function ShopMapDisplay({ navigation }: any)
           const latitude = currentUserLocation?.coords.latitude;
           const longitude = currentUserLocation?.coords.longitude;
           const firstShop = shopList?.[2];
-          const coordinates: { latitude: number; longitude: number; } | undefined = firstShop?.coordinates;
+          // const coordinates: { latitude: number; longitude: number; } | undefined = firstShop?.coordinates;
           const distances = await Promise.all(
             shopList?.map((shop) =>
             {
+              let shopLatLng = {latitude: shop.shopAddress.latitude, longitude: shop.shopAddress.longitude};
               return getCoordDistance(
                 {
                   coord1: {
                     latitude: currentUserLocation!.coords.latitude,
                     longitude: currentUserLocation!.coords.longitude,
                   },
-                  coord2: shop.coordinates,
+                  coord2: shop.shopAddress,
                 }
               );
             }) || []
           );
-          console.log('Distances', distances);
           distancesArry = distances as number[];
-          console.log('Shop distances', distancesArry);
+          console.log('All Shop distances from current user location ', distancesArry);
 
           const nearbyShops = shopList?.filter((shop, index) =>
           {
@@ -78,11 +78,11 @@ export default function ShopMapDisplay({ navigation }: any)
         }
       } catch (error)
       {
-        console.log('Encountered an unknown error');
+        console.log('Encountered an unknown error', error);
       }
 
     })();
-  }, [shopList, currentUserLocation]);
+  }, [shopList, currentUserLocation,MAXDISTANCE]);
 
   useEffect(() =>
   {
@@ -173,35 +173,36 @@ export default function ShopMapDisplay({ navigation }: any)
     setUserSelectedRegion(data)
   }
 
-  const handleMarkerPress = (event: any) =>
+  const handleMarkerPress = (index: number) =>
   {
-
-    console.log('called handleMarkerPress: ', event);
+    const selectedShop:shopDataInterface | undefined = nearbyShops?.[index];
+    console.log('called handleMarkerPress: ', selectedShop?.shopId);
+    navigation.navigate('CustomerShopPage', { shopId: selectedShop?.shopId});
   }
 
-  const userSelectedCoordinate = async (data: any) =>
+  // const userSelectedCoordinate = async (data: any) =>
+  // {
+  //   const { coordinate }: {
+  //     coordinate: {
+  //       latitude: number,
+  //       longitude: number
+  //     }
+  //   } = data.nativeEvent;
+  //   console.log('current user location', currentUserLocation);
+  //   console.log('NearBy shops', nearbyShops);
+  //   setUserSelectedCoordinateLocation((previousState) => ({
+  //     ...previousState,
+  //     latitude: coordinate.latitude,
+  //     longitude: coordinate.longitude,
+  //   }));
+  //   const addressString = await getAddressFromCoordinates(coordinate);
+  //   setSelectedAddress(addressString)
+  // }
+
+  const handleRangeSelect = (range: number) =>
   {
-    const { coordinate }: {
-      coordinate: {
-        latitude: number,
-        longitude: number
-      }
-    } = data.nativeEvent;
-    console.log('current user location', currentUserLocation);
-    console.log('NearBy shops', nearbyShops);
-
-    setUserSelectedCoordinateLocation((previousState) => ({
-      ...previousState,
-      latitude: coordinate.latitude,
-      longitude: coordinate.longitude,
-    }));
-    const addressString = await getAddressFromCoordinates(coordinate);
-    setSelectedAddress(addressString)
-
-    setTimeout(() =>
-    {
-      console.log(userSelectedCoordinateLocation);
-    }, 5000);
+    console.log('Called handleRangeSelect with value', range);
+    setMAXDISTANCE(range);
   }
 
   return (
@@ -220,7 +221,6 @@ export default function ShopMapDisplay({ navigation }: any)
           followsUserLocation={true}
 
           initialRegion={mapRegion}
-          onPress={userSelectedCoordinate}
           onRegionChangeComplete={handleRegionChange}
           onMarkerPress={handleMarkerPress}
         >
@@ -228,10 +228,10 @@ export default function ShopMapDisplay({ navigation }: any)
             <Marker
               key={index}
               style={styles.markerToolTip}
-              coordinate={shop.coordinates}
+              coordinate={shop.shopAddress}
               title={shop.shopName}
               description={shop.description}
-              onPress={handleMarkerPress} >
+              onPress={(event) => handleMarkerPress(index)} >
             </Marker>
           ))}
           <Circle
@@ -242,7 +242,48 @@ export default function ShopMapDisplay({ navigation }: any)
             fillColor='rgba(150, 211, 159, 0.3)'
           />
         </MapView>}
+
       </Div>
+      <Dropdown
+        ref={dropdownRef}
+        title={
+          <Text mx="xl" color="gray500" pb="md">
+            Select a range (Km)
+          </Text>
+        }
+        mt="md"
+        pb="2xl"
+        showSwipeIndicator={true}
+        roundedTop="xl">
+        <Dropdown.Option value='5000' py="md" px="xl" block onPress={() => handleRangeSelect(5000)}>
+          5Km
+        </Dropdown.Option>
+        <Dropdown.Option value='10000' py="md" px="xl" block onPress={() => handleRangeSelect(10000)}>
+          10Km
+        </Dropdown.Option>
+        <Dropdown.Option value='20000' py="md" px="xl" block onPress={() => handleRangeSelect(20000)}>
+          20Km
+        </Dropdown.Option>
+        <Dropdown.Option value='50000' py="md" px="xl" block onPress={() => handleRangeSelect(50000)}>
+          50Km
+        </Dropdown.Option>
+      </Dropdown>
+      <Text
+        fontSize="sm"
+        color='#9D9D9D'
+        textAlign='center'
+        >Showing shops in a {MAXDISTANCE/1000.0}Km radius</Text>
+      <Button
+        block
+        bg="#45A053"
+        mt="sm"
+        rounded={30}
+        p="md"
+        mx="md"
+        color="white"
+        onPress={() => dropdownRef.current.open()}>
+        Select Distance
+      </Button>
     </Div>
   );
 }
@@ -250,6 +291,7 @@ export default function ShopMapDisplay({ navigation }: any)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'column'
   },
   map: {
     width: '100%',
