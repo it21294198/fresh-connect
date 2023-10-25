@@ -55,7 +55,7 @@ export default function ShopMapDisplay({ navigation }: any)
           const distances = await Promise.all(
             shopList?.map((shop) =>
             {
-              let shopLatLng = {latitude: shop.shopAddress.latitude, longitude: shop.shopAddress.longitude};
+              let shopLatLng = { latitude: shop.shopAddress.latitude, longitude: shop.shopAddress.longitude };
               return getCoordDistance(
                 {
                   coord1: {
@@ -82,7 +82,7 @@ export default function ShopMapDisplay({ navigation }: any)
       }
 
     })();
-  }, [shopList, currentUserLocation,MAXDISTANCE]);
+  }, [shopList, currentUserLocation, MAXDISTANCE]);
 
   useEffect(() =>
   {
@@ -175,9 +175,9 @@ export default function ShopMapDisplay({ navigation }: any)
 
   const handleMarkerPress = (index: number) =>
   {
-    const selectedShop:shopDataInterface | undefined = nearbyShops?.[index];
+    const selectedShop: shopDataInterface | undefined = nearbyShops?.[index];
     console.log('called handleMarkerPress: ', selectedShop?.shopId);
-    navigation.navigate('CustomerShopPage', { shopId: selectedShop?.shopId});
+    navigation.navigate('CustomerShopPage', { shopId: selectedShop?.shopId });
   }
 
   // const userSelectedCoordinate = async (data: any) =>
@@ -264,7 +264,7 @@ export default function ShopMapDisplay({ navigation }: any)
         <Dropdown.Option value='20000' py="md" px="xl" block onPress={() => handleRangeSelect(20000)}>
           20Km
         </Dropdown.Option>
-        <Dropdown.Option value='50000' py="md" px="xl" block onPress={() => handleRangeSelect(50000)}>
+        <Dropdown.Option value='50000' py="md" px="xl" block onPress={() => handleRangeSelect(85000)}>
           50Km
         </Dropdown.Option>
       </Dropdown>
@@ -272,7 +272,7 @@ export default function ShopMapDisplay({ navigation }: any)
         fontSize="sm"
         color='#9D9D9D'
         textAlign='center'
-        >Showing shops in a {MAXDISTANCE/1000.0}Km radius</Text>
+      >Showing shops in a {MAXDISTANCE / 1000.0}Km radius</Text>
       <Button
         block
         bg="#45A053"

@@ -20,8 +20,6 @@ import SelectUser from '../screens/SelectUser';
 import { useSelector } from 'react-redux';
 
 import { View, Image } from 'react-native';
-import { UserLogin } from '../util/interfaces';
-
 import { customDrawerPropsInterface, UserLogin } from '../util/interfaces';
 
 import filledHomeImg2 from "../assets/homeFilledIcon2.png"
