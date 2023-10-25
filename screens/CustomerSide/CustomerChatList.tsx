@@ -2,6 +2,7 @@ import { View, Platform, StyleSheet, ScrollView, TouchableOpacity } from 'react-
 import React, { useState, useEffect } from 'react'
 import { Button, Icon, Div, Text } from 'react-native-magnus'
 import { getChatRooms, getMessages, getUser } from '../ChatController'
+import { CustomerHeader } from '../../components/headers/CustomerHeader'
 
 export default function CustomerChatList({ route, navigation }: any) {
   const [chatRoom, setChatRoom] = useState<any[]>([])
@@ -81,6 +82,8 @@ export default function CustomerChatList({ route, navigation }: any) {
     // })
     //const name:string = getRoomUser(room.participants[1])
     return (
+      <>
+      <CustomerHeader navigation={navigation} title='My Chats' headerRight={false} back={false} />
       <Div key={index} m="sm" rounded="lg" bg="white" shadow="md" p="md">
         <TouchableOpacity onPress={() => {navigation.navigate('Chat', { user: user1, chatRoom: roomData.room.id })}}>
         <Div row>
@@ -106,6 +109,7 @@ export default function CustomerChatList({ route, navigation }: any) {
         </Div>
         </TouchableOpacity>
       </Div>
+      </>
     )
   })
 
