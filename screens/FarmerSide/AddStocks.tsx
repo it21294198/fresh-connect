@@ -27,7 +27,7 @@ export default function AddStocks() {
 	const [isDisabled, setIsDisabled] = useState(false);
 
 	let uId:string|null = useSelector((state:{user:UserLogin})=>state.user.userId);
-	uId = 'JAAcrEfH1LPGi9NddZz16ZegLVK2'; // remove later
+	// uId = 'JAAcrEfH1LPGi9NddZz16ZegLVK2'; // remove later
 
 	useEffect(() => {
 		async function fetchData() {
@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
 		padding: 8
 	},
 	addButton: {
-		backgroundColor: '#10893E', // #3c802f  #10893E
+		backgroundColor: '#45A053', // fig #45A053   #3c802f  #10893E #10893E
     borderRadius: 10,
     paddingVertical: 15,
 		paddingHorizontal: 30,

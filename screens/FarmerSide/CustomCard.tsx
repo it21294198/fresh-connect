@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   rightDetail: {
     width: 'auto',
     alignSelf: 'center',
-    backgroundColor: '#10893E',
+    backgroundColor: '#45A053', // fig #45A053   #3c802f  #10893E #10893E
     borderRadius: 15,
     paddingVertical: 5,
     paddingHorizontal: 10,
