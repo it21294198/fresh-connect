@@ -45,7 +45,7 @@ import CustomerProductPage from '../screens/CustomerSide/CustomerProductPage';
 
 
 import { paths } from '../assets/strings';
-import { Button, Div, Text } from "react-native-magnus";
+import { Button, Div, Icon, Text } from "react-native-magnus";
 import { getHeaderTitle } from '@react-navigation/elements';
 import { DrawerProfile } from '../components/DrawerProfile';
 
@@ -231,7 +231,12 @@ export default function MainNavigation()
   {
     return (
       <Tab.Navigator initialRouteName='Home'>
-        <Tab.Screen name='Home' component={FarmerHomePage} />
+        <Tab.Screen name='Home' component={FarmerHomePage} options={{
+            tabBarIcon: ({ color, size }) => (
+              <Icon name="home" color={'black'} size={size} />
+            ),
+            tabBarLabel: ''
+          }}/>
         <Tab.Screen name='FarmerShopPage' component={FarmerShopPage} />
         <Tab.Screen name='FarmerProfile' component={FarmerProfile} />
         <Tab.Screen name='ProductPage' component={ProductPage} />
