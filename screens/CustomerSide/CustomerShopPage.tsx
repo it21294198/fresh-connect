@@ -1,12 +1,22 @@
 import { View, ScrollView, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { Input, Icon, Button, Div, Text, Header, Image } from "react-native-magnus";
+import { getProducts } from './CustomerController';
 
 
 export default function CustomerShopPage({ route, navigation }: any) {
   const [data, setData] = useState<any[]>([]);
   const { user, shop } = route.params
   const openTime = shop.openHours[0] + " - " + shop.openHours[1]
+
+  async function receiveData(){
+    const newData: any = await getProducts("123")
+    setData(newData)
+  }
+
+  useEffect(()=>{
+    receiveData()
+  },[])
 
   const openNow = () => {
     var d = new Date();
@@ -75,7 +85,7 @@ export default function CustomerShopPage({ route, navigation }: any) {
   const renderProducts = products.map((product,index) => {
     const newPrice = "Rs " + product.price + "/" + product.per + product.qtUnit;
     return (
-      <Div key={index} m="sm" rounded={10} shadow='sm' p="md">
+      <Div key={index} m="sm" rounded="lg" bg="white" shadow="md" p="md">
         <Div row>
           <TouchableOpacity onPress={() => navigation.navigate('CustomerProductPage', { user: user, shop: shop, product: product })}>
             <Div
@@ -105,7 +115,7 @@ export default function CustomerShopPage({ route, navigation }: any) {
               Date Added
             </Text>
           </Div>
-          <Div flex={2} alignItems='center'>
+          <Div flex={1} alignItems='center'>
             <Text fontSize="md" mt={20}>
               {product.createdAt}
             </Text>
@@ -121,12 +131,11 @@ export default function CustomerShopPage({ route, navigation }: any) {
   return (
     <ScrollView style={styles.scrollview}>
       <View style={styles.container}>
-        <Div row>
-          <Div
-            flex={1}
-            w="100%"
+        <Div row flex={1} justifyContent='center' mt="sm">
+          <Div          
+            w={150}
             h={150}
-            alignItems='center'
+            rounded="circle"           
             bgImg={ require("./Assets/store.jpg")}
           />
         </Div>
@@ -228,6 +237,7 @@ const styles = StyleSheet.create({
   divider: {
     marginTop: 30,
     borderColor: '#D9D9D9',
+    backgroundColor:'#D9D9D9',
     borderWidth: 3,
     marginHorizontal: 10,
     marginBottom: 30

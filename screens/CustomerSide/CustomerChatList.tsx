@@ -1,100 +1,121 @@
-import { View, Text, Platform, StyleSheet, FlatList, TouchableOpacity } from 'react-native'
-import React from 'react'
-import { Button, Icon } from 'react-native-magnus'
+import { View, Platform, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { Button, Icon, Div, Text } from 'react-native-magnus'
+import { getChatRooms, getMessages, getUser } from '../ChatController'
 
-export default function CustomerChatList({ navigation }: any) {
+export default function CustomerChatList({ route, navigation }: any) {
+  const [chatRoom, setChatRoom] = useState<any[]>([])
+  const [name,setName] =useState("")
+  const [lastMsg,setLastMsg] =useState<string>("")
+  const [time,setTime] =useState<string>("")
+  //const { user } = route.params
+
   const user1 = {
     id: "8SoZKFk8U0q6l2lEbogL",
     name: 'John'
   }
 
-  const user2 = {
-    id: "Z04NU1rDCHE8GNus2HbL",
-    name: 'Peter' 
+  async function getRooms() {
+    const newRooms: any = await getChatRooms(user1.id)
+    setChatRoom(newRooms)
   }
-  const chatRooms = [
-    {
-      id: '8oCIlz7fwspqb6EOZG4D1',
-      name: 'Nuwara Farm Chat'
-    },
-    {
-      id: 'nglQRgIiMMIqccafJeFm',
-      name: 'Western Farm Chat'
-    },
-  ]
+
+  // async function renderLastMessage(id:string) {
+  //   const lastMessage: any = await getMessages(id)
+  //   return(
+  //     <Text>
+  //       {lastMessage[0]}
+  //     </Text>
+  //   )
+  // }
+
+  // async function getRoomUser(id:string) {
+  //   let roomUser: string
+  //   getUser(id).then((user:string) => {
+  //     roomUser = user
+  //   })
+  //   return roomUser
+  // }
+
+  useEffect(() => {
+    getRooms()
+  }, [lastMsg])
+
+  // const user1 = {
+  //   id: "8SoZKFk8U0q6l2lEbogL",
+  //   name: 'John'
+  // }
+
+  // const user2 = {
+  //   id: "Z04NU1rDCHE8GNus2HbL",
+  //   name: 'Peter' 
+  // }
+  // const chatRooms = [
+  //   {
+  //     id: '8oCIlz7fwspqb6EOZG4D1',
+  //     name: 'Nuwara Farm Chat'
+  //   },
+  //   {
+  //     id: 'nglQRgIiMMIqccafJeFm',
+  //     name: 'Western Farm Chat'
+  //   },
+  // ]
+
+  const renderChatRooms:any = chatRoom.map(async (room, index) => {
+    //renderLastMessage(room.id)
+    await getMessages(room.id).then((msg:any) => {
+      setLastMsg(msg[0].message)
+      setTime(msg[0].timestamp.toDate().toLocaleTimeString())
+    })
+    await getUser(room.participants[1]).then((user:string) => {
+      setName(user)
+    })
+    //const name:string = getRoomUser(room.participants[1])
+    return (
+      <Div key={index} m="sm" rounded="lg" bg="white" shadow="md" p="md">
+        <TouchableOpacity onPress={() => {navigation.navigate('Chat', { user: user1, chatRoom: room.id })}}>
+        <Div row>
+
+        <Div flex={1} alignItems='flex-start' mt="sm">
+        <Text fontWeight="bold" fontSize="xl">
+        <Icon name='user-circle' fontFamily='FontAwesome5' fontSize={20} color='white' bg='blue500' mx="md" h={30} w={30} rounded="circle" />  
+        {name}
+        </Text>
+        </Div>
+
+        <Div flex={1} alignItems='flex-end'>
+        <Text fontSize="md" color="gray500" ml="md" mt="md">
+        {time}
+        </Text>
+        </Div>
+
+        </Div>
+        <Div row>
+        <Text fontSize="md" color="gray500" ml="md" mt="sm">
+        {lastMsg}
+        </Text>
+        </Div>
+        </TouchableOpacity>
+      </Div>
+    )
+  })
+
   return (
-    <View style={styles.container}>
-      <FlatList
-      style={styles.list}
-        data={chatRooms}
-        keyExtractor={item => item.id} 
-        renderItem={({ item }:any) => (
-            <Button
-              mt="lg"
-              px="xl"
-              py="lg"
-              bg="white"
-              w={'100%'}
-              borderWidth={1}
-              borderColor="green"
-              color="red500"
-              underlayColor="red100"
-              suffix={<Icon name="arrowright" ml="md" color="grren"/>}
-              onPress={() => navigation.navigate('Chat', { user: user2,chatRoom:item })}
-            >    {item.name}
-            </Button>
-        )}
-        />
-    </View>
+    <ScrollView style={styles.scrollview}>
+      <View style={styles.container}>
+        {renderChatRooms}
+      </View>
+    </ScrollView>
+
   )
 }
 
 const styles = StyleSheet.create({
-  btn: {
-    width: 200,
-  },
-  btnContainer1: {
-    flexDirection: 'row', // Horizontal layout
-    justifyContent: 'flex-end', // Right-align content
-    marginTop: 20,
-    paddingRight: 20,
-  },
-  btnContainer: {
-    flexDirection: 'row', // Horizontal layout
-    justifyContent: 'flex-end', // Right-align content
-  },
-  card: {
-    width: Platform.OS === 'android' ? '90%' : '50%',
-    marginBottom: 20,
-    marginTop: 20
-  },
-  cardCover: {
-    width: '100%',
-    aspectRatio: 16 / 9,
-    alignSelf: 'center'
-  },
   container: {
     flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-  },
-  containerStyle: {
-    width: '100%',
-    height: '80%',
-    backgroundColor: 'white',
-    marginLeft: 'auto',
-    marginRight: 'auto'
-  },
-  dialog: {
-    width: Platform.OS === 'android' ? '90%' : '30%',
-    marginLeft: 'auto',
-    marginRight: 'auto'
-  },
-  list:{
-    width:'80%'
   },
   scrollview: {
+    flex: 1,
     minHeight: '100%'
-  }
+  },
 })

@@ -6,22 +6,30 @@ export interface UserLogin {
   lastName?:string|null|undefined;
   contactNo?:number|null|undefined;
   userId?:string|null|undefined;
-
-export interface User {
-  username: string;
-  type: string;
-  logStatus: boolean;
+  isSeller?:boolean|null;
 }
 
-export interface Loading {
+export interface User {
+  firstName?:any;
+  lastName?: any;
+  username?: string;
+  password:string;
+  email:string;
+  type?: string;
+  logStatus?: boolean;
+}
+
+export interface LoadingState{
   isLoading: boolean;
 }
 
 export interface UserSignIn{
-  firstName:string;
-  lastName:string;
+  firstName?:string;
+  lastName?:string;
+  userId?:string;
   email:string;
   password:string;
+}
 
 export interface customDrawerPropsInterface {
   drawerActiveTintColor?: string;
@@ -32,8 +40,36 @@ export interface customDrawerPropsInterface {
     size?: number;
   };
 }
-
 export interface drawerProfileInterface{
   CustomerProfile: any | undefined;
 
+}
+
+export interface locationObjectInterface{
+    latitude: number,
+    longitude: number,
+    latitudeDelta?: number,
+    longitudeDelta?: number,
+}
+export interface userSelectedCoordinateLocation{
+  coordinate:
+    {
+      latitude: number,
+      longitude: number
+    }  
+    position:{
+      x: number;
+      y: number;
+    }
+}
+
+export interface ShopRegister{
+  shopName:string;
+  email:string;
+  contactNo:number;
+  description:string;
+  openAt?:any;
+  closeAt?:any;
+  address:string;
+  accept:boolean;
 }
