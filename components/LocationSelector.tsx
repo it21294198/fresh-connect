@@ -11,7 +11,7 @@ import getInitialState from "react-native-maps";
 import { GOOGLE_MAPS_API_KEY } from "@env";
 import { locationObjectInterface, userSelectedCoordinateLocation } from '../util/interfaces';
 import * as Location from 'expo-location';
-
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 export default function LocationSelector({ navigation, handleConfirm }: { navigation: any, handleConfirm: (coordinates: locationObjectInterface, selectedAddress: string | undefined) => void })
 {
@@ -68,7 +68,7 @@ export default function LocationSelector({ navigation, handleConfirm }: { naviga
     longitudeDelta: 0.0421,
   });
 
-  const myApiKey = ""
+  const myApiKey = "AIzaSyD1zXbosA4kkCMF7LhfD3Xw0IQotezwHHM"
   function getAddressFromCoordinates({ latitude, longitude }: { latitude: number, longitude: number }): Promise<string | undefined>
   {
     return new Promise((resolve, reject) =>
@@ -159,6 +159,18 @@ export default function LocationSelector({ navigation, handleConfirm }: { naviga
 
   return (
     <Div style={styles.container}>
+        {/* <GooglePlacesAutocomplete
+          placeholder='Search'
+          onPress={(data, details = null) =>
+          {
+            // 'details' is provided when fetchDetails = true
+            console.log(data, details);
+          }}
+          query={{
+            key: 'YOUR API KEY',
+            language: 'en',
+          }}
+        /> */}
       <Div style={styles.mapcontainer}>
         <MapView
           provider={PROVIDER_GOOGLE}
