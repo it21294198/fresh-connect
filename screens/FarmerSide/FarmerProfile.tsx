@@ -247,7 +247,7 @@ const updateShopProfile = async () =>{
       </View>
       <View>
         <Text style={styles.texts}>Address</Text>
-        <TouchableOpacity onPress={selectLocation}>
+        <TouchableOpacity onPress={selectShopLocation}>
           <View style={styles.inputsView}>
             <Image
             resizeMode="contain"
