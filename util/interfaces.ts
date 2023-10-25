@@ -63,6 +63,39 @@ export interface userSelectedCoordinateLocation{
     }
 }
 
+export interface shopDataInterface {
+  shopName: string;
+  address: string;
+  description: string;
+  coordinates: {
+    latitude: number;
+    longitude: number;
+  }
+  email?: string;
+  openHours?: string[];
+  contactNo?: number;
+}
+
+export interface LocationObj{
+  coords: {
+    accuracy: number | null;
+    altitude: number | null;
+    altitudeAccuracy: number | null;
+    heading: number | null;
+    latitude: number ;
+    longitude: number;
+    speed: number | null;
+  }
+  mocked?:boolean;
+  timestamp: number;
+}
+
+export interface coordComparisionObject{
+  coord1: {latitude: number | undefined; longitude: number| undefined;};
+  
+  coord2: {latitude: number| undefined; longitude: number| undefined;};
+}
+
 export interface ShopRegister{
   shopName:string;
   email:string;
@@ -73,3 +106,4 @@ export interface ShopRegister{
   address:string;
   accept:boolean;
 }
+
