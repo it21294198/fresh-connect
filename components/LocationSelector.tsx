@@ -159,7 +159,8 @@ export default function LocationSelector({ navigation, handleConfirm }: { naviga
 
   return (
     <Div style={styles.container}>
-      {/* <GooglePlacesAutocomplete
+        {/* <GooglePlacesAutocomplete
+
           placeholder='Search'
           onPress={(data, details = null) =>
           {

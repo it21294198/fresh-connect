@@ -21,7 +21,7 @@ export const CommonHeader = ({ navigation, title, headerRight }: { navigation: a
     };
 
     return (
-        <SafeAreaView style={{ backgroundColor: 'white' }}>
+        <SafeAreaView style={{ backgroundColor: 'white', height: 100, top: 0 }}>
             <Header flex={1} flexDir='row'
                 p="lg"
                 borderBottomWidth={1}
