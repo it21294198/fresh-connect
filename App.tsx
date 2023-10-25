@@ -17,6 +17,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import CustomerProfile from './screens/CustomerSide/CustomerProfile';
 import SavedShops from './screens/CustomerSide/SavedShops';
 import RegisterShop from './screens/RegisterShop';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const Stack = createStackNavigator();
 
@@ -63,13 +64,15 @@ export function Main() {
 
 export default function App(){
     return(
-      <ThemeProvider>
-        <Provider store={store}>
-          <Main/>
-          {/* <CustomerProfile/> */}
-          {/* <SavedShops/> */}
-          {/* <RegisterShop/> */}
-        </Provider>
-      </ThemeProvider>
+        <ThemeProvider>
+          <SafeAreaProvider>
+              <Provider store={store}>
+                <Main/>
+                {/* <CustomerProfile/> */}
+                {/* <SavedShops/> */}
+                {/* <RegisterShop/> */}
+            </Provider>
+          </SafeAreaProvider>
+        </ThemeProvider>
   )
 }
