@@ -75,6 +75,7 @@ const pressSignUp = () =>{
           style={styles.input}
           onChangeText={(text)=>{setUser({...user,password:text})}}
           placeholder='Password'
+          secureTextEntry={true}
           />
           {/* this line will be visible is there is a login error */}
           <View style={loginError?styles.errorView:{display:'none'}}>
