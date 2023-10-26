@@ -110,4 +110,11 @@ export interface ShopRegister{
   address:string;
   accept:boolean;
 }
+export interface faqInterface{
+  id?: string;
+  title: string;
+  description: string;
+  createdAt: Date;
+  updatedAt?: Date;
+}
 
