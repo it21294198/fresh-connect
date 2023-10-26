@@ -57,6 +57,7 @@ import { getHeaderTitle } from '@react-navigation/elements';
 import { DrawerProfile } from '../components/DrawerProfile';
 import RegisterShop from '../screens/RegisterShop';
 import { TestFile } from '../screens/CustomerSide/TestFile';
+import FarmerChatList from '../screens/FarmerSide/FarmerChatList';
 
 export default function MainNavigation()
 {
@@ -377,7 +378,7 @@ export default function MainNavigation()
       })}>
         <Tab.Screen name='Home' component={FarmerHomePage} />
         <Tab.Screen name='FarmerProfile' component={FarmerProfile} />
-        <Tab.Screen name='Chat' component={Chat} />
+        <Tab.Screen name='Chat' component={FarmerChats} />
       </Tab.Navigator>
     )
   }
@@ -485,6 +486,14 @@ export default function MainNavigation()
     )
   }
 
+    function FarmerChats(){
+    return(
+      <Stack.Navigator initialRouteName='FarmerChatList' screenOptions={{ headerShown: false }}>
+        <Stack.Screen name='ChatList' options={{ title: 'Chats List' }} component={FarmerChatList}/>
+        <Stack.Screen name='Chat' options={({route}:any)=>({title: route.params.chatRoom.name})} component={Chat}/>
+      </Stack.Navigator>
+    )
+  }
   function CustomerSavedShops(){
     return(
       <Stack.Navigator initialRouteName='SavedShops' screenOptions={{ headerShown: false }}>
