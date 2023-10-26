@@ -18,7 +18,7 @@ export default function RegisterShop({navigation}:any) {
 
   let uId:string|null = useSelector((state:{user:UserLogin})=>state.user.userId)
 
-  const [locationAddress, setLocationAddress] = useState<any>('Address');
+  const [locationAddress, setLocationAddress] = useState<any>(null);
   const [email, setEmail] = useState<string>('email');
   const [isChecked, setIsChecked] = useState(false);
   const [timeInput, setTimeInput] = useState(null);
@@ -32,11 +32,12 @@ export default function RegisterShop({navigation}:any) {
     description:'',
     openAt:undefined,
     closeAt:undefined,
-    address:'test',
+    shopAddress:undefined,
+    address:'',
     accept:false
   });
 
-  const [locationData, setLocationData] = useState<any>()
+  const [locationData, setLocationData] = useState<any>(null)
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
@@ -103,8 +104,8 @@ const setShopProfile = async () => {
       contactNo: farmerRegistrForm.contactNo,
       openAt: Timestamp.fromDate(new Date(farmerRegistrForm.openAt)),
       closeAt: Timestamp.fromDate(new Date(farmerRegistrForm.closeAt)),
-      address: farmerRegistrForm.address,
-      shopAddress: farmerRegistrForm.address,
+      address: addressUser,
+      shopAddress: locationData,
       description: farmerRegistrForm.description,
     };
 
