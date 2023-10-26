@@ -481,7 +481,7 @@ export default function MainNavigation()
 
 return (
   <NavigationContainer>
-    {farmer ? (
+    {!farmer ? (
       isSeller ? <ForFarmerSide /> : <RegisterShop />
     ) : (
       <ForCustomerSide />
