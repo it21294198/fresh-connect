@@ -32,11 +32,11 @@ export default function UpdateStocks({route}) {
 
 	useEffect(() => {
     async function fetchData() {
-			dispatch(setLoadingTrue());
-      setCategories(await fetchCategories());
-			dispatch(setLoadingFalse());
+			setCategories(await fetchCategories());
 		}
+		dispatch(setLoadingTrue());
 		fetchData();
+		dispatch(setLoadingFalse());
   }, [])
 
 	const handleUpdateStock = async () => {
