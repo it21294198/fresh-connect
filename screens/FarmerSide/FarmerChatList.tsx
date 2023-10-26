@@ -85,7 +85,7 @@ export default function FarmerChatList({ route, navigation }: any) {
     //const name:string = getRoomUser(room.participants[1])
     return (
       <Div key={index} m="sm" rounded="lg" bg="white" shadow="md" p="md">
-        <TouchableOpacity onPress={() => {navigation.navigate('Chat', { user: uId, chatRoom: roomData.room.id })}}>
+        <TouchableOpacity onPress={() => {navigation.navigate('Chat', { chatRoom: roomData.room.id })}}>
         <Div row>
 
         <Div flex={1} alignItems='flex-start' mt="sm">
