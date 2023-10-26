@@ -86,3 +86,24 @@ export async function fetchCategories(): Promise<string[]> {
 		return [''];
 	}
 }
+
+// get catagories
+export async function fetchOpenHours(uid: string) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const docSnap = await getDoc(doc(fireStore, 'shops', uid));
+      if (docSnap.exists()) {
+        const openHours = {
+          openAt: docSnap.data().openAt,
+          closeAt: docSnap.data().closeAt,
+        };
+        resolve(openHours);
+      } else {
+        reject(new Error('Document does not exist'));
+      }
+    } catch (error) {
+      console.log('Error fetching open hours: ', error);
+      reject(error);
+    }
+  });
+}
