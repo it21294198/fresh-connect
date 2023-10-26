@@ -1,10 +1,11 @@
-import { collection, getDocs, query } from "firebase/firestore"
+import { DocumentData, QuerySnapshot, collection, getDocs, query } from "firebase/firestore"
 import { fireStore } from "../config/firebase"
-import { shopDataInterface } from "./interfaces";
+import { faqInterface, shopDataInterface } from "./interfaces";
 
 // collection references
 const shopsColRef = collection(fireStore, 'shops');
 const geoCodeColRef = collection(fireStore, 'mapGeoCodeTestCollection');
+const faQColRef = collection(fireStore, 'faq');
 
 export const getShops = async () => {
     const shopsSnapshot = await getDocs(shopsColRef);
@@ -12,4 +13,9 @@ export const getShops = async () => {
     // const shops= shopsSnapshot.docs.map((doc) => doc.data() as shopDataInterface);
     console.log('Called getShops in dbFunctions', shops);
     return shops;
+}
+
+export const getFaqs = async () =>{
+    const faqItemsSnapshot = await getDocs(faQColRef);
+    return faqItemsSnapshot;
 }
