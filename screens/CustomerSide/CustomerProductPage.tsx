@@ -10,7 +10,7 @@ import { loaderSlice, setLoadingFalse, setLoadingTrue } from '../../features/con
 import { CustomerHeader } from '../../components/headers/CustomerHeader';
 
 export default function CustomerProductPage({ route, navigation }: any) {
-    const { user, shop, product } = route.params
+    const { uId, shop, product } = route.params
 
     const newPrice = "Rs " + product.price + " per " + product.per + product.qtUnit;
     const dispatch = useDispatch()
@@ -21,7 +21,7 @@ export default function CustomerProductPage({ route, navigation }: any) {
         try {
             //Find the chat room where users are at
             dispatch(setLoadingTrue());
-            const userChatRoomsQuery = query(collection(fireStore, "chatRooms"), where("participants", "array-contains", user.id));
+            const userChatRoomsQuery = query(collection(fireStore, "chatRooms"), where("participants", "array-contains", uId));
             const shopChatRoomsQuery = query(collection(fireStore, "chatRooms"), where("participants", "array-contains", shop.userId));
 
             const userChatRoomsSnapshot = await getDocs(userChatRoomsQuery);
@@ -43,7 +43,7 @@ export default function CustomerProductPage({ route, navigation }: any) {
             const commonChatRooms = userChatRooms.filter((roomId: string) => shopChatRooms.includes(roomId));
             //console.log(commonChatRooms)
 
-            const userName = await getUser(user.id)
+            const userName = await getUser(uId)
             const shopUserName = await getUser(shop.userId)
             const chatName = userName + " chat with " + shopUserName
 
@@ -52,11 +52,11 @@ export default function CustomerProductPage({ route, navigation }: any) {
                 console.log("Chat Room Available")
                 const chatRoomId = commonChatRooms[0];
                 dispatch(setLoadingFalse());
-                navigation.navigate('Chat', { user: user, chatRoom: chatRoomId });
+                navigation.navigate('Chat', { user: uId, chatRoom: chatRoomId });
             } else {
                 console.log("Chat Room Not Available so creating one")
                 const newChatRoomRef = await addDoc(collection(fireStore, "chatRooms"), {
-                    participants: [user.id, shop.userId],
+                    participants: [uId, shop.userId],
                     name: chatName,
                 })
                 const updateTimestamp = await updateDoc(newChatRoomRef, {
@@ -64,7 +64,7 @@ export default function CustomerProductPage({ route, navigation }: any) {
                     timestamp: serverTimestamp(),
                 });
                 dispatch(setLoadingFalse());
-                navigation.navigate('Chat', { user: user, chatRoom: newChatRoomRef.id });
+                navigation.navigate('Chat', { user: uId, chatRoom: newChatRoomRef.id });
             }
         } catch (error) {
             console.log("Error Navigating: ", error)
