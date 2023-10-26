@@ -21,15 +21,15 @@ export default function FarmerHomePage() {
   const [refreshing, setRefreshing] = useState(false);
 
   async function fetchData() {
-    dispatch(setLoadingTrue());
     setItems(await fetchProducts(uId as string));
     setCategories(await fetchCategories());
-    dispatch(setLoadingFalse());
   }
-
+  
   // get data
   useEffect(() => {
+    dispatch(setLoadingTrue());
 		fetchData();
+    dispatch(setLoadingFalse());
   }, [])
   // on refresh
   const onRefresh = async () => {
