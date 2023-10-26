@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FarmerHeader } from '../../components/headers/FarmerHeader';
 import CustomCard from './CustomCard';
-import { Product, fetchCategories, fetchProducts } from '../../util/FarmerDbHooks';
+import { Product, fetchCategories, fetchOpenHours, fetchProducts } from '../../util/FarmerDbHooks';
 import { useDispatch, useSelector } from 'react-redux';
 import { UserLogin } from '../../util/interfaces';
 import { Timestamp } from 'firebase/firestore';
@@ -19,10 +19,15 @@ export default function FarmerHomePage() {
   const [categories, setCategories] = useState<string[]>([]);
   const [items, setItems] = useState<Product[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [openTime, setOpenTime] = useState('');
+  const [closeTime, setCloseTime] = useState('')
 
   async function fetchData() {
     setItems(await fetchProducts(uId as string));
     setCategories(await fetchCategories());
+    const openHours: any = await fetchOpenHours(uId);
+    setOpenTime(formatTime(openHours.openAt));
+    setCloseTime(formatTime(openHours.closeAt));
   }
   
   // get data
@@ -83,7 +88,8 @@ export default function FarmerHomePage() {
           <Text style={styles.boldText}>Open Hours</Text>
           <View>
             <Text style={styles.dayRangeText}>Mon - Fri</Text>
-            <Text style={styles.timeRangeText}>9:00 AM - 5:00 PM</Text>
+            {/* <Text style={styles.timeRangeText}>9:00 AM - 5:00 PM</Text> */}
+            <Text style={styles.timeRangeText}>{`${openTime} - ${closeTime}`}</Text>
           </View>
         </View>
 
