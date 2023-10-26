@@ -44,7 +44,7 @@ export default function Chat({ route, navigation }: any) {
         wrapperStyle={{
           right: {
             // Here is the color change
-            backgroundColor: '#D7FAD1'
+            backgroundColor: '#6646ee'
           },
           left:{
             // Here is the color change
@@ -53,7 +53,7 @@ export default function Chat({ route, navigation }: any) {
         }}
         textStyle={{
           right: {
-            color: '#2D332B'
+            color: '#fff'
           },
           left: {
             color: '#2D332B'

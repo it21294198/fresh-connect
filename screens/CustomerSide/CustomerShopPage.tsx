@@ -33,7 +33,7 @@ export default function CustomerShopPage({ route, navigation }: any) {
     console.log("Shop Saved Successfully")
   }
 
-  const filteredData = data.filter((data) => {
+  const filteredData = data?.filter((data) => {
     const name = data.name.toLowerCase()
     const category = data.category.toLowerCase()
     const price = data.price.toString().toLowerCase()
