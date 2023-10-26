@@ -93,7 +93,7 @@ export default function CustomerHomePage({ navigation }: any) {
 
   const renderActvity = filteredData.map((shop, index) => {
     return (
-      <TouchableOpacity onPress={() => navigation.navigate('CustomerShopPage', { uId: uId, shopId: shop.userId })}>
+      <TouchableOpacity onPress={() => navigation.navigate('CustomerShopPage', { user: uId, shopId: shop.userId })}>
       <Div key={index} m="sm" rounded="lg" bg="white" shadow="md" p="xl">
         <Div row alignItems="center">
           <Div flex={1}>
