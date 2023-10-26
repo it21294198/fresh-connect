@@ -291,6 +291,16 @@ export default function MainNavigation()
               style={{ width: 19, height: 20, resizeMode: 'contain', tintColor: '#A89797' }}
             />
           }
+          else if (route.name === 'Chats')
+          {
+            icon = focused ? <Image
+              source={chatFilledIcon}
+              style={{ width: 19, height: 20, resizeMode: 'contain' }}
+            /> : <Image
+              source={chatEmptyIcon}
+              style={{ width: 19, height: 20, resizeMode: 'contain', tintColor: '#A89797' }}
+            />
+          }
 
 
           return icon;
