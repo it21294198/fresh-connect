@@ -108,6 +108,7 @@ export interface ShopRegister{
   openAt?:any;
   closeAt?:any;
   address:string;
+  shopAddress?:any;
   accept:boolean;
 }
 export interface faqInterface{
