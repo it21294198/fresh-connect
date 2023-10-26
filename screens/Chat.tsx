@@ -4,10 +4,14 @@ import { GiftedChat } from 'react-native-gifted-chat'
 import { getMessages, getUser, sendMessage } from './ChatController'
 import { CustomerHeader } from '../components/headers/CustomerHeader'
 import { Div } from 'react-native-magnus'
+import { UserLogin } from '../util/interfaces';
+import { useSelector } from 'react-redux';
 
 export default function Chat({ route, navigation }: any) {
   const [messages, setMessages] = useState<any[]>([])
   const { user,chatRoom } = route.params
+  let id:any = useSelector((state:{user:UserLogin})=>state.user.userId)?.toString()
+  let firstName:any = useSelector((state:{user:UserLogin})=>state.user.firstName)?.toString()
 
   async function receiveMessages(){
     //console.log(chatRoom)
@@ -30,13 +34,13 @@ export default function Chat({ route, navigation }: any) {
 
   useEffect(() => {
     receiveMessages()
-  }, [])
+  }, [messages])
 
   function onSend(newMessage:any = []) {
     setMessages((previousMessages) => GiftedChat.append(previousMessages, newMessage));
     const msg:any={
-      sender:user.id,
-      senderName:user.name,
+      sender:id,
+      senderName:firstName,
       chatRoom: chatRoom,
       message:newMessage[0].text,
       // date: new Date().toDateString(),
@@ -54,7 +58,7 @@ export default function Chat({ route, navigation }: any) {
       messages={messages}
       onSend={onSend}
       user={{
-        _id: user.id, 
+        _id: id, 
       }}
       scrollToBottom
     />

@@ -9,7 +9,7 @@ export default function CustomerShopPage({ route, navigation }: any) {
   const [shop, setShop] = useState<any>();
   const [Keyword, setKeyword] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string>("null")
-  const { user, shopId } = route.params
+  const { uId, shopId } = route.params
   let openTime: string = "Open"
   if (shop) {
     openTime = shop.openAt.toDate().toLocaleTimeString() + " - " + shop.closeAt.toDate().toLocaleTimeString()
@@ -18,13 +18,11 @@ export default function CustomerShopPage({ route, navigation }: any) {
   async function receiveData() {
     const newData: any = await getProducts(shopId)
     setData(newData)
-    console.log(newData)
   }
 
   async function receiveShop() {
     const newData: any = await getShopById(shopId)
     setShop(newData)
-    console.log(newData)
   }
 
   const filteredData = data.filter((data) => {
@@ -41,7 +39,7 @@ export default function CustomerShopPage({ route, navigation }: any) {
   useEffect(() => {
     receiveShop()
     receiveData()
-  }, [])
+  }, [data])
 
   const openNow = () => {
     if (shop) {
@@ -124,13 +122,13 @@ export default function CustomerShopPage({ route, navigation }: any) {
       return (
         <Div key={index} m="sm" rounded="lg" bg="white" shadow="md" p="md">
           <Div row>
-            <TouchableOpacity onPress={() => navigation.navigate('CustomerProductPage', { user: user, shop: shop, product: product })}>
+            <TouchableOpacity onPress={() => navigation.navigate('CustomerProductPage', { uId: uId, shop: shop, product: product })}>
               <Div
                 rounded="xl"
                 h={150}
                 w={300}
                 alignItems='center'
-                bgImg={product.imageId}
+                bgImg={require("./Assets/carrot.jpg")}
               />
             </TouchableOpacity>
           </Div>
@@ -157,7 +155,7 @@ export default function CustomerShopPage({ route, navigation }: any) {
                 {product.createdAt.toDate().toLocaleDateString()}
               </Text>
             </Div>
-            <Div flex={1} alignItems='flex-end' mr="sm" flexWrap='wrap'>
+            <Div flex={1} alignItems='flex-end' ml="xs">
               <Button mt="md" bg="#45A053" fontSize="md" rounded={17.5}>{newPrice}</Button>
             </Div>
           </Div>
@@ -175,7 +173,7 @@ export default function CustomerShopPage({ route, navigation }: any) {
               w={150}
               h={150}
               rounded="circle"
-              bgImg={require("./Assets/store.jpg")}
+              bgImg={require("../../assets/shop.jpg")}
             />
           </Div>
           <Div row>
@@ -214,7 +212,7 @@ export default function CustomerShopPage({ route, navigation }: any) {
               {openNow()}
             </Div>
             <Div flex={1} alignItems='flex-end' mt="lg" mr="xs">
-              <Button bg="#45A053" fontSize="md" rounded={17.5} suffix={<Icon px="md" name="star" color="gray100" />}>Save shop</Button>
+              <Button bg="#45A053" fontSize="md" rounded={17.5} suffix={<Icon px="md" name="star" color="gray100" />}>Saved shop</Button>
             </Div>
           </Div>
           <Input
