@@ -52,7 +52,7 @@ export default function SavedShops({navigation}:any) {
   const pressedShopImage = (id:any) =>{
     console.log('shopPressed',id);
     // this is from akmal
-    // navigation.navigate('')
+    navigation.navigate('CustomerShopPage', { user: uId, shopId: id })
   }
 
   const pressFevIcon = (id:any) =>{

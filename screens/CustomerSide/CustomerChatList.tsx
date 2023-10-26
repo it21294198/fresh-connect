@@ -3,18 +3,20 @@ import React, { useState, useEffect } from 'react'
 import { Button, Icon, Div, Text } from 'react-native-magnus'
 import { getChatRooms, getMessages, getUser } from '../ChatController'
 import { CustomerHeader } from '../../components/headers/CustomerHeader'
+import { UserLogin } from '../../util/interfaces';
+import { useSelector } from 'react-redux';
 
 export default function CustomerChatList({ route, navigation }: any) {
   const [chatRoom, setChatRoom] = useState<any[]>([])
-  //const { user } = route.params
+  let uId:any = useSelector((state:{user:UserLogin})=>state.user.userId)?.toString()
 
-  const user1 = {
-    id: "8SoZKFk8U0q6l2lEbogL",
-    name: 'John'
-  }
+  // const user1 = {
+  //   id: "8SoZKFk8U0q6l2lEbogL",
+  //   name: 'John'
+  // }
 
   async function getRooms() {
-    const rooms: any = await getChatRooms(user1.id);
+    const rooms: any = await getChatRooms(uId);
     const chatRoomDataPromises = rooms.map(async (room: any) => {
       const messages: any = await getMessages(room.id);
       const participantName: string = await getUser(room.participants[1]);
@@ -49,7 +51,7 @@ export default function CustomerChatList({ route, navigation }: any) {
 
   useEffect(() => {
     getRooms()
-  }, [])
+  }, [chatRoom])
 
   // const user1 = {
   //   id: "8SoZKFk8U0q6l2lEbogL",
@@ -85,7 +87,7 @@ export default function CustomerChatList({ route, navigation }: any) {
       <>
       <CustomerHeader navigation={navigation} title='My Chats' headerRight={false} back={false} />
       <Div key={index} m="sm" rounded="lg" bg="white" shadow="md" p="md">
-        <TouchableOpacity onPress={() => {navigation.navigate('Chat', { user: user1, chatRoom: roomData.room.id })}}>
+        <TouchableOpacity onPress={() => {navigation.navigate('Chat', { user: uId, chatRoom: roomData.room.id })}}>
         <Div row>
 
         <Div flex={1} alignItems='flex-start' mt="sm">
@@ -117,7 +119,7 @@ export default function CustomerChatList({ route, navigation }: any) {
     <ScrollView style={styles.scrollview}>
       <View style={styles.container}>
         {!(chatRoom.length===0) ? renderChatRooms :
-        <Div justifyContent='center' alignItems='center'>
+        <Div justifyContent='center' alignItems='center' mt="3xl">
           <Text fontSize="xl" color='red500'>
             No any Chats
             </Text>
