@@ -1,4 +1,4 @@
-import { View, ScrollView, StyleSheet, FlatList } from 'react-native';
+import { View, ScrollView, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { fireStore } from '../../config/firebase';
 import { collection, getDocs, DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
@@ -6,22 +6,24 @@ import { Input, Icon, Button, Div, Text, Header, Image } from "react-native-magn
 import { getSavedShops, getShopById, getShops } from './CustomerController';
 import { CustomerHeader } from '../../components/headers/CustomerHeader';
 import { CommonHeader } from '../../components/headers/CommonHeader';
+import { UserLogin } from '../../util/interfaces';
+import { useSelector } from 'react-redux';
 
 
 export default function CustomerHomePage({ navigation }: any) {
   const [data, setData] = useState<any[]>([]);
-  const [Keyword, setKeyword] = useState("")
+  const [Keyword, setKeyword] = useState("");
+  let uId:any = useSelector((state:{user:UserLogin})=>state.user.userId)?.toString()
 
   async function receiveData() {
     // const newData: any = await getShops()
     // setData(newData)
-    const newD: any = await getSavedShops("JAAcrEfH1LPGi9NddZz16ZegLVK2")
+    const newD: any = await getSavedShops(uId)
     const savedShopsPromises = newD.map((data: any) => getShopById(data))
     Promise.all(savedShopsPromises)
       .then((shops) => {
         // 'shops' will be an array of results
         setData(shops)
-        console.log(shops);
       })
       .catch((error) => {
         // Handle errors
@@ -49,48 +51,49 @@ export default function CustomerHomePage({ navigation }: any) {
 
   useEffect(() => {
     receiveData()
-  }, [])
+  }, [data])
 
-  const user = {
-    id: "8SoZKFk8U0q6l2lEbogL",
-    name: 'John'
-  }
+  // const user = {
+  //   id: "8SoZKFk8U0q6l2lEbogL",
+  //   name: 'John'
+  // }
 
-  const savedShops = [
-    {
-      shopId: '123',
-      shopName: 'Nuwara Farm',
-      userId: "Z04NU1rDCHE8GNus2HbL",
-      description: 'Fresh fruits and vegatables available',
-      openHours: ["10:00", "16:30"],
-      contactNo: "0777124568",
-      email: "farmer@email.com",
-      address: 'No.43, Main Street, Kandy'
-    },
-    {
-      shopId: '124',
-      shopName: 'Emerald Tea',
-      userId: "Z04NU1rDCHE8GNus2HbL",
-      description: 'All varieties of export quality tea available',
-      openHours: ["09:00", "16:30"],
-      contactNo: "0777124568",
-      email: "farmer@email.com",
-      address: 'No.43, Main Street, Kany'
-    },
-    {
-      shopId: '125',
-      shopName: 'Coconut Groves',
-      userId: "Z04NU1rDCHE8GNus2HbL",
-      description: 'Coconut and coconut related products available',
-      openHours: ["09:00", "16:30"],
-      contactNo: "0777124568",
-      email: "farmer@email.com",
-      address: 'No.43, Main Street, Kany'
-    }
-  ]
+  // const savedShops = [
+  //   {
+  //     shopId: '123',
+  //     shopName: 'Nuwara Farm',
+  //     userId: "Z04NU1rDCHE8GNus2HbL",
+  //     description: 'Fresh fruits and vegatables available',
+  //     openHours: ["10:00", "16:30"],
+  //     contactNo: "0777124568",
+  //     email: "farmer@email.com",
+  //     address: 'No.43, Main Street, Kandy'
+  //   },
+  //   {
+  //     shopId: '124',
+  //     shopName: 'Emerald Tea',
+  //     userId: "Z04NU1rDCHE8GNus2HbL",
+  //     description: 'All varieties of export quality tea available',
+  //     openHours: ["09:00", "16:30"],
+  //     contactNo: "0777124568",
+  //     email: "farmer@email.com",
+  //     address: 'No.43, Main Street, Kany'
+  //   },
+  //   {
+  //     shopId: '125',
+  //     shopName: 'Coconut Groves',
+  //     userId: "Z04NU1rDCHE8GNus2HbL",
+  //     description: 'Coconut and coconut related products available',
+  //     openHours: ["09:00", "16:30"],
+  //     contactNo: "0777124568",
+  //     email: "farmer@email.com",
+  //     address: 'No.43, Main Street, Kany'
+  //   }
+  // ]
 
   const renderActvity = filteredData.map((shop, index) => {
     return (
+      <TouchableOpacity onPress={() => navigation.navigate('CustomerShopPage', { uId: uId, shopId: shop.userId })}>
       <Div key={index} m="sm" rounded="lg" bg="white" shadow="md" p="xl">
         <Div row alignItems="center">
           <Div flex={1}>
@@ -116,9 +119,10 @@ export default function CustomerHomePage({ navigation }: any) {
           </Div>
         </Div>
         <Div row justifyContent='flex-end'>
-          <Button bg='#45A053' rounded={17.5} onPress={() => navigation.navigate('CustomerShopPage', { user: user, shopId: shop.userId })}>View</Button>
+          <Button bg='#45A053' rounded={17.5}>View</Button>
         </Div>
       </Div>
+      </TouchableOpacity>
     )
   })
 
