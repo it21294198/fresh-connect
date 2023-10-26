@@ -1,4 +1,4 @@
-import { collection, addDoc, serverTimestamp, doc, updateDoc, getDocs, query, orderBy, getDoc, setDoc, deleteDoc, where } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, doc, updateDoc, getDocs, query, orderBy, getDoc, setDoc, deleteDoc, where, arrayUnion } from 'firebase/firestore';
 import {fireStore} from '../../config/firebase'
 
 async function getShops(){
@@ -44,6 +44,17 @@ async function getShopById(id: string){
     }
 }
 
+async function saveShop(id: string, data:string){
+    try{
+        const docRef = doc(fireStore,"users",id);
+        await updateDoc(docRef, {
+            savedShops: arrayUnion(data)
+        });
+    }catch(error){
+        console.log("Error saving shop ",error)
+    }
+}
+
 async function getProducts(id: string){
     const products:any = [];
     try{
@@ -61,4 +72,4 @@ async function getProducts(id: string){
     }
 }
 
-export {getShops, getProducts, getShopById, getSavedShops}
+export {getShops, getProducts, getShopById, getSavedShops, saveShop}

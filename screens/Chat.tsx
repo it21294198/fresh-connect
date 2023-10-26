@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native'
 import React, { useState, useEffect } from 'react'
-import { GiftedChat } from 'react-native-gifted-chat'
+import { Bubble, GiftedChat } from 'react-native-gifted-chat'
 import { getMessages, getUser, sendMessage } from './ChatController'
 import { CustomerHeader } from '../components/headers/CustomerHeader'
 import { Div } from 'react-native-magnus'
@@ -36,6 +36,34 @@ export default function Chat({ route, navigation }: any) {
     receiveMessages()
   }, [messages])
 
+  function renderBubble(props:any) {
+    return (
+      // Step 3: return the component
+      <Bubble
+        {...props}
+        wrapperStyle={{
+          right: {
+            // Here is the color change
+            backgroundColor: '#6646ee'
+          },
+          left:{
+            // Here is the color change
+            backgroundColor: '#FCFCFC'
+          }
+        }}
+        textStyle={{
+          right: {
+            color: '#fff'
+          },
+          left: {
+            color: '#2D332B'
+          }
+        }}
+      />
+    );
+  }
+
+
   function onSend(newMessage:any = []) {
     setMessages((previousMessages) => GiftedChat.append(previousMessages, newMessage));
     const msg:any={
@@ -61,6 +89,9 @@ export default function Chat({ route, navigation }: any) {
         _id: id, 
       }}
       scrollToBottom
+      renderBubble={renderBubble}
+      placeholder='Type a message here'
+      isTyping={true}
     />
     </>
   )

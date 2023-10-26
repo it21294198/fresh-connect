@@ -1,15 +1,18 @@
 import { View, ScrollView, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { Input, Icon, Button, Div, Text, Header, Image } from "react-native-magnus";
-import { getProducts, getShopById } from './CustomerController';
+import { getProducts, getShopById, saveShop } from './CustomerController';
 import { CustomerHeader } from '../../components/headers/CustomerHeader';
+import { UserLogin } from '../../util/interfaces';
+import { useSelector } from 'react-redux';
 
 export default function CustomerShopPage({ route, navigation }: any) {
   const [data, setData] = useState<any[]>([]);
   const [shop, setShop] = useState<any>();
   const [Keyword, setKeyword] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string>("null")
-  const { uId, shopId } = route.params
+  const { user, shopId } = route.params
+  let uId:any = useSelector((state:{user:UserLogin})=>state.user.userId)?.toString()
   let openTime: string = "Open"
   if (shop) {
     openTime = shop.openAt.toDate().toLocaleTimeString() + " - " + shop.closeAt.toDate().toLocaleTimeString()
@@ -25,7 +28,12 @@ export default function CustomerShopPage({ route, navigation }: any) {
     setShop(newData)
   }
 
-  const filteredData = data.filter((data) => {
+  async function saveNewShop() {
+    await saveShop(uId,shopId)
+    console.log("Shop Saved Successfully")
+  }
+
+  const filteredData = data?.filter((data) => {
     const name = data.name.toLowerCase()
     const category = data.category.toLowerCase()
     const price = data.price.toString().toLowerCase()
@@ -212,7 +220,7 @@ export default function CustomerShopPage({ route, navigation }: any) {
               {openNow()}
             </Div>
             <Div flex={1} alignItems='flex-end' mt="lg" mr="xs">
-              <Button bg="#45A053" fontSize="md" rounded={17.5} suffix={<Icon px="md" name="star" color="gray100" />}>Saved shop</Button>
+              <Button bg="#45A053" fontSize="md" onPress={saveNewShop} rounded={17.5} suffix={<Icon px="md" name="star" color="gray100" />}>Save shop</Button>
             </Div>
           </Div>
           <Input
