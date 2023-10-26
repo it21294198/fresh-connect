@@ -298,8 +298,8 @@ export default function MainNavigation()
       })}>
         <Tab.Screen name="Home" component={CustomerHomeStack} />
         <Tab.Screen name="Shops" component={ShopMapDisplay} options={{ headerShown: false, tabBarShowLabel: true, }} />
-        <Tab.Screen name="Saved Shops" component={SavedShops} />
-        {/* <Tab.Screen name="Chats" component={Chats} /> */}
+        <Tab.Screen name="Saved Shops" component={CustomerSavedShops} />
+        <Tab.Screen name="Chats" component={Chats} />
         <Tab.Screen name="Profile" component={CustomerProfile} />
         {/* <Tab.Screen name="Test" component={TestFile} /> */}
       </Tab.Navigator>
@@ -461,6 +461,15 @@ export default function MainNavigation()
       <Stack.Navigator initialRouteName='CustomerChatList' screenOptions={{ headerShown: false }}>
         <Stack.Screen name='ChatList' options={{ title: 'Chats List' }} component={CustomerChatList}/>
         <Stack.Screen name='Chat' options={({route}:any)=>({title: route.params.chatRoom.name})} component={Chat}/>
+      </Stack.Navigator>
+    )
+  }
+
+  function CustomerSavedShops(){
+    return(
+      <Stack.Navigator initialRouteName='SavedShops' screenOptions={{ headerShown: false }}>
+        <Stack.Screen name='SavedShops' options={{ title: "Saved Shops" }} component={SavedShops}/>
+        <Stack.Screen name='CustomerShopPage' options={{title: "Shop"}} component={CustomerShopPage}/>
       </Stack.Navigator>
     )
   }
