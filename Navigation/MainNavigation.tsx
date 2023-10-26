@@ -357,7 +357,7 @@ export default function MainNavigation()
       })}>
         <Tab.Screen name='Home' component={FarmerHomePage} />
         <Tab.Screen name='FarmerProfile' component={FarmerProfile} />
-        <Tab.Screen name='Chat' component={ProductPage} />
+        <Tab.Screen name='Chat' component={Chat} />
       </Tab.Navigator>
     )
   }
