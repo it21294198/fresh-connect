@@ -4,6 +4,7 @@ import { Button, Icon, Div, Text } from 'react-native-magnus'
 import { getChatRooms, getMessages, getUser } from '../ChatController'
 import { UserLogin } from '../../util/interfaces';
 import { useSelector } from 'react-redux';
+import { CustomerHeader } from '../../components/headers/CustomerHeader';
 
 export default function FarmerChatList({ route, navigation }: any) {
   const [chatRoom, setChatRoom] = useState<any[]>([])
@@ -113,6 +114,8 @@ export default function FarmerChatList({ route, navigation }: any) {
   })
 
   return (
+    <>
+  <CustomerHeader navigation={navigation} title='My Chats' headerRight={false} back={false} />
     <ScrollView style={styles.scrollview}>
       <View style={styles.container}>
       {!(chatRoom.length===0) ? renderChatRooms :
@@ -123,7 +126,7 @@ export default function FarmerChatList({ route, navigation }: any) {
             </Div>}
       </View>
     </ScrollView>
-
+    </>
   )
 }
 
