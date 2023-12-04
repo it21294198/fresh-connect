@@ -1,17 +1,30 @@
-## When you clone the project first run following commands and create some file
+# Fresh-Connect 
+Fresh-Connect is an app that effortlessly connects users with local shops, utilizing real-time location data to showcase nearby options on an interactive map. Users can explore a variety of products offered by nearby sellers, making informed decisions and enhancing their shopping experience.
 
-### Move to folder
-```
-cd f [press tab key]
-```
+## Tech Stack
+* Reacy Native
+* Tailwind CSS
+* Typescript
+* Firebase
 
-### Install npm
+## Contributors
+
+<a href="https://github.com/it21294198/fresh-connect/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=it21294198/fresh-connect" />
+</a>
+
+## Getting Started
+### 1. Clone the project
+```
+git clone https://github.com/it21294198/fresh-connect.git
+```
+### 2. Install packages
 ```
 npm i
 ```
 
-### create file name **.env.local** in root folder
-### Include the firebase config
+### 3. Create a file named **.env.local** in root folder
+### 4. Include the firebase config
 ```
   EXPO_PUBLIC_API_KEY = 
   EXPO_PUBLIC_AUTH_DOMAIN = 
@@ -21,9 +34,7 @@ npm i
   EXPO_PUBLIC_APP_ID = 
 ```
 - - -
-When the project is created
-
-  1. add env changes to babel.config.js 
+### 5. Add env changes to babel.config.js 
  ```js
   module.exports = function (api) {
   api.cache(true);
@@ -50,7 +61,7 @@ When the project is created
   };
 };
   ```
-  2. created env.d.ts for enable env with typescript
+### 6. created env.d.ts for enable env with typescript
   ```ts
   declare module '@env' {
   export const EXPO_PUBLIC_API_KEY: string;
@@ -60,8 +71,8 @@ When the project is created
   export const EXPO_PUBLIC_MESSAGING_SENDER_ID: string;
   export const EXPO_PUBLIC_APP_ID: string;
 }
-  ``` 
-  3. add tsconfig.json
+  ```
+### 7. Add tsconfig.json
    ```json
 {
   "extends": "expo/tsconfig.base",
@@ -76,45 +87,3 @@ When the project is created
   ]
 }
    ```
-## Use of Redux correctly
-
-### Get the value inside store (user id = uid)
-
-```ts
-import { UserLogin } from '../util/interfaces'; // get the path accordingly
-import { useSelector } from 'react-redux';
-
-let uId:string|null = useSelector((state:{user:UserLogin})=>state.user.userId)
-let email:string|null = useSelector((state:{user:UserLogin})=>state.user.email)
-
-console.log(email) // you can use this any where
-```
-
-### How to use loading
-```ts
-import { useDispatch } from 'react-redux';
-import { setLoadingFalse, setLoadingTrue } from '../features/connection/loaderSlice';
-//palace this near useStates area
-const dispatch = useDispatch()
-
-function getLongTimeToProcess(){
-  dispatch(setLoadingTrue());
-  // put your time consuming process
-  dispatch(setLoadingFalse());
-
-  //place navigation if needed below here
-}
-```
-
-### Set the value inside store (no need to use this)
-
-```ts
-import { useDispatch } from 'react-redux';
-
-const dispatch = useDispatch()
-
-const uid:string = '@123abc'
-
-dispatch(setUserId(uid))
-```
-
